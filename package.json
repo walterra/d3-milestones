@@ -1,0 +1,55 @@
+{
+  "name": "milestones",
+  "version": "1.0.0-alpha1",
+  "description": "A d3 based timeline visualization.",
+  "keywords": [
+    "d3",
+    "visualization",
+    "timeline"
+  ],
+  "main": "build/milestones.js",
+  "module": "build/milestones.js",
+  "homepage": "https://github.com/elastic/milestones",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elastic/milestones.git"
+  },
+  "bugs": {
+    "url": "https://github.com/elastic/milestones/issues"
+  },
+  "author": "Elastic",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "d3": "^4.10.0"
+  },
+  "devDependencies": {
+    "browserify": "^14.4.0",
+    "catw": "^1.0.1",
+    "eslint": "^3.8.1",
+    "eslint-config-es5": "^0.5.0",
+    "faucet": "0.0.1",
+    "http-server": "^0.9.0",
+    "less": "^2.7.1",
+    "rollup": "^0.36.3",
+    "rollup-plugin-buble": "^0.15.0",
+    "rollup-plugin-eslint": "^3.0.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
+    "rollup-watch": "^2.5.0",
+    "tape": "4",
+    "tape-run": "^2.1.4",
+    "uglify-js": "2"
+  },
+  "scripts": {
+    "start": "http-server",
+    "pretest": "rm -rf build && mkdir build && rollup -c",
+    "watch": "rm -rf build && mkdir build && rollup -c --watch | npm run watch-css | http-server",
+    "test": "npm run test-faucet",
+    "test-faucet": "browserify test/*-test.js | ./node_modules/.bin/tape-run | ./node_modules/.bin/faucet",
+    "test-raw": "npm run pretest && browserify test/*-test.js | ./node_modules/.bin/tape-run",
+    "build-css": "lessc src/styles/styles.less > build/milestones.css",
+    "watch-css": "catw -w 'src/styles/**/*.less' -c 'npm run build-css'",
+    "prepublish": "npm run test && uglifyjs build/milestones.js -c -m -o build/milestones.min.js && npm run build-css",
+    "postpublish": "zip -j build/milestones.zip -- LICENSE README.md build/milestones.css build/milestones.js build/milestones.min.js"
+  }
+}

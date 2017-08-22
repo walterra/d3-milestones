@@ -1,0 +1,61 @@
+.milestones {
+  &--horizontal-line {
+    position: absolute;
+    background-color: #000;
+    height: 3px;
+    margin-top: 4px;
+  }
+
+  &--group {
+    position: absolute;
+    font-family: sans-serif;
+    font-size: 10px;
+
+    &--bullet {
+      background-color: #fff;
+      border: 3px solid #333;
+      border-radius: 50%;
+      width: 0px;
+      height: 0px;
+      padding: 2.5px;
+    }
+
+    &--label {
+      position: absolute;
+      border-left: 1px solid #000;
+      margin-left: 5px;
+      padding: 0;
+      color: #666;
+
+      &-above {
+        bottom: 100%;
+      }
+
+      &-last {
+        right: 100%;
+        border-left: 0;
+        border-right: 1px solid #000;
+        margin-left: 0;
+        margin-right: -6px;
+        text-align: right;
+
+        div {
+          margin-left: 0px;
+          margin-right: 3px;
+        }
+      }
+
+      div {
+        position: relative;
+        margin-left: 3px;
+      }
+
+      &--text--title {
+        color: #000;
+        font-weight: bold;
+        white-space: nowrap;
+      }
+
+    }
+  }
+}

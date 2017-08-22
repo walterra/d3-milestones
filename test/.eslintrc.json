@@ -1,0 +1,6 @@
+{
+  "extent": "../eslintrc.json",
+  "globals": {
+    "require": true
+  }
+}

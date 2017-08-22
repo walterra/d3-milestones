@@ -1,0 +1,8 @@
+.idea
+.DS_Store
+*.iml
+*.log
+node_modules/
+npm-debug.log
+.vscode
+yarn.lock
