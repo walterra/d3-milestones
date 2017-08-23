@@ -1,12 +1,12 @@
 import * as dom from 'd3-selection';
 import * as scale from 'd3-scale';
-import { ascending } from 'd3';
-import { extent } from 'd3';
-import { max } from 'd3';
-import { nest } from 'd3';
-import { timeFormat as d3TimeFormat } from 'd3';
-import { timeParse as d3TimeParse } from 'd3';
-import { isoParse } from 'd3';
+import { ascending } from 'd3-array';
+import { extent } from 'd3-array';
+import { max } from 'd3-array';
+import { nest } from 'd3-collection';
+import { timeFormat as d3TimeFormat } from 'd3-time-format';
+import { timeParse as d3TimeParse } from 'd3-time-format';
+import { isoParse } from 'd3-time-format';
 import api from './_api';
 
 const cssPrefix = 'milestones';
