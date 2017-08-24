@@ -4287,7 +4287,9 @@ function milestones(selector$$1) {
 
     timeline.exit().remove();
 
-    var selectorWidth = +select(selector$$1).node().getBoundingClientRect().width - 10;
+    // rightMargin compensates for the right most bullet position
+    var rightMargin = 11;
+    var selectorWidth = parseFloat(select(selector$$1).style('width')) - rightMargin;
 
     if (typeof mapping.category !== 'undefined') {
       timelineEnter.append('div')

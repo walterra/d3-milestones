@@ -1,6 +1,6 @@
 {
   "name": "milestones",
-  "version": "1.0.0-alpha2",
+  "version": "1.0.0-alpha3",
   "description": "A d3 based timeline visualization.",
   "keywords": [
     "d3",

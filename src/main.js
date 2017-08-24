@@ -145,7 +145,9 @@ export default function milestones(selector) {
 
     timeline.exit().remove();
 
-    const selectorWidth = +dom.select(selector).node().getBoundingClientRect().width - 10;
+    // rightMargin compensates for the right most bullet position
+    const rightMargin = 11;
+    const selectorWidth = parseFloat(dom.select(selector).style('width')) - rightMargin;
 
     if (typeof mapping.category !== 'undefined') {
       timelineEnter.append('div')
