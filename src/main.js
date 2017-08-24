@@ -10,13 +10,15 @@ import { isoParse } from 'd3-time-format';
 import api from './_api';
 
 const cssPrefix = 'milestones';
-const cssLineClass = cssPrefix + '--horizontal-line';
-const cssGroupClass = cssPrefix + '--group';
-const cssLabelClass = cssGroupClass + '--label';
+const cssCategoryClass = cssPrefix + '__category_label';
+const cssLineClass = cssPrefix + '__horizontal_line';
+const cssGroupClass = cssPrefix + '__group';
+const cssBulletClass = cssGroupClass + '__bullet';
+const cssLabelClass = cssGroupClass + '__label';
 const cssLastClass = cssLabelClass + '-last';
 const cssAboveClass = cssLabelClass + '-above';
-const cssTextClass = cssLabelClass + '--text';
-const cssTitleClass = cssTextClass + '--title';
+const cssTextClass = cssLabelClass + '__text';
+const cssTitleClass = cssTextClass + '__title';
 
 export default function milestones(selector) {
   let optimizeLayout = false;
@@ -30,6 +32,8 @@ export default function milestones(selector) {
   }
 
   let mapping = {
+    category: undefined,
+    entries: undefined,
     timestamp: 'timestamp',
     text: 'text'
   };
@@ -43,7 +47,7 @@ export default function milestones(selector) {
   }
   setLabelFormat('%Y-%m-%d %H:%M');
 
-  // second, minute, hour, day, month, year
+  // second, minute, hour, day, month, quarter, year
   const aggregateFormats = {
     second: '%Y-%m-%d %H:%M:%S',
     minute: '%Y-%m-%d %H:%M',
@@ -67,6 +71,7 @@ export default function milestones(selector) {
     }
     return d3TimeFormat(f);
   }
+
   function timeParse(f) {
     if (f === '%Y-Q%Q') {
       const quarterParser = d3TimeParse(aggregateFormats.month);
@@ -102,7 +107,20 @@ export default function milestones(selector) {
   window.addEventListener('resize', () => window.requestAnimationFrame(() => render()));
 
   function transform(data) {
-    return data.map((t, tI) => {
+    // test for different data structures
+    if (typeof mapping.category !== 'undefined' && typeof mapping.entries !== 'undefined') {
+      data = data.map((timeline, timelineIndex) => {
+        return {
+          category: timeline[mapping.category],
+          entries: getNestedEntries(timeline[mapping.entries], timelineIndex)
+        };
+      });
+      return data;
+    } else if (typeof data !== 'undefined' && !Array.isArray(data[0])) {
+      data = [data];
+    }
+
+    function getNestedEntries(t, tI) {
       const nested = nest()
         .key(groupBy).sortKeys(ascending)
         .entries(t);
@@ -111,15 +129,12 @@ export default function milestones(selector) {
         d.timelineIndex = tI;
         return d;
       });
-    });
+    }
+
+    return data.map((t, tI) => getNestedEntries(t, tI));
   }
 
   function render(data) {
-    // test if data is a nested Array (multiple timelines)
-    if (typeof data !== 'undefined' && !Array.isArray(data[0])) {
-      data = [data];
-    }
-
     const timelineSelection = dom.select(selector).selectAll('.' + cssPrefix);
     const nestedData = (typeof data !== 'undefined') ? transform(data) : timelineSelection.data();
     const timeline = timelineSelection.data(nestedData);
@@ -130,22 +145,50 @@ export default function milestones(selector) {
 
     timeline.exit().remove();
 
-    const width = +dom.select(selector).node().getBoundingClientRect().width - 10;
+    const selectorWidth = +dom.select(selector).node().getBoundingClientRect().width - 10;
 
-    timelineEnter.append('div').attr('class', cssLineClass);
+    if (typeof mapping.category !== 'undefined') {
+      timelineEnter.append('div')
+        .attr('class', cssCategoryClass)
+        .text(d => d.category);
 
+      timelineEnter.append('div')
+        .attr('class', 'data-js-timeline')
+        .append('div').attr('class', cssLineClass);
+    } else {
+      timelineEnter.append('div').attr('class', cssLineClass);
+    }
     const timelineMerge = timeline.merge(timelineEnter);
 
+    const categoryLabelWidths = [];
+    const categoryLabels = timelineMerge.selectAll('.' + cssCategoryClass);
+    categoryLabels.each((d, i, node) => {
+      categoryLabelWidths.push(node[i].getBoundingClientRect().width);
+    });
+    const maxCategoryLabelWidth = Math.round(max(categoryLabelWidths) || 0);
+    const timelineLeftMargin = 10;
+    const width = selectorWidth - maxCategoryLabelWidth - timelineLeftMargin;
+    categoryLabels.style('width', maxCategoryLabelWidth + 'px');
+    timelineMerge.selectAll('.data-js-timeline')
+      .style('margin-left', (maxCategoryLabelWidth + timelineLeftMargin) + 'px');
     timelineMerge.selectAll('.' + cssLineClass)
       .style('width', width + 'px');
 
-    const groupSelection = timelineMerge.selectAll('.' + cssGroupClass);
-    const group = groupSelection.data(d => d);
+    const groupSelector = (typeof mapping.category === 'undefined')
+      ? timelineMerge
+      : timelineMerge.selectAll('.data-js-timeline');
+    const groupSelection = groupSelector.selectAll('.' + cssGroupClass);
 
-    const allKeys = nestedData.reduce((keys, t) => {
+    const group = groupSelection.data(d => {
+      return (typeof mapping.category === 'undefined') ? d : d.entries;
+    });
+
+    const allKeys = nestedData.reduce((keys, timeline) => {
+      const t = (typeof mapping.category === 'undefined') ? timeline : timeline.entries;
       t.map(d => keys.push(d.key));
       return keys;
     }, []);
+
     const x = scale.scaleTime()
       .rangeRound([0, width])
       // sets oldest and newest date as the scales domain
@@ -157,7 +200,7 @@ export default function milestones(selector) {
     group.exit().remove();
 
     groupEnter.append('div')
-      .attr('class', cssGroupClass + '--bullet');
+      .attr('class', cssBulletClass);
 
     const groupMerge = groupEnter.merge(group)
       .style('margin-left', d => x(aggregateFormatParse(d.key)) + 'px');
@@ -183,10 +226,20 @@ export default function milestones(selector) {
         // calculate the available width
         const offset = x(aggregateFormatParse(d.key));
         // get the next and previous item on the same lane
-        const nextItem = nestedData[d.timelineIndex][d.index + 2];
-        const previousItem = nestedData[d.timelineIndex][d.index - 2];
-        const itemNumTotal = nestedData[d.timelineIndex].length;
+        let nextItem;
+        let previousItem;
+        let itemNumTotal;
         const itemNum = d.index + 1;
+        if (typeof mapping.category === 'undefined') {
+          nextItem = nestedData[d.timelineIndex][d.index + 2];
+          previousItem = nestedData[d.timelineIndex][d.index - 2];
+          itemNumTotal = nestedData[d.timelineIndex].length;
+        } else {
+          nextItem = nestedData[d.timelineIndex].entries[d.index + 2];
+          previousItem = nestedData[d.timelineIndex].entries[d.index - 2];
+          itemNumTotal = nestedData[d.timelineIndex].entries.length;
+        }
+
         let availableWidth;
 
         if (typeof nextItem !== 'undefined') {
@@ -241,7 +294,9 @@ export default function milestones(selector) {
           const d = dom.selectAll(node).data()[0];
           const index = nodes.length - d.index - 1;
           const item = dom.selectAll(nodes[index]).data()[0];
+          const offset = x(aggregateFormatParse(item.key));
           const currentNode = nodes[index][0];
+
           if (
             currentNode.scrollWidth > (currentNode.getBoundingClientRect().width + 1)
           ) {
@@ -267,8 +322,12 @@ export default function milestones(selector) {
                 break;
               }
             } while (nextGroupHeight >= nextTestItem[0].getBoundingClientRect().height);
-            const offset = x(aggregateFormatParse(item.key));
-            const uberNextItem = nestedData[d.timelineIndex][nextTestIndex];
+            let uberNextItem;
+            if (typeof mapping.category === 'undefined') {
+              uberNextItem = nestedData[d.timelineIndex][nextTestIndex];
+            } else {
+              uberNextItem = nestedData[d.timelineIndex].entries[nextTestIndex];
+            }
             const rightMargin = 6;
 
             let availableWidth = currentNode.getBoundingClientRect().width;
@@ -294,8 +353,7 @@ export default function milestones(selector) {
 
       dom.select(node[i])
         .style('margin-top', (margin + maxAboveHeight) + 'px')
-        .style('height', (margin + maxBelowHeight) + 'px')
-        .style('width', width + 'px');
+        .style('height', (margin + maxBelowHeight) + 'px');
     });
   }
 
