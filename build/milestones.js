@@ -4152,13 +4152,15 @@ var api = function(methods) {
 };
 
 var cssPrefix = 'milestones';
-var cssLineClass = cssPrefix + '--horizontal-line';
-var cssGroupClass = cssPrefix + '--group';
-var cssLabelClass = cssGroupClass + '--label';
+var cssCategoryClass = cssPrefix + '__category_label';
+var cssLineClass = cssPrefix + '__horizontal_line';
+var cssGroupClass = cssPrefix + '__group';
+var cssBulletClass = cssGroupClass + '__bullet';
+var cssLabelClass = cssGroupClass + '__label';
 var cssLastClass = cssLabelClass + '-last';
 var cssAboveClass = cssLabelClass + '-above';
-var cssTextClass = cssLabelClass + '--text';
-var cssTitleClass = cssTextClass + '--title';
+var cssTextClass = cssLabelClass + '__text';
+var cssTitleClass = cssTextClass + '__title';
 
 function milestones(selector$$1) {
   var optimizeLayout = false;
@@ -4172,6 +4174,8 @@ function milestones(selector$$1) {
   }
 
   var mapping = {
+    category: undefined,
+    entries: undefined,
     timestamp: 'timestamp',
     text: 'text'
   };
@@ -4185,7 +4189,7 @@ function milestones(selector$$1) {
   }
   setLabelFormat('%Y-%m-%d %H:%M');
 
-  // second, minute, hour, day, month, year
+  // second, minute, hour, day, month, quarter, year
   var aggregateFormats = {
     second: '%Y-%m-%d %H:%M:%S',
     minute: '%Y-%m-%d %H:%M',
@@ -4209,6 +4213,7 @@ function milestones(selector$$1) {
     }
     return timeFormat(f);
   }
+
   function timeParse$$1(f) {
     if (f === '%Y-Q%Q') {
       var quarterParser = timeParse(aggregateFormats.month);
@@ -4244,7 +4249,20 @@ function milestones(selector$$1) {
   window.addEventListener('resize', function () { return window.requestAnimationFrame(function () { return render(); }); });
 
   function transform(data) {
-    return data.map(function (t, tI) {
+    // test for different data structures
+    if (typeof mapping.category !== 'undefined' && typeof mapping.entries !== 'undefined') {
+      data = data.map(function (timeline, timelineIndex) {
+        return {
+          category: timeline[mapping.category],
+          entries: getNestedEntries(timeline[mapping.entries], timelineIndex)
+        };
+      });
+      return data;
+    } else if (typeof data !== 'undefined' && !Array.isArray(data[0])) {
+      data = [data];
+    }
+
+    function getNestedEntries(t, tI) {
       var nested = nest()
         .key(groupBy).sortKeys(ascending$1)
         .entries(t);
@@ -4253,15 +4271,12 @@ function milestones(selector$$1) {
         d.timelineIndex = tI;
         return d;
       });
-    });
+    }
+
+    return data.map(function (t, tI) { return getNestedEntries(t, tI); });
   }
 
   function render(data) {
-    // test if data is a nested Array (multiple timelines)
-    if (typeof data !== 'undefined' && !Array.isArray(data[0])) {
-      data = [data];
-    }
-
     var timelineSelection = select(selector$$1).selectAll('.' + cssPrefix);
     var nestedData = (typeof data !== 'undefined') ? transform(data) : timelineSelection.data();
     var timeline = timelineSelection.data(nestedData);
@@ -4272,22 +4287,50 @@ function milestones(selector$$1) {
 
     timeline.exit().remove();
 
-    var width = +select(selector$$1).node().getBoundingClientRect().width - 10;
+    var selectorWidth = +select(selector$$1).node().getBoundingClientRect().width - 10;
 
-    timelineEnter.append('div').attr('class', cssLineClass);
+    if (typeof mapping.category !== 'undefined') {
+      timelineEnter.append('div')
+        .attr('class', cssCategoryClass)
+        .text(function (d) { return d.category; });
 
+      timelineEnter.append('div')
+        .attr('class', 'data-js-timeline')
+        .append('div').attr('class', cssLineClass);
+    } else {
+      timelineEnter.append('div').attr('class', cssLineClass);
+    }
     var timelineMerge = timeline.merge(timelineEnter);
 
+    var categoryLabelWidths = [];
+    var categoryLabels = timelineMerge.selectAll('.' + cssCategoryClass);
+    categoryLabels.each(function (d, i, node) {
+      categoryLabelWidths.push(node[i].getBoundingClientRect().width);
+    });
+    var maxCategoryLabelWidth = Math.round(max(categoryLabelWidths) || 0);
+    var timelineLeftMargin = 10;
+    var width = selectorWidth - maxCategoryLabelWidth - timelineLeftMargin;
+    categoryLabels.style('width', maxCategoryLabelWidth + 'px');
+    timelineMerge.selectAll('.data-js-timeline')
+      .style('margin-left', (maxCategoryLabelWidth + timelineLeftMargin) + 'px');
     timelineMerge.selectAll('.' + cssLineClass)
       .style('width', width + 'px');
 
-    var groupSelection = timelineMerge.selectAll('.' + cssGroupClass);
-    var group = groupSelection.data(function (d) { return d; });
+    var groupSelector = (typeof mapping.category === 'undefined')
+      ? timelineMerge
+      : timelineMerge.selectAll('.data-js-timeline');
+    var groupSelection = groupSelector.selectAll('.' + cssGroupClass);
 
-    var allKeys = nestedData.reduce(function (keys$$1, t) {
+    var group = groupSelection.data(function (d) {
+      return (typeof mapping.category === 'undefined') ? d : d.entries;
+    });
+
+    var allKeys = nestedData.reduce(function (keys$$1, timeline) {
+      var t = (typeof mapping.category === 'undefined') ? timeline : timeline.entries;
       t.map(function (d) { return keys$$1.push(d.key); });
       return keys$$1;
     }, []);
+
     var x = time()
       .rangeRound([0, width])
       // sets oldest and newest date as the scales domain
@@ -4299,7 +4342,7 @@ function milestones(selector$$1) {
     group.exit().remove();
 
     groupEnter.append('div')
-      .attr('class', cssGroupClass + '--bullet');
+      .attr('class', cssBulletClass);
 
     var groupMerge = groupEnter.merge(group)
       .style('margin-left', function (d) { return x(aggregateFormatParse(d.key)) + 'px'; });
@@ -4325,10 +4368,20 @@ function milestones(selector$$1) {
         // calculate the available width
         var offset = x(aggregateFormatParse(d.key));
         // get the next and previous item on the same lane
-        var nextItem = nestedData[d.timelineIndex][d.index + 2];
-        var previousItem = nestedData[d.timelineIndex][d.index - 2];
-        var itemNumTotal = nestedData[d.timelineIndex].length;
+        var nextItem;
+        var previousItem;
+        var itemNumTotal;
         var itemNum = d.index + 1;
+        if (typeof mapping.category === 'undefined') {
+          nextItem = nestedData[d.timelineIndex][d.index + 2];
+          previousItem = nestedData[d.timelineIndex][d.index - 2];
+          itemNumTotal = nestedData[d.timelineIndex].length;
+        } else {
+          nextItem = nestedData[d.timelineIndex].entries[d.index + 2];
+          previousItem = nestedData[d.timelineIndex].entries[d.index - 2];
+          itemNumTotal = nestedData[d.timelineIndex].entries.length;
+        }
+
         var availableWidth;
 
         if (typeof nextItem !== 'undefined') {
@@ -4383,7 +4436,9 @@ function milestones(selector$$1) {
           var d = selectAll(node).data()[0];
           var index = nodes.length - d.index - 1;
           var item = selectAll(nodes[index]).data()[0];
+          var offset = x(aggregateFormatParse(item.key));
           var currentNode = nodes[index][0];
+
           if (
             currentNode.scrollWidth > (currentNode.getBoundingClientRect().width + 1)
           ) {
@@ -4409,8 +4464,12 @@ function milestones(selector$$1) {
                 break;
               }
             } while (nextGroupHeight >= nextTestItem[0].getBoundingClientRect().height);
-            var offset = x(aggregateFormatParse(item.key));
-            var uberNextItem = nestedData[d.timelineIndex][nextTestIndex];
+            var uberNextItem;
+            if (typeof mapping.category === 'undefined') {
+              uberNextItem = nestedData[d.timelineIndex][nextTestIndex];
+            } else {
+              uberNextItem = nestedData[d.timelineIndex].entries[nextTestIndex];
+            }
             var rightMargin = 6;
 
             var availableWidth = currentNode.getBoundingClientRect().width;
@@ -4436,8 +4495,7 @@ function milestones(selector$$1) {
 
       select(node[i])
         .style('margin-top', (margin + maxAboveHeight) + 'px')
-        .style('height', (margin + maxBelowHeight) + 'px')
-        .style('width', width + 'px');
+        .style('height', (margin + maxBelowHeight) + 'px');
     });
   }
 
