@@ -4412,7 +4412,15 @@ function milestones(selector$$1) {
       .html(function (d) {
         var above = d.index % 2;
         var group = '<span class="' + cssTitleClass + '">' + labelFormat(aggregateFormatParse(d.key)) + '</span>';
-        var lines = d.values.map(function (d) { return d[mapping.text]; });
+        var lines = d.values.map(function (d) {
+          var t = d[mapping.text];
+          // test if text is an image filename,
+          // if so return an image tag with the filename as the source
+          if (['jpg', 'jpeg', 'gif', 'png'].indexOf(t.split('.').pop()) > -1) {
+            return '<img class="milestones-image-label" src="' + t + '" height="100" />';
+          }
+          return t;
+        });
 
         (above) ? lines.push(group) : lines.unshift(group);
 

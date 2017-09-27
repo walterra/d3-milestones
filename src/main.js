@@ -270,7 +270,15 @@ export default function milestones(selector) {
       .html(d => {
         const above = d.index % 2;
         const group = '<span class="' + cssTitleClass + '">' + labelFormat(aggregateFormatParse(d.key)) + '</span>';
-        const lines = d.values.map(d => d[mapping.text]);
+        const lines = d.values.map(d => {
+          const t = d[mapping.text];
+          // test if text is an image filename,
+          // if so return an image tag with the filename as the source
+          if (['jpg', 'jpeg', 'gif', 'png'].indexOf(t.split('.').pop()) > -1) {
+            return '<img class="milestones-image-label" src="' + t + '" height="100" />';
+          }
+          return t;
+        });
 
         (above) ? lines.push(group) : lines.unshift(group);
 
