@@ -4189,6 +4189,12 @@ function milestones(selector$$1) {
   }
   setLabelFormat('%Y-%m-%d %H:%M');
 
+  var useLabels;
+  function setUseLabels(d) {
+    useLabels = d;
+  }
+  setUseLabels(true);
+
   // second, minute, hour, day, month, quarter, year
   var aggregateFormats = {
     second: '%Y-%m-%d %H:%M:%S',
@@ -4349,152 +4355,156 @@ function milestones(selector$$1) {
     var groupMerge = groupEnter.merge(group)
       .style('margin-left', function (d) { return x(aggregateFormatParse(d.key)) + 'px'; });
 
-    var label = groupMerge.selectAll('.' + cssLabelClass).data(function (d) { return [d]; });
+    if (useLabels) {
+      var label = groupMerge.selectAll('.' + cssLabelClass).data(function (d) { return [d]; });
 
-    var labelMerge = label.enter().append('div')
-      .attr('class', cssLabelClass)
-      .merge(label)
-      .classed(cssLastClass, function (d) {
-        var mostRightPosition = x.range()[1];
-        var currentPosition = x(aggregateFormatParse(d.key));
-        return mostRightPosition === currentPosition; // nestedData[d.timelineIndex].length === (d.index + 1);
-      })
-      .classed(cssAboveClass, function (d) { return d.index % 2; });
-
-    var text = labelMerge.selectAll('.' + cssTextClass).data(function (d) { return [d]; });
-
-    var textEnter = text.enter().append('div')
-      .attr('class', cssTextClass)
-      .merge(text)
-      .style('width', function (d) {
-        // calculate the available width
-        var offset = x(aggregateFormatParse(d.key));
-        // get the next and previous item on the same lane
-        var nextItem;
-        var previousItem;
-        var itemNumTotal;
-        var itemNum = d.index + 1;
-        if (typeof mapping.category === 'undefined') {
-          nextItem = nestedData[d.timelineIndex][d.index + 2];
-          previousItem = nestedData[d.timelineIndex][d.index - 2];
-          itemNumTotal = nestedData[d.timelineIndex].length;
-        } else {
-          nextItem = nestedData[d.timelineIndex].entries[d.index + 2];
-          previousItem = nestedData[d.timelineIndex].entries[d.index - 2];
-          itemNumTotal = nestedData[d.timelineIndex].entries.length;
-        }
-
-        var availableWidth;
-
-        if (typeof nextItem !== 'undefined') {
-          var offsetNextItem = x(aggregateFormatParse(nextItem.key));
-          availableWidth = offsetNextItem - offset;
-
-          if ((itemNumTotal - itemNum) === 2) {
-            availableWidth /= 2;
-          }
-        } else {
-          if ((itemNumTotal - itemNum) === 1) {
-            availableWidth = width - offset;
-          } else if ((itemNumTotal - itemNum) === 0) {
-            if (typeof previousItem !== 'undefined') {
-              var offsetPreviousItem = x(aggregateFormatParse(previousItem.key));
-              availableWidth = (width - offsetPreviousItem) / 2;
-            } else {
-              availableWidth = width;
-            }
-          }
-        }
-
-        var rightMargin = 6;
-        return (availableWidth - rightMargin) + 'px';
-      })
-      .html(function (d) {
-        var above = d.index % 2;
-        var group = '<span class="' + cssTitleClass + '">' + labelFormat(aggregateFormatParse(d.key)) + '</span>';
-        var lines = d.values.map(function (d) {
-          var t = d[mapping.text];
-          // test if text is an image filename,
-          // if so return an image tag with the filename as the source
-          if (['jpg', 'jpeg', 'gif', 'png'].indexOf(t.split('.').pop()) > -1) {
-            return '<img class="milestones-image-label" src="' + t + '" height="100" />';
-          }
-          return t;
-        });
-
-        (above) ? lines.push(group) : lines.unshift(group);
-
-        return lines.join('<br />');
-      });
-
-    var textMerge = text.merge(textEnter);
-
-    textMerge
-      .style('padding-top', '0px')
-      .style('padding-bottom', '0px');
-
-    if (optimizeLayout) {
-      var nestedNodes = nest()
-        .key(function (d) {
-          return selectAll(d).data()[0].timelineIndex;
+      var labelMerge = label.enter().append('div')
+        .attr('class', cssLabelClass)
+        .merge(label)
+        .classed(cssLastClass, function (d) {
+          var mostRightPosition = x.range()[1];
+          var currentPosition = x(aggregateFormatParse(d.key));
+          return mostRightPosition === currentPosition; // nestedData[d.timelineIndex].length === (d.index + 1);
         })
-        .entries(textMerge._groups);
+        .classed(cssAboveClass, function (d) { return d.index % 2; });
 
-      nestedNodes.forEach(function (d) {
-        var nodes = d.values;
-        nodes.forEach(function (node) {
-          var d = selectAll(node).data()[0];
-          var index = nodes.length - d.index - 1;
-          var item = selectAll(nodes[index]).data()[0];
-          var offset = x(aggregateFormatParse(item.key));
-          var currentNode = nodes[index][0];
+      var text = labelMerge.selectAll('.' + cssTextClass).data(function (d) { return [d]; });
 
-          if (
-            currentNode.scrollWidth > (currentNode.getBoundingClientRect().width + 1)
-          ) {
-            var domElement = selectAll(nodes[index]);
-            var padding = index % 2 ? 'padding-bottom' : 'padding-top';
-
-            // get the height of the next group
-            var defaultPadding = 3;
-            var nextGroup = nodes[index + 2];
-            var nextGroupHeight = 0;
-            if (typeof nextGroup !== 'undefined') {
-              nextGroupHeight = nextGroup[0].getBoundingClientRect().height + defaultPadding;
-            }
-            domElement.style(padding, nextGroupHeight + 'px');
-
-            // get the available width until the uber-next group
-            var nextTestIndex = index + 2;
-            var nextTestItem;
-            do {
-              nextTestIndex += 2;
-              nextTestItem = textMerge._groups[nextTestIndex];
-              if (typeof nextTestItem === 'undefined') {
-                break;
-              }
-            } while (nextGroupHeight >= nextTestItem[0].getBoundingClientRect().height);
-            var uberNextItem;
-            if (typeof mapping.category === 'undefined') {
-              uberNextItem = nestedData[d.timelineIndex][nextTestIndex];
-            } else {
-              uberNextItem = nestedData[d.timelineIndex].entries[nextTestIndex];
-            }
-            var rightMargin = 6;
-
-            var availableWidth = currentNode.getBoundingClientRect().width;
-
-            if (typeof uberNextItem !== 'undefined') {
-              var offsetUberNextItem = x(aggregateFormatParse(uberNextItem.key));
-              availableWidth = offsetUberNextItem - offset - rightMargin;
-            } else {
-              availableWidth = width - offset - rightMargin;
-            }
-
-            domElement.style('width', availableWidth + 'px');
+      var textEnter = text.enter().append('div')
+        .attr('class', cssTextClass)
+        .merge(text)
+        .style('width', function (d) {
+          // calculate the available width
+          var offset = x(aggregateFormatParse(d.key));
+          // get the next and previous item on the same lane
+          var nextItem;
+          var previousItem;
+          var itemNumTotal;
+          var itemNum = d.index + 1;
+          if (typeof mapping.category === 'undefined') {
+            nextItem = nestedData[d.timelineIndex][d.index + 2];
+            previousItem = nestedData[d.timelineIndex][d.index - 2];
+            itemNumTotal = nestedData[d.timelineIndex].length;
+          } else {
+            nextItem = nestedData[d.timelineIndex].entries[d.index + 2];
+            previousItem = nestedData[d.timelineIndex].entries[d.index - 2];
+            itemNumTotal = nestedData[d.timelineIndex].entries.length;
           }
+
+          var availableWidth;
+
+          if (typeof nextItem !== 'undefined') {
+            var offsetNextItem = x(aggregateFormatParse(nextItem.key));
+            availableWidth = offsetNextItem - offset;
+
+            if ((itemNumTotal - itemNum) === 2) {
+              availableWidth /= 2;
+            }
+          } else {
+            if ((itemNumTotal - itemNum) === 1) {
+              availableWidth = width - offset;
+            } else if ((itemNumTotal - itemNum) === 0) {
+              if (typeof previousItem !== 'undefined') {
+                var offsetPreviousItem = x(aggregateFormatParse(previousItem.key));
+                availableWidth = (width - offsetPreviousItem) / 2;
+              } else {
+                availableWidth = width;
+              }
+            }
+          }
+
+          var rightMargin = 6;
+          return (availableWidth - rightMargin) + 'px';
+        })
+        .html(function (d) {
+          var above = d.index % 2;
+          var group = '<span class="' + cssTitleClass + '">' + labelFormat(aggregateFormatParse(d.key)) + '</span>';
+          var lines = d.values.map(function (d) {
+            var t = d[mapping.text];
+            // test if text is an image filename,
+            // if so return an image tag with the filename as the source
+            if (['jpg', 'jpeg', 'gif', 'png'].indexOf(t.split('.').pop()) > -1) {
+              return '<img class="milestones-image-label" src="' + t + '" height="100" />';
+            }
+            return t;
+          });
+
+          (above) ? lines.push(group) : lines.unshift(group);
+
+          return lines.join('<br />');
         });
-      });
+
+      var textMerge = text.merge(textEnter);
+
+      textMerge
+        .style('padding-top', '0px')
+        .style('padding-bottom', '0px');
+
+      if (optimizeLayout) {
+        var nestedNodes = nest()
+          .key(function (d) {
+            return selectAll(d).data()[0].timelineIndex;
+          })
+          .entries(textMerge._groups);
+
+        nestedNodes.forEach(function (d) {
+          var nodes = d.values;
+          nodes.forEach(function (node) {
+            var d = selectAll(node).data()[0];
+            var index = nodes.length - d.index - 1;
+            var item = selectAll(nodes[index]).data()[0];
+            var offset = x(aggregateFormatParse(item.key));
+            var currentNode = nodes[index][0];
+
+            if (
+              currentNode.scrollWidth > (currentNode.getBoundingClientRect().width + 1)
+            ) {
+              var domElement = selectAll(nodes[index]);
+              var padding = index % 2 ? 'padding-bottom' : 'padding-top';
+
+              // get the height of the next group
+              var defaultPadding = 3;
+              var nextGroup = nodes[index + 2];
+              var nextGroupHeight = 0;
+              if (typeof nextGroup !== 'undefined') {
+                nextGroupHeight = nextGroup[0].getBoundingClientRect().height + defaultPadding;
+              }
+              domElement.style(padding, nextGroupHeight + 'px');
+
+              // get the available width until the uber-next group
+              var nextTestIndex = index + 2;
+              var nextTestItem;
+              do {
+                nextTestIndex += 2;
+                nextTestItem = textMerge._groups[nextTestIndex];
+                if (typeof nextTestItem === 'undefined') {
+                  break;
+                }
+              } while (nextGroupHeight >= nextTestItem[0].getBoundingClientRect().height);
+              var uberNextItem;
+              if (typeof mapping.category === 'undefined') {
+                uberNextItem = nestedData[d.timelineIndex][nextTestIndex];
+              } else {
+                uberNextItem = nestedData[d.timelineIndex].entries[nextTestIndex];
+              }
+              var rightMargin = 6;
+
+              var availableWidth = currentNode.getBoundingClientRect().width;
+
+              if (typeof uberNextItem !== 'undefined') {
+                var offsetUberNextItem = x(aggregateFormatParse(uberNextItem.key));
+                availableWidth = offsetUberNextItem - offset - rightMargin;
+              } else {
+                availableWidth = width - offset - rightMargin;
+              }
+
+              domElement.style('width', availableWidth + 'px');
+            }
+          });
+        });
+      }
+    } else {
+      groupMerge.selectAll('.' + cssLabelClass).remove();
     }
 
     // finally, adjust margin-top, height and width of the whole timeline
@@ -4504,8 +4514,8 @@ function milestones(selector$$1) {
       var maxBelowHeight = max(select(node[i]).selectAll('* :not(.' + cssAboveClass + ')')._groups[0], function (d) { return d.getBoundingClientRect().height; });
 
       select(node[i])
-        .style('margin-top', (margin + maxAboveHeight) + 'px')
-        .style('height', (margin + maxBelowHeight) + 'px');
+        .style('margin-top', (margin + (maxAboveHeight || 0)) + 'px')
+        .style('height', (margin + (maxBelowHeight || 0)) + 'px');
     });
   }
 
@@ -4515,6 +4525,7 @@ function milestones(selector$$1) {
     optimize: setOptimizeLayout,
     parseTime: setParseTime,
     labelFormat: setLabelFormat,
+    useLabels: setUseLabels,
     render: render
   });
 }
