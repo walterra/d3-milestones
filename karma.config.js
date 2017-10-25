@@ -1,5 +1,7 @@
 const buble = require('rollup-plugin-buble');
 const tapSpec = require('tap-spec');
+const eslint = require('rollup-plugin-eslint');
+const nodeResolve = require('rollup-plugin-node-resolve');
 
 module.exports = (config) => {
   config.set({
@@ -13,6 +15,7 @@ module.exports = (config) => {
     },
     colors: true,
     files: [
+      'build/milestones.css',
       'build/tape.js',
       'test/*-test.js'
     ],
@@ -37,6 +40,12 @@ module.exports = (config) => {
         'tape': 'tape'
       },
       plugins: [
+        eslint({
+          exclude: [
+            'src/styles/**',
+          ]
+        }),
+        nodeResolve(),
         buble()
       ],
       sourcemap: false // 'inline'

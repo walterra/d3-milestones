@@ -59,7 +59,7 @@
     "pretest": "browserify test/tape.js --standalone tape -o build/tape.js",
     "watch": "rm -rf build && mkdir build && rollup -c --watch | npm run watch-css | http-server",
     "test": "karma start karma.config.js",
-    "test-watch": "karma start karma.config.js --auto-watch --no-single-run",
+    "test-watch": "karma start karma.config.js --no-single-run",
     "build-css": "lessc src/styles/styles.less > build/milestones.css",
     "watch-css": "catw -w 'src/styles/**/*.less' -c 'npm run build-css'",
     "prepublish": "npm run test && uglifyjs build/milestones.js -c -m -o build/milestones.min.js && npm run build-css",
