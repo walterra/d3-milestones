@@ -17,8 +17,10 @@
   "bugs": {
     "url": "https://github.com/elastic/milestones/issues"
   },
-  "author": "Elastic",
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
+  "contributors": [
+    "Walter Rafelsberger <walter.rafelsberger@elastic.co>"
+  ],
   "private": true,
   "dependencies": {
     "d3-array": "^1.2.0",
