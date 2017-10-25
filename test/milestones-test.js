@@ -1,8 +1,6 @@
-var test = require('tape');
-// var milestones = require('../build/milestones');
-// var d3 = require('d3');
+import tape from 'tape';
 
-test('dummy test', function(t) {
-  t.equal(1, 1);
+tape('simple tape test', t => {
+  t.equal(1, 1, 'foo');
   t.end();
 });
