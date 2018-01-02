@@ -35,9 +35,11 @@ module.exports = (config) => {
     rollupPreprocessor: {
       // context: 'this',
       external: ['tape'],
-      format: 'iife',
-      globals: {
-        'tape': 'tape'
+      output: {
+        format: 'iife',
+        globals: {
+          'tape': 'tape'
+        },
       },
       plugins: [
         eslint({

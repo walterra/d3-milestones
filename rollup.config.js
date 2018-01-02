@@ -3,12 +3,14 @@ import eslint from 'rollup-plugin-eslint';
 import nodeResolve from 'rollup-plugin-node-resolve';
 
 export default {
-  entry: 'src/main.js',
-  dest: 'build/milestones.js',
-  format: 'umd',
-  moduleName: 'milestones',
-  sourceMap: true,
-  sourceMapFile: 'build/milestones.js',
+  input: 'src/main.js',
+  output: {
+    file: 'build/d3-milestones.js',
+    format: 'umd',
+    name: 'milestones',
+    sourcemap: true
+  },
+  sourcemapFile: 'build/d3-milestones.js',
   plugins: [
     eslint({
       exclude: [

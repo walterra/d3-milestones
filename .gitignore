@@ -7,3 +7,4 @@ npm-debug.log
 .vscode
 yarn.lock
 .source.*.html
+build/

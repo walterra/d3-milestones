@@ -1,31 +1,30 @@
 {
-  "name": "milestones",
-  "version": "1.0.0-alpha5",
+  "name": "d3-milestones",
+  "version": "1.0.0-alpha6",
   "description": "A d3 based timeline visualization.",
   "keywords": [
     "d3",
     "visualization",
     "timeline"
   ],
-  "main": "build/milestones.js",
-  "module": "build/milestones.js",
-  "homepage": "https://github.com/elastic/milestones",
+  "main": "build/d3-milestones.js",
+  "module": "build/d3-milestones.js",
+  "homepage": "https://github.com/walterra/d3-milestones",
   "repository": {
     "type": "git",
-    "url": "https://github.com/elastic/milestones.git"
+    "url": "https://github.com/walterra/d3-milestones.git"
   },
   "bugs": {
-    "url": "https://github.com/elastic/milestones/issues"
+    "url": "https://github.com/walterra/d3-0milestones/issues"
   },
   "license": "Apache-2.0",
   "contributors": [
     "Walter Rafelsberger <walter.rafelsberger@elastic.co>"
   ],
-  "private": true,
   "dependencies": {
     "d3-array": "^1.2.0",
     "d3-collection": "^1.0.4",
-    "d3-scale": "^1.0.6",
+    "d3-scale": "^1.0.7",
     "d3-selection": "^1.1.0",
     "d3-time-format": "^2.0.5"
   },
@@ -41,7 +40,7 @@
     "karma-tap": "^3.1.1",
     "karma-tap-pretty-reporter": "^3.0.5",
     "less": "^2.7.1",
-    "rollup": "^0.50.0",
+    "rollup": "^0.53.3",
     "rollup-plugin-buble": "^0.16.0",
     "rollup-plugin-commonjs": "^8.0.0",
     "rollup-plugin-node-builtins": "^2.0.0",
@@ -52,17 +51,18 @@
     "tap-spec": "^4.1.1",
     "tape": "^4.6.3",
     "tape-run": "^2.1.4",
-    "uglify-js": "2"
+    "uglify-js": "2.6.0"
   },
   "scripts": {
     "start": "http-server",
+    "build": "rm -rf build && mkdir build && rollup -c",
     "pretest": "browserify test/tape.js --standalone tape -o build/tape.js",
     "watch": "rm -rf build && mkdir build && rollup -c --watch | npm run watch-css | http-server",
     "test": "karma start karma.config.js",
     "test-watch": "karma start karma.config.js --no-single-run",
-    "build-css": "lessc src/styles/styles.less > build/milestones.css",
+    "build-css": "lessc src/styles/styles.less > build/d3-milestones.css",
     "watch-css": "catw -w 'src/styles/**/*.less' -c 'npm run build-css'",
-    "prepublish": "npm run test && uglifyjs build/milestones.js -c -m -o build/milestones.min.js && npm run build-css",
-    "postpublish": "zip -j build/milestones.zip -- LICENSE README.md build/milestones.css build/milestones.js build/milestones.min.js"
+    "prepublish": "npm run build && npm run test && uglifyjs build/d3-milestones.js -c -m -o build/d3-milestones.min.js && npm run build-css",
+    "postpublish": "zip -j build/d3-milestones.zip -- LICENSE README.md build/d3-milestones.css build/d3-milestones.js build/d3-milestones.min.js"
   }
 }
