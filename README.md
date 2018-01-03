@@ -48,3 +48,7 @@ There are more examples included in the github repository. These examples should
   - http://localhost:8080/example/milestones.html
   - http://localhost:8080/example/tarantino.html
   - http://localhost:8080/example/tarantino-rodriguez.html
+
+## More
+
+`d3-milestones` is also available as a visualization plugin for Kibana here: https://github.com/walterra/kibana-milestones-vis
