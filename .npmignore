@@ -8,4 +8,7 @@ npm-debug.log
 yarn.lock
 .source.*.html
 build/*.zip
+example/
 test/
+karma.config.js
+rollup.config.js
