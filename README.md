@@ -1,3 +1,5 @@
+[![npm version](https://badge.fury.io/js/d3-milestones.svg)](https://badge.fury.io/js/d3-milestones)
+
 # milestones
 
 A d3 based timeline visualization.
