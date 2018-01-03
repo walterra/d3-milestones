@@ -1,6 +1,6 @@
 {
   "name": "d3-milestones",
-  "version": "1.0.0-alpha6",
+  "version": "1.0.0-alpha7",
   "description": "A d3 based timeline visualization.",
   "keywords": [
     "d3",
@@ -8,14 +8,15 @@
     "timeline"
   ],
   "main": "build/d3-milestones.js",
-  "module": "build/d3-milestones.js",
+  "module": "src/main",
+  "jsnext:main": "src/main",
   "homepage": "https://github.com/walterra/d3-milestones",
   "repository": {
     "type": "git",
     "url": "https://github.com/walterra/d3-milestones.git"
   },
   "bugs": {
-    "url": "https://github.com/walterra/d3-0milestones/issues"
+    "url": "https://github.com/walterra/d3-milestones/issues"
   },
   "license": "Apache-2.0",
   "contributors": [
@@ -63,6 +64,6 @@
     "build-css": "lessc src/styles/styles.less > build/d3-milestones.css",
     "watch-css": "catw -w 'src/styles/**/*.less' -c 'npm run build-css'",
     "prepublish": "npm run build && npm run test && uglifyjs build/d3-milestones.js -c -m -o build/d3-milestones.min.js && npm run build-css",
-    "postpublish": "zip -j build/d3-milestones.zip -- LICENSE README.md build/d3-milestones.css build/d3-milestones.js build/d3-milestones.min.js"
+    "postpublish": "zip -j build/d3-milestones.zip -- LICENSE.md README.md build/d3-milestones.css build/d3-milestones.js build/d3-milestones.min.js"
   }
 }
