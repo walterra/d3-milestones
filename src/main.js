@@ -330,7 +330,7 @@ export default function milestones(selector) {
         .style('padding-bottom', '0px');
 
       if (optimizeLayout) {
-        function optimizeFn() {
+        const optimizeFn = () => {
           let optimizations = 0;
           const nestedNodes = nest()
             .key(d => {
@@ -356,7 +356,7 @@ export default function milestones(selector) {
                 const domElement = dom.selectAll(nodes[index]);
                 const padding = isAbove(index) ? 'padding-bottom' : 'padding-top';
 
-                function getAvailableWidth(nextCheck) {
+                const getAvailableWidth = (nextCheck) => {
                   // get the height of the next group
                   const defaultPadding = 3;
                   const nextGroup = nodes[index + nextCheck];
