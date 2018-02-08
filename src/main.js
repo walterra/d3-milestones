@@ -65,6 +65,13 @@ export default function milestones(selector) {
   }
   setLabelFormat('%Y-%m-%d %H:%M');
 
+  let range;
+  function setRange(d) {
+    if (Array.isArray(d) && d.length == 2) {
+      range = d;
+    }
+  }
+
   let useLabels;
   function setUseLabels(d) {
     useLabels = d;
@@ -214,10 +221,14 @@ export default function milestones(selector) {
       return keys;
     }, []);
 
+    const domain = (typeof range !== 'undefined')
+      ? range.map(aggregateFormatParse)
+      : extent(allKeys, d => aggregateFormatParse(d));
+
     const x = scale.scaleTime()
       .rangeRound([0, width])
       // sets oldest and newest date as the scales domain
-      .domain(extent(allKeys, d => aggregateFormatParse(d)));
+      .domain(domain);
 
     const groupEnter = group.enter().append('div')
       .attr('class', cssGroupClass);
@@ -425,6 +436,7 @@ export default function milestones(selector) {
     parseTime: setParseTime,
     labelFormat: setLabelFormat,
     useLabels: setUseLabels,
+    range: setRange,
     render: render
   });
 }

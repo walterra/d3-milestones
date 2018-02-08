@@ -6,7 +6,7 @@
 
 A d3 based timeline visualization.
 
-![Quentin Tarantino Movie Timeline](example/tarantino.png)
+![The Viking Timeline](example/vikings.png)
 
 ## Installing
 
@@ -29,16 +29,16 @@ The most quick way to get going is to use `unpkg.com` as a CDN to include the li
     .parseTime('%Y')
     .aggregateBy('year')
     .render([
-      { year: 1983, title: 'Love Birds in Bondage' },
-      { year: 1987, title: 'My Best Friend\'s Birthday' },
+      { year: 789, title: 'Vikings begin attacks on England.' },
+      { year: 840, title: 'Vikings found Dublin in Ireland.' }
       ...
-      { year: 2015, title: 'The Hateful Eight' },
-      { year: 2019, title: 'Untitled Manson Family Project (announced)' }
+      { year: 1050, title: 'The city of Oslo is founded in Norway.' },
+      { year: 1066, title: 'Battle of Hastings.' }
     ]);
 </script>
 ```
 
-Head over here to see this example in action: https://bl.ocks.org/walterra/385f914c4f38e42fab740860ca22db16.
+Head over here to see this example in action: https://beta.observablehq.com/@walterra/vikings-timeline.
 
 ## Examples
 
@@ -48,8 +48,8 @@ There are more examples included in the github repository. These examples should
 - `npm install` should fetch all required dependencies and create the build files.
 - `npm start` spins up a web server. It will output the host/ip you should head your browser to, e.g.:
   - http://localhost:8080/example/milestones.html
-  - http://localhost:8080/example/tarantino.html
-  - http://localhost:8080/example/tarantino-rodriguez.html
+  - http://localhost:8080/example/vikings.html
+  - http://localhost:8080/example/os_category-labels.html
 
 ## API Reference
 
