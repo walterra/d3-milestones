@@ -15,7 +15,7 @@ module.exports = (config) => {
     },
     colors: true,
     files: [
-      'build/milestones.css',
+      'build/d3-milestones.css',
       'build/tape.js',
       'test/*-test.js'
     ],

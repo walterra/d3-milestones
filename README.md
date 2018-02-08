@@ -15,8 +15,8 @@ To use it via NPM, use `npm install d3-milestones`.
 The most quick way to get going is to use `unpkg.com` as a CDN to include the library directly into your HTML file.
 
 ```html
-<link rel="stylesheet" href="https://unpkg.com/d3-milestones@1.0.0-alpha8/build/d3-milestones.css">
-<script src="https://unpkg.com/d3-milestones@1.0.0-alpha8/build/d3-milestones.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/d3-milestones/build/d3-milestones.css">
+<script src="https://unpkg.com/d3-milestones/build/d3-milestones.min.js"></script>
 
 <div id="timeline"></div>
 

@@ -20,7 +20,25 @@ const cssAboveClass = cssLabelClass + '-above';
 const cssTextClass = cssLabelClass + '__text';
 const cssTitleClass = cssTextClass + '__title';
 
+const labelMaxWidth = 180;
+const labelRightMargin = 6;
+
 export default function milestones(selector) {
+  let distribution = 'top-bottom';
+  function setDistribution(d) {
+    distribution = d;
+  }
+
+  function isAbove(i) {
+    let above = i % 2;
+    if (distribution === 'top') {
+      above = true;
+    } else if (distribution === 'bottom') {
+      above = false;
+    }
+    return above;
+  }
+
   let optimizeLayout = false;
   function setOptimizeLayout(d) {
     optimizeLayout = d;
@@ -145,7 +163,6 @@ export default function milestones(selector) {
     const nestedData = (typeof data !== 'undefined') ? transform(data) : timelineSelection.data();
     const timeline = timelineSelection.data(nestedData);
 
-
     const timelineEnter = timeline.enter().append('div')
       .attr('class', cssPrefix);
 
@@ -171,7 +188,7 @@ export default function milestones(selector) {
     const categoryLabelWidths = [];
     const categoryLabels = timelineMerge.selectAll('.' + cssCategoryClass);
     categoryLabels.each((d, i, node) => {
-      categoryLabelWidths.push(node[i].getBoundingClientRect().width);
+      categoryLabelWidths.push(node[i].offsetWidth);
     });
     const maxCategoryLabelWidth = Math.round(max(categoryLabelWidths) || 0);
     const timelineLeftMargin = 10;
@@ -224,7 +241,7 @@ export default function milestones(selector) {
           const currentPosition = x(aggregateFormatParse(d.key));
           return mostRightPosition === currentPosition; // nestedData[d.timelineIndex].length === (d.index + 1);
         })
-        .classed(cssAboveClass, d => d.index % 2);
+        .classed(cssAboveClass, d => isAbove(d.index));
 
       const text = labelMerge.selectAll('.' + cssTextClass).data(d => [d]);
 
@@ -239,13 +256,14 @@ export default function milestones(selector) {
           let previousItem;
           let itemNumTotal;
           const itemNum = d.index + 1;
+          const nextCheck = (distribution === 'top-bottom') ? 2 : 1;
           if (typeof mapping.category === 'undefined') {
-            nextItem = nestedData[d.timelineIndex][d.index + 2];
-            previousItem = nestedData[d.timelineIndex][d.index - 2];
+            nextItem = nestedData[d.timelineIndex][d.index + nextCheck];
+            previousItem = nestedData[d.timelineIndex][d.index - nextCheck];
             itemNumTotal = nestedData[d.timelineIndex].length;
           } else {
-            nextItem = nestedData[d.timelineIndex].entries[d.index + 2];
-            previousItem = nestedData[d.timelineIndex].entries[d.index - 2];
+            nextItem = nestedData[d.timelineIndex].entries[d.index + nextCheck];
+            previousItem = nestedData[d.timelineIndex].entries[d.index - nextCheck];
             itemNumTotal = nestedData[d.timelineIndex].entries.length;
           }
 
@@ -271,11 +289,13 @@ export default function milestones(selector) {
             }
           }
 
-          const rightMargin = 6;
-          return (availableWidth - rightMargin) + 'px';
+          const labelRightMargin = 6;
+          const finalWidth = Math.min(labelMaxWidth, (Math.max(0, availableWidth - labelRightMargin)));
+          return finalWidth + 'px';
         })
         .html(d => {
-          const above = d.index % 2;
+          const above = isAbove(d.index);
+
           const group = '<span class="' + cssTitleClass + '">' + labelFormat(aggregateFormatParse(d.key)) + '</span>';
           const lines = d.values.map(d => {
             const t = d[mapping.text];
@@ -299,67 +319,87 @@ export default function milestones(selector) {
         .style('padding-bottom', '0px');
 
       if (optimizeLayout) {
-        const nestedNodes = nest()
-          .key(d => {
-            return dom.selectAll(d).data()[0].timelineIndex;
-          })
-          .entries(textMerge._groups);
+        function optimizeFn() {
+          let optimizations = 0;
+          const nestedNodes = nest()
+            .key(d => {
+              return dom.selectAll(d).data()[0].timelineIndex;
+            })
+            .entries(textMerge._groups);
 
-        nestedNodes.forEach(d => {
-          const nodes = d.values;
-          nodes.forEach(node => {
-            const d = dom.selectAll(node).data()[0];
-            const index = nodes.length - d.index - 1;
-            const item = dom.selectAll(nodes[index]).data()[0];
-            const offset = x(aggregateFormatParse(item.key));
-            const currentNode = nodes[index][0];
+          const nextCheck = (distribution === 'top-bottom') ? 2 : 1;
+          nestedNodes.forEach(d => {
+            const nodes = d.values;
+            nodes.forEach(node => {
+              const d = dom.selectAll(node).data()[0];
+              const index = nodes.length - d.index - 1;
+              const item = dom.selectAll(nodes[index]).data()[0];
+              const offset = x(aggregateFormatParse(item.key));
+              const currentNode = nodes[index][0];
+              if (
+                currentNode.scrollWidth > currentNode.offsetWidth ||
+                currentNode.offsetWidth < 60
+              ) {
+                optimizations++;
 
-            if (
-              currentNode.scrollWidth > (currentNode.getBoundingClientRect().width + 1)
-            ) {
-              const domElement = dom.selectAll(nodes[index]);
-              const padding = index % 2 ? 'padding-bottom' : 'padding-top';
+                const domElement = dom.selectAll(nodes[index]);
+                const padding = isAbove(index) ? 'padding-bottom' : 'padding-top';
 
-              // get the height of the next group
-              const defaultPadding = 3;
-              const nextGroup = nodes[index + 2];
-              let nextGroupHeight = 0;
-              if (typeof nextGroup !== 'undefined') {
-                nextGroupHeight = nextGroup[0].getBoundingClientRect().height + defaultPadding;
-              }
-              domElement.style(padding, nextGroupHeight + 'px');
+                function getAvailableWidth(nextCheck) {
+                  // get the height of the next group
+                  const defaultPadding = 3;
+                  const nextGroup = nodes[index + nextCheck];
+                  let nextGroupHeight = 0;
+                  if (typeof nextGroup !== 'undefined') {
+                    nextGroupHeight = nextGroup[0].offsetHeight + defaultPadding;
+                  }
+                  domElement.style(padding, nextGroupHeight + 'px');
 
-              // get the available width until the uber-next group
-              let nextTestIndex = index + 2;
-              let nextTestItem;
-              do {
-                nextTestIndex += 2;
-                nextTestItem = textMerge._groups[nextTestIndex];
-                if (typeof nextTestItem === 'undefined') {
-                  break;
+                  // get the available width until the uber-next group
+                  let nextTestIndex = index + nextCheck;
+                  let nextTestItem;
+                  do {
+                    nextTestIndex += nextCheck;
+                    nextTestItem = textMerge._groups[nextTestIndex];
+                    if (typeof nextTestItem === 'undefined') {
+                      break;
+                    }
+                  } while (nextGroupHeight >= (nextTestItem[0].offsetHeight));
+                  let uberNextItem;
+                  if (typeof mapping.category === 'undefined') {
+                    uberNextItem = nestedData[d.timelineIndex][nextTestIndex];
+                  } else {
+                    uberNextItem = nestedData[d.timelineIndex].entries[nextTestIndex];
+                  }
+
+                  let availableWidth = currentNode.offsetWidth;
+
+                  if (typeof uberNextItem !== 'undefined') {
+                    const offsetUberNextItem = x(aggregateFormatParse(uberNextItem.key));
+                    availableWidth = offsetUberNextItem - offset - labelRightMargin;
+                  } else {
+                    availableWidth = width - offset - labelRightMargin;
+                  }
+
+                  return availableWidth;
                 }
-              } while (nextGroupHeight >= nextTestItem[0].getBoundingClientRect().height);
-              let uberNextItem;
-              if (typeof mapping.category === 'undefined') {
-                uberNextItem = nestedData[d.timelineIndex][nextTestIndex];
-              } else {
-                uberNextItem = nestedData[d.timelineIndex].entries[nextTestIndex];
+                let availableWidth = 0;
+                let runs = 0;
+                let nextCheckIterator = nextCheck - 1;
+                do {
+                  nextCheckIterator++;
+                  runs++;
+                  availableWidth = getAvailableWidth(nextCheckIterator);
+                } while (availableWidth < currentNode.scrollWidth && runs < 10);
+                availableWidth = Math.min(labelMaxWidth, availableWidth);
+                domElement.style('width', availableWidth + 'px');
               }
-              const rightMargin = 6;
-
-              let availableWidth = currentNode.getBoundingClientRect().width;
-
-              if (typeof uberNextItem !== 'undefined') {
-                const offsetUberNextItem = x(aggregateFormatParse(uberNextItem.key));
-                availableWidth = offsetUberNextItem - offset - rightMargin;
-              } else {
-                availableWidth = width - offset - rightMargin;
-              }
-
-              domElement.style('width', availableWidth + 'px');
-            }
+            });
           });
-        });
+
+          return optimizations;
+        }
+        optimizeFn();
       }
     } else {
       groupMerge.selectAll('.' + cssLabelClass).remove();
@@ -368,8 +408,8 @@ export default function milestones(selector) {
     // finally, adjust margin-top, height and width of the whole timeline
     timelineMerge.each((d, i, node) => {
       const margin = 10;
-      const maxAboveHeight = max(dom.select(node[i]).selectAll('* .' + cssAboveClass)._groups[0], d => d.getBoundingClientRect().height);
-      const maxBelowHeight = max(dom.select(node[i]).selectAll('* :not(.' + cssAboveClass + ')')._groups[0], d => d.getBoundingClientRect().height);
+      const maxAboveHeight = max(dom.select(node[i]).selectAll('* .' + cssAboveClass)._groups[0], d => d.offsetHeight);
+      const maxBelowHeight = max(dom.select(node[i]).selectAll('* :not(.' + cssAboveClass + ')')._groups[0], d => d.offsetHeight);
 
       dom.select(node[i])
         .style('margin-top', (margin + (maxAboveHeight || 0)) + 'px')
@@ -381,6 +421,7 @@ export default function milestones(selector) {
     aggregateBy: setAggregateBy,
     mapping: assignMapping,
     optimize: setOptimizeLayout,
+    distribution: setDistribution,
     parseTime: setParseTime,
     labelFormat: setLabelFormat,
     useLabels: setUseLabels,
