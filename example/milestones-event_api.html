@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Version Milestones with Event API</title>
+  <link rel="stylesheet" href="../build/d3-milestones.css">
+  <!--[if IE]>
+    <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+  <![endif]-->
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+
+    h1 {
+      font-size: 1.5em;
+    }
+
+    label {
+      font-size: .8em;
+    }
+  </style>
+</head>
+
+<body id="home">
+  <h1>Version Milestones with Event API</h1>
+  <p>The chart is response, try resizing the browser window. Use the checkboxes to trigger examples of the chart's features.</p>
+  <p>The chart implements click, mouseover, and mouseleave. Please click on an text or image to call the corresponding action. Or inspect the console to see the return of the event.</p>
+  <form>
+    <table><tbody>
+      <tr>
+        <td><label for="checkbox-optimize">Optimize Label Layout</label></td>
+        <td><input id="checkbox-optimize" type="checkbox" checked /></td>
+      </tr>
+      <tr>
+        <td><label for="select-groupby">Aggregate data by</label></td>
+        <td>
+          <select id="select-groupby">
+            <option value="second">Second</option>
+            <option value="minute">Minute</option>
+            <option value="hour">Hour</option>
+            <option value="day" selected>Day</option>
+            <option value="week">Week</option>
+            <option value="month">Month</option>
+            <option value="quarter">Quarter</option>
+            <option value="year">Year</option>
+          </select>
+        </td>
+      </td>
+    </table>
+  </form>
+  <div id="timeline"></div>
+  <script src="../build/d3-milestones.js"></script>
+  <script>
+    var data = [
+      { "timestamp" : "2012-09-09T00:00", "detail":"v1.0.0" },
+      { "timestamp" : "2012-09-10T00:00", "detail":"v1.0.1" },
+      { "timestamp" : "2012-09-12T00:00", "detail":"v1.1.0" },
+      { "timestamp" : "2012-09-15T00:00", "detail":"v1.1.1" },
+      { "timestamp" : "2012-09-26T00:00", "detail":"v1.2.0" },
+      { "timestamp" : "2012-10-10T00:00", "detail":"v2.0.0" },
+      { "timestamp" : "2012-10-31T00:00", "detail":"v2.1.0" },
+      { "timestamp" : "2012-11-07T00:00", "detail":"v2.2.0" },
+      { "timestamp" : "2012-11-25T00:00", "detail":"v2.2.1" },
+      { "timestamp" : "2012-12-01T00:00", "detail":"v2.3.0" },
+      { "timestamp" : "2012-12-05T00:00", "detail":"v2.3.1" },
+      { "timestamp" : "2013-01-03T00:00", "detail":"v3.0.0" },
+      { "timestamp" : "2013-01-09T00:00", "detail":"v3.0.1" },
+      { "timestamp" : "2013-01-16T00:00", "detail":"v3.1.0" },
+      { "timestamp" : "2013-01-16T00:00", "detail":"v4.0.0" },
+      { "timestamp" : "2013-01-17T00:00", "detail":"v4.0.1" },
+      { "timestamp" : "2013-02-08T00:00", "detail":"v4.1.0" },
+      { "timestamp" : "2013-03-06T00:00", "detail":"v4.1.1" },
+      { "timestamp" : "2013-03-06T00:00", "detail":"v4.2.0" },
+      { "timestamp" : "2013-03-09T00:00", "detail":"v4.3.0" },
+      { "timestamp" : "2013-03-27T00:00", "detail":"v4.4.0" },
+      { "timestamp" : "2013-04-13T00:00", "detail":"v4.5.0" },
+      { "timestamp" : "2013-05-04T00:00", "detail":"v5.0.0" },
+      { "timestamp" : "2013-07-06T00:00", "detail":"v5.0.1" },
+      { "timestamp" : "2013-08-01T00:00", "detail":"v5.1.0" }
+    ];
+
+    var timeline = milestones('#timeline')
+      .mapping({
+        timestamp: 'timestamp',
+        text: 'detail'
+      })
+      .onEventClick((d) => {
+        console.log('click', d);
+        alert(`
+          ${d.text} | ${d.timestamp}
+          ${JSON.stringify(d.attributes)}
+        `);
+      })
+      .onEventMouseOver((d) => {
+        console.log('mouseover', d);
+      })
+      .onEventMouseLeave((d) => {
+        console.log('mouseleave', d);
+      });
+
+    var checkboxOptimize = document.getElementById('checkbox-optimize');
+    var selectGroupBy = document.getElementById('select-groupby');
+
+    function update() {
+      timeline
+        .parseTime('%Y-%m-%dT%H:%M')
+        .aggregateBy(selectGroupBy.options[selectGroupBy.selectedIndex].value)
+        .optimize(checkboxOptimize.checked)
+        .render(data);
+    }
+
+    checkboxOptimize.onclick = update;
+    selectGroupBy.onchange = update;
+
+    update();
+
+  </script>
+</body>
+</html>
