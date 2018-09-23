@@ -1,12 +1,8 @@
 import * as dom from 'd3-selection';
 import * as scale from 'd3-scale';
-import { ascending } from 'd3-array';
-import { extent } from 'd3-array';
-import { max } from 'd3-array';
+import { ascending, extent, max } from 'd3-array';
 import { nest } from 'd3-collection';
-import { timeFormat as d3TimeFormat } from 'd3-time-format';
-import { timeParse as d3TimeParse } from 'd3-time-format';
-import { isoParse } from 'd3-time-format';
+import { isoParse, timeFormat as d3TimeFormat, timeParse as d3TimeParse } from 'd3-time-format';
 import api from './_api';
 
 const cssPrefix = 'milestones';
@@ -19,6 +15,7 @@ const cssLastClass = cssLabelClass + '-last';
 const cssAboveClass = cssLabelClass + '-above';
 const cssTextClass = cssLabelClass + '__text';
 const cssTitleClass = cssTextClass + '__title';
+const cssEventClass = cssTextClass + '__event';
 
 const labelMaxWidth = 180;
 const labelRightMargin = 6;
@@ -77,6 +74,42 @@ export default function milestones(selector) {
     useLabels = d;
   }
   setUseLabels(true);
+
+  // set callback for event mouseover
+  let callBackMouseOver;
+  function setEventMouseOverCallback(callback) {
+    callBackMouseOver = callback;
+  }
+  function eventMouseOver(d) {
+    if (typeof callBackMouseOver === 'function') {
+      callBackMouseOver(d);
+    }
+    return d;
+  }
+
+  // set callback for event mouseleave
+  let callBackMouseLeave;
+  function setEventMouseLeaveCallback(callback) {
+    callBackMouseLeave = callback;
+  }
+  function eventMouseLeave(d) {
+    if (typeof callBackMouseOver === 'function') {
+      callBackMouseLeave(d);
+    }
+    return d;
+  }
+
+  // set callback for event click
+  let callbackClick;
+  function setEventClickCallback(callback) {
+    callbackClick = callback;
+  }
+  function eventClick(d) {
+    if (typeof callbackClick === 'function') {
+      callbackClick(d);
+    }
+    return d;
+  }
 
   // second, minute, hour, day, month, quarter, year
   const aggregateFormats = {
@@ -303,24 +336,72 @@ export default function milestones(selector) {
           const labelRightMargin = 6;
           const finalWidth = Math.min(labelMaxWidth, (Math.max(0, availableWidth - labelRightMargin)));
           return finalWidth + 'px';
-        })
-        .html(d => {
-          const above = isAbove(d.index);
+        });
+        // .html(d => {
+        //   const above = isAbove(d.index);
 
-          const group = '<span class="' + cssTitleClass + '">' + labelFormat(aggregateFormatParse(d.key)) + '</span>';
-          const lines = d.values.map(d => {
-            const t = d[mapping.text];
-            // test if text is an image filename,
-            // if so return an image tag with the filename as the source
-            if (['jpg', 'jpeg', 'gif', 'png'].indexOf(t.split('.').pop()) > -1) {
-              return '<img class="milestones-image-label" src="' + t + '" height="100" />';
-            }
-            return t;
+        //   const group = '<span class="' + cssTitleClass + '">' + labelFormat(aggregateFormatParse(d.key)) + '</span>';
+        //   const lines = d.values.map(d => {
+        //     const t = d[mapping.text];
+        //     // test if text is an image filename,
+        //     // if so return an image tag with the filename as the source
+        //     if (['jpg', 'jpeg', 'gif', 'png'].indexOf(t.split('.').pop()) > -1) {
+        //       return '<img class="milestones-image-label" src="' + t + '" height="100" />';
+        //     }
+        //     return t;
+        //   });
+
+        //   (above) ? lines.push(group) : lines.unshift(group);
+
+        //   return lines.join('<br />');
+        // });
+
+      // delete textEnter children on chart update
+      textEnter.selectAll('*').remove();
+      
+      // add textEnter title if above
+      textEnter.append('div')
+        .attr('class', cssTitleClass)
+        .text(d => {
+          if (!isAbove(d.index)) {
+            return labelFormat(aggregateFormatParse(d.key));
+          }
+          return '';
+        });
+
+      // add textEnter event
+      textEnter.selectAll('.' + cssEventClass)
+        .data(d => {
+          return d.values.map(v => {
+            return {
+              text: v[mapping.text],
+              timestamp: v[mapping.timestamp],
+              attributes: v, // original value of an object passed to the milestone
+            };
           });
-
-          (above) ? lines.push(group) : lines.unshift(group);
-
-          return lines.join('<br />');
+        })
+        .enter()
+        .append('div')
+        .on('click', eventClick)
+        .on('mouseleave', eventMouseLeave)
+        .on('mouseover', eventMouseOver)
+        .attr('class', cssEventClass)
+        .attr('data-date', d => d.timestamp)
+        .html(d => {
+          if (['jpg', 'jpeg', 'gif', 'png'].indexOf(d.text.split('.').pop()) > -1) {
+            return '<img class="milestones-image-label" src="' + d.text + '" height="100" />';
+          }
+          return d.text;
+        });
+      
+      // add textEnter title if bottom
+      textEnter.append('div')
+        .attr('class', cssTitleClass)
+        .text(d => {
+          if (isAbove(d.index)) {
+            return labelFormat(aggregateFormatParse(d.key));
+          }
+          return '';
         });
 
       const textMerge = text.merge(textEnter);
@@ -393,7 +474,7 @@ export default function milestones(selector) {
                   }
 
                   return availableWidth;
-                }
+                };
                 let availableWidth = 0;
                 let runs = 0;
                 let nextCheckIterator = nextCheck - 1;
@@ -409,7 +490,7 @@ export default function milestones(selector) {
           });
 
           return optimizations;
-        }
+        };
         optimizeFn();
       }
     } else {
@@ -437,6 +518,9 @@ export default function milestones(selector) {
     labelFormat: setLabelFormat,
     useLabels: setUseLabels,
     range: setRange,
-    render: render
+    render: render,
+    onEventClick: setEventClickCallback,
+    onEventMouseLeave: setEventMouseLeaveCallback,
+    onEventMouseOver: setEventMouseOverCallback,
   });
 }

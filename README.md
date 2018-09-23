@@ -111,6 +111,41 @@ When called without `data` this triggers re-rendering the existing visualization
 
 `data` is expected to be an array of event objects with fields matching either the expected defaults (`timestamp` and `text` attribute) or the provided mapping via `.mapping()`.
 
+<a name="onEventClick" href="#onEventClick">#</a> vis.<b>onEventClick</b>(<i>function</i>)
+
+Set a callback which is executed when the text or image is clicked.
+
+```js
+  vis.onEventClick((d) => {
+    console.log('click', d);
+    alert(`
+      ${d.text} | ${d.timestamp}
+      ${JSON.stringify(d.attributes)}
+    `);
+  })
+```
+
+<a name="onEventMouseOver" href="#onEventMouseOver">#</a> vis.<b>onEventMouseOver</b>(<i>function</i>)
+
+Set a callback which is executed when the mouse cursor is over text or image.
+
+```js
+  vis.onEventMouseOver((d) => {
+    console.log('mouseover', d);
+  })
+```
+
+<a name="onEventMouseLeave" href="#onEventMouseLeave">#</a> vis.<b>onEventMouseLeave</b>(<i>function</i>)
+
+Set a callback which is executed when the mouse cursor is leaving text or image.
+
+```js
+  vis.onEventMouseLeave((d) => {
+    console.log('mouseleave', d);
+  })
+```
+
+
 ## More
 
 `d3-milestones` is also available as a visualization plugin for Kibana here: https://github.com/walterra/kibana-milestones-vis
