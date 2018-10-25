@@ -1,6 +1,7 @@
 [![npm](https://img.shields.io/npm/v/d3-milestones.svg?maxAge=2592000)](https://www.npmjs.com/package/d3-milestones)
 [![npm](https://img.shields.io/npm/l/d3-milestones.svg?maxAge=2592000)](https://www.npmjs.com/package/d3-milestones)
 [![npm](https://img.shields.io/npm/dt/d3-milestones.svg?maxAge=2592000)](https://www.npmjs.com/package/d3-milestones)
+[![travis](https://api.travis-ci.org/walterra/d3-milestones.svg?branch=master)](https://travis-ci.org/walterra/d3-milestones)
 
 # d3-milestones
 
