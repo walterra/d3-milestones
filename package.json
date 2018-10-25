@@ -60,6 +60,7 @@
     "build": "rm -rf build && mkdir build && rollup -c",
     "pretest": "browserify test/tape.js --standalone tape -o build/tape.js",
     "watch": "rm -rf build && mkdir build && rollup -c --watch | npm run watch-css | http-server",
+    "lint": "eslint \"./src/**/*.js\" \"./test/**/*.js\"",
     "test": "karma start karma.config.js",
     "test-watch": "karma start karma.config.js --no-single-run",
     "build-css": "lessc src/styles/styles.less > build/d3-milestones.css",

@@ -11,3 +11,8 @@ before_install:
 
 addons:
   chrome: stable
+
+script:
+  - npm run lint
+  - npm run build
+  - npm test
