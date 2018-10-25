@@ -4,7 +4,7 @@ const { eslint } = require('rollup-plugin-eslint');
 const nodeResolve = require('rollup-plugin-node-resolve');
 
 module.exports = (config) => {
-  config.set({
+  const configuration = {
     autoWatch: true,
     // client: { captureConsole: false },
     browsers: [ 'Chrome' ],
@@ -56,5 +56,27 @@ module.exports = (config) => {
     tapReporter: {
       prettify: tapSpec
     }
-  });
+  };
+
+  if (process.env.TRAVIS) {
+    configuration.autoWatch = false;
+    configuration.browsers = ['Chrome_travis_ci'];
+
+    configuration.customLaunchers = {
+      Chrome_travis_ci: {
+        base: 'Chrome',
+        flags: ['--no-sandbox']
+      }
+    };
+
+    // Continuous Integration mode
+    // if true, Karma captures browsers, runs the tests and exits
+    configuration.singleRun = true;
+
+    // Concurrency level
+    // how many browser should be started simultaneous
+    configuration.concurrency = Infinity;
+  }
+
+  config.set(configuration);
 };
