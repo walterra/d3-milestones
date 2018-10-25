@@ -82,6 +82,7 @@ export default function milestones(selector) {
   }
   function eventMouseOver(d) {
     if (typeof callBackMouseOver === 'function') {
+      dom.select(this).classed('milestones__group__label__text__event--hover', true);
       callBackMouseOver(d);
     }
     return d;
@@ -94,6 +95,7 @@ export default function milestones(selector) {
   }
   function eventMouseLeave(d) {
     if (typeof callBackMouseOver === 'function') {
+      dom.select(this).classed('milestones__group__label__text__event--hover', false);
       callBackMouseLeave(d);
     }
     return d;
@@ -336,72 +338,75 @@ export default function milestones(selector) {
           const labelRightMargin = 6;
           const finalWidth = Math.min(labelMaxWidth, (Math.max(0, availableWidth - labelRightMargin)));
           return finalWidth + 'px';
-        });
-        // .html(d => {
-        //   const above = isAbove(d.index);
+        })
+        .each(function(d) {
+          const above = isAbove(d.index);
 
-        //   const group = '<span class="' + cssTitleClass + '">' + labelFormat(aggregateFormatParse(d.key)) + '</span>';
-        //   const lines = d.values.map(d => {
-        //     const t = d[mapping.text];
-        //     // test if text is an image filename,
-        //     // if so return an image tag with the filename as the source
-        //     if (['jpg', 'jpeg', 'gif', 'png'].indexOf(t.split('.').pop()) > -1) {
-        //       return '<img class="milestones-image-label" src="' + t + '" height="100" />';
-        //     }
-        //     return t;
-        //   });
+          const element = dom.select(this);
+          element.empty();
 
-        //   (above) ? lines.push(group) : lines.unshift(group);
-
-        //   return lines.join('<br />');
-        // });
-
-      // delete textEnter children on chart update
-      textEnter.selectAll('*').remove();
-      
-      // add textEnter title if above
-      textEnter.append('div')
-        .attr('class', cssTitleClass)
-        .text(d => {
-          if (!isAbove(d.index)) {
-            return labelFormat(aggregateFormatParse(d.key));
+          if (!above) {
+            element.append('span')
+              .classed(cssTitleClass, true)
+              .text(labelFormat(aggregateFormatParse(d.key)));
+            element.append('br');
           }
-          return '';
-        });
 
-      // add textEnter event
-      textEnter.selectAll('.' + cssEventClass)
-        .data(d => {
-          return d.values.map(v => {
-            return {
+          d.values.map((v, i) => {
+            if (i > 0) {
+              element.append('br');
+            }
+
+            const t = v[mapping.text];
+            let item;
+            // test if text is an image filename,
+            // if so return an image tag with the filename as the source
+            if (['jpg', 'jpeg', 'gif', 'png'].indexOf(t.split('.').pop()) > -1) {
+              item = element.append('img')
+                .classed('milestones-label', true)
+                .classed('milestones-image-label', true)
+                .attr('height', '100')
+                .attr('src', t);
+            } else {
+              item = element.append('span')
+                .classed('milestones-label', true)
+                .classed('milestones-text-label', true)
+                .text(t);
+            }
+
+            item.datum({
               text: v[mapping.text],
               timestamp: v[mapping.timestamp],
               attributes: v, // original value of an object passed to the milestone
-            };
+            });
+
+            if (
+              typeof callbackClick === 'function'
+              || typeof callBackMouseLeave === 'function'
+              || typeof callBackMouseOver === 'function'
+            ) {
+              item.classed(cssEventClass, true);
+            }
+
+            if (typeof callbackClick === 'function') {
+              item.on('click', eventClick);
+            }
+
+            if (typeof callBackMouseLeave === 'function') {
+              item.on('mouseleave', eventMouseLeave);
+            }
+
+            if (typeof callBackMouseOver === 'function') {
+              item.on('mouseover', eventMouseOver);
+            }
           });
-        })
-        .enter()
-        .append('div')
-        .on('click', eventClick)
-        .on('mouseleave', eventMouseLeave)
-        .on('mouseover', eventMouseOver)
-        .attr('class', cssEventClass)
-        .attr('data-date', d => d.timestamp)
-        .html(d => {
-          if (['jpg', 'jpeg', 'gif', 'png'].indexOf(d.text.split('.').pop()) > -1) {
-            return '<img class="milestones-image-label" src="' + d.text + '" height="100" />';
+
+          if (above) {
+            element.append('br');
+            element.append('span')
+              .classed(cssTitleClass, true)
+              .text(labelFormat(aggregateFormatParse(d.key)));
           }
-          return d.text;
-        });
-      
-      // add textEnter title if bottom
-      textEnter.append('div')
-        .attr('class', cssTitleClass)
-        .text(d => {
-          if (isAbove(d.index)) {
-            return labelFormat(aggregateFormatParse(d.key));
-          }
-          return '';
         });
 
       const textMerge = text.merge(textEnter);

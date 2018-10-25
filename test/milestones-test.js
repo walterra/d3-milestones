@@ -33,4 +33,6 @@ tape('should render a minimal milestones chart', t => {
   t.equal(d3.selectAll('#wrapper .milestones .milestones__group').size(), 3, 'should render 3 .milestones__group elements');
 
   t.end();
+
+  document.body.innerHTML = '';
 });
