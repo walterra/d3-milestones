@@ -393,7 +393,7 @@ export default function milestones(selector) {
                   }
 
                   return availableWidth;
-                }
+                };
                 let availableWidth = 0;
                 let runs = 0;
                 let nextCheckIterator = nextCheck - 1;
@@ -409,7 +409,7 @@ export default function milestones(selector) {
           });
 
           return optimizations;
-        }
+        };
         optimizeFn();
       }
     } else {
