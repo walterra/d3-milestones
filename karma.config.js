@@ -1,6 +1,6 @@
 const buble = require('rollup-plugin-buble');
 const tapSpec = require('tap-spec');
-const eslint = require('rollup-plugin-eslint');
+const { eslint } = require('rollup-plugin-eslint');
 const nodeResolve = require('rollup-plugin-node-resolve');
 
 module.exports = (config) => {
@@ -40,6 +40,7 @@ module.exports = (config) => {
         globals: {
           'tape': 'tape'
         },
+        sourcemap: false // 'inline'
       },
       plugins: [
         eslint({
@@ -49,8 +50,7 @@ module.exports = (config) => {
         }),
         nodeResolve(),
         buble()
-      ],
-      sourcemap: false // 'inline'
+      ]
     },
     singleRun: true,
     tapReporter: {

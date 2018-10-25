@@ -4,8 +4,8 @@ import * as d3 from 'd3-selection';
 
 tape('should render a minimal milestones chart', t => {
   document.body.insertAdjacentHTML(
-   'afterbegin',
-   '<div id="wrapper"></div>'
+    'afterbegin',
+    '<div id="wrapper"></div>'
   );
 
   const data = [
