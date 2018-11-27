@@ -70,6 +70,7 @@
     "postpublish": "git push && git push --tags && zip -j build/d3-milestones.zip -- LICENSE.md README.md build/d3-milestones.css build/d3-milestones.js build/d3-milestones.min.js"
   },
   "resolutions": {
+    "cached-path-relative": "1.0.2",
     "merge": "1.2.1"
   }
 }
