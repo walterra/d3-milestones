@@ -42,13 +42,14 @@
     "karma-tap": "^4.1.4",
     "karma-tap-pretty-reporter": "^4.1.0",
     "less": "^3.8.1",
+    "npm-force-resolutions": "0.0.2",
     "rollup": "^0.66.6",
     "rollup-plugin-buble": "^0.19.4",
     "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-eslint": "^5.0.0",
     "rollup-plugin-node-builtins": "^2.1.2",
     "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-eslint": "^5.0.0",
     "rollup-watch": "^4.3.1",
     "tap-spec": "^5.0.0",
     "tape": "^4.9.1",
@@ -67,5 +68,8 @@
     "watch-css": "catw -w 'src/styles/**/*.less' -c 'npm run build-css'",
     "prepare": "npm run build && npm run test && uglifyjs build/d3-milestones.js -c -m -o build/d3-milestones.min.js && npm run build-css",
     "postpublish": "git push && git push --tags && zip -j build/d3-milestones.zip -- LICENSE.md README.md build/d3-milestones.css build/d3-milestones.js build/d3-milestones.min.js"
+  },
+  "resolutions": {
+    "merge": "1.2.1"
   }
 }
