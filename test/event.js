@@ -5,7 +5,7 @@ import * as d3 from 'd3-selection';
 tape('should render a minimal milestones chart with attached events', t => {
   document.body.insertAdjacentHTML(
     'afterbegin',
-    '<div id="wrapper"></div>'
+    '<div id="wrapper_event"></div>'
   );
 
   const data = [
@@ -14,7 +14,7 @@ tape('should render a minimal milestones chart with attached events', t => {
     { 'timestamp': '2012-09-12T00:00', 'detail': 'v1.1.0' }
   ];
 
-  const timeline = milestones('#wrapper')
+  const timeline = milestones('#wrapper_event')
     .onEventClick((d) => {
       t.equal(d.text, 'v1.0.0', 'click event text should match label text');
     })
@@ -37,22 +37,21 @@ tape('should render a minimal milestones chart with attached events', t => {
 
   t.plan(3);
 
-  d3.select('#wrapper .milestones-text-label').each(function (d, i) {
+  d3.select('#wrapper_event .milestones-text-label').each(function (d, i) {
     var onClickFunc = d3.select(this).on('click');
     onClickFunc.apply(this, [d, i]);
   });
 
-  d3.select('#wrapper .milestones-text-label').each(function (d, i) {
+  d3.select('#wrapper_event .milestones-text-label').each(function (d, i) {
     var onClickFunc = d3.select(this).on('mouseover');
     onClickFunc.apply(this, [d, i]);
   });
 
-  d3.select('#wrapper .milestones-text-label').each(function (d, i) {
+  d3.select('#wrapper_event .milestones-text-label').each(function (d, i) {
     var onClickFunc = d3.select(this).on('mouseleave');
     onClickFunc.apply(this, [d, i]);
   });
 
   t.end();
 
-  document.body.innerHTML = '';
 });

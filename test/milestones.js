@@ -5,7 +5,7 @@ import * as d3 from 'd3-selection';
 tape('should render a minimal milestones chart', t => {
   document.body.insertAdjacentHTML(
     'afterbegin',
-    '<div id="wrapper"></div>'
+    '<div id="wrapper_milestones"></div>'
   );
 
   const data = [
@@ -14,7 +14,7 @@ tape('should render a minimal milestones chart', t => {
     { 'timestamp' : '2012-09-12T00:00', 'detail':'v1.1.0' }
   ];
 
-  const timeline = milestones('#wrapper')
+  const timeline = milestones('#wrapper_milestones')
     .mapping({
       timestamp: 'timestamp',
       text: 'detail'
@@ -28,11 +28,10 @@ tape('should render a minimal milestones chart', t => {
 
   t.plan(3);
 
-  t.false(d3.select('#wrapper .milestones').empty(), 'should render .milestones element');
-  t.false(d3.select('#wrapper .milestones .milestones__horizontal_line').empty(), 'should render .milestones__horizontal_line element');
-  t.equal(d3.selectAll('#wrapper .milestones .milestones__group').size(), 3, 'should render 3 .milestones__group elements');
+  t.false(d3.select('#wrapper_milestones .milestones').empty(), 'should render .milestones element');
+  t.false(d3.select('#wrapper_milestones .milestones .milestones__horizontal_line').empty(), 'should render .milestones__horizontal_line element');
+  t.equal(d3.selectAll('#wrapper_milestones .milestones .milestones__group').size(), 3, 'should render 3 .milestones__group elements');
 
   t.end();
 
-  document.body.innerHTML = '';
 });

@@ -5,7 +5,7 @@ const nodeResolve = require('rollup-plugin-node-resolve');
 
 module.exports = (config) => {
   const configuration = {
-    autoWatch: true,
+    autoWatch: false,
     // client: { captureConsole: false },
     browsers: [ 'Chrome' ],
     browserConsoleLogOptions: {
