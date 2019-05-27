@@ -17,10 +17,10 @@ module.exports = (config) => {
     files: [
       'build/d3-milestones.css',
       'build/tape.js',
-      'test/*-test.js'
+      { pattern: 'test/*-test.js', watched: false }
     ],
     frameworks: ['tap'],
-    // logLevel: 'LOG_DEBUG',
+    // logLevel: config.LOG_DEBUG,
     logLevel: config.LOG_ERROR,
     plugins: [
       'karma-rollup-preprocessor',
@@ -40,7 +40,7 @@ module.exports = (config) => {
         globals: {
           'tape': 'tape'
         },
-        sourcemap: false // 'inline'
+        sourcemap: 'inline'
       },
       plugins: [
         eslint({
