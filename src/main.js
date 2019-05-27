@@ -343,7 +343,7 @@ export default function milestones(selector) {
           const above = isAbove(d.index);
 
           const element = dom.select(this);
-          element.empty();
+          element.html(null);
 
           if (!above) {
             element.append('span')
