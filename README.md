@@ -9,6 +9,8 @@ A d3 based timeline visualization.
 
 ![The Viking Timeline](example/vikings.png)
 
+If you're using `d3-milestones` out in the wild I'd love to see what you came up with, just ping me on [twitter.com/walterra](https://www.twitter.com/walterra).
+
 ## Installing
 
 To use it via NPM, use `npm install d3-milestones`. 
