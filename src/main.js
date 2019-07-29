@@ -283,7 +283,7 @@ export default function milestones(selector) {
         .attr('class', cssLabelClass)
         .merge(label)
         .classed(cssLastClass, d => {
-          const mostRightPosition = x.range()[1];
+          const mostRightPosition = Math.round(x.range()[1]);
           const currentPosition = x(aggregateFormatParse(d.key));
           return mostRightPosition === currentPosition; // nestedData[d.timelineIndex].length === (d.index + 1);
         })
