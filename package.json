@@ -77,7 +77,7 @@
     }
   },
   "resolutions": {
-    "bl": "0.9.5",
+    "bl": ">=0.9.5",
     "cached-path-relative": "1.0.2",
     "extend": ">=3.0.2",
     "lodash": ">=4.17.13",
