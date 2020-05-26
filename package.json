@@ -61,6 +61,7 @@
   "scripts": {
     "start": "serve .",
     "build": "rm -rf build && mkdir build && rollup -c",
+    "preinstall": "npx npm-force-resolutions",
     "pretest": "browserify test/tape.js --standalone tape -o build/tape.js",
     "watch": "rm -rf build && mkdir build && rollup -c --watch | npm run watch-css | serve .",
     "lint": "eslint \"./src/**/*.js\" \"./test/**/*.js\"",
@@ -85,6 +86,7 @@
     "extend": ">=3.0.2",
     "lodash": ">=4.17.13",
     "merge": "1.2.1",
+    "minimist": "^0.2.1",
     "semver": ">=4.3.2"
   }
 }
