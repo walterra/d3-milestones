@@ -7,7 +7,8 @@ import api from './_api';
 
 const cssPrefix = 'milestones';
 const cssCategoryClass = cssPrefix + '__category_label';
-const cssLineClass = cssPrefix + '__horizontal_line';
+const cssHorizontalLineClass = cssPrefix + '__horizontal_line';
+const cssVerticalLineClass = cssPrefix + '__vertical_line';
 const cssGroupClass = cssPrefix + '__group';
 const cssBulletClass = cssGroupClass + '__bullet';
 const cssLabelClass = cssGroupClass + '__label';
@@ -17,7 +18,6 @@ const cssTextClass = cssLabelClass + '__text';
 const cssTitleClass = cssTextClass + '__title';
 const cssEventClass = cssTextClass + '__event';
 
-const labelMaxWidth = 180;
 const labelRightMargin = 6;
 
 export default function milestones(selector) {
@@ -39,6 +39,11 @@ export default function milestones(selector) {
   let optimizeLayout = false;
   function setOptimizeLayout(d) {
     optimizeLayout = d;
+  }
+
+  let orientation = 'horizontal';
+  function setOrientation(d) {
+    orientation = d;
   }
 
   let parseTime = isoParse;
@@ -201,6 +206,13 @@ export default function milestones(selector) {
   }
 
   function render(data) {
+    console.log('render orientation: ', orientation);
+
+    const widthAttribute = orientation === 'horizontal' ? 'width' : 'height';
+    const marginTimeAttribute = orientation === 'horizontal' ? 'margin-left' : 'margin-top';
+    const cssLineClass = orientation === 'horizontal' ? cssHorizontalLineClass : cssVerticalLineClass;
+    const labelMaxWidth = orientation === 'horizontal' ? 180 : 100;
+
     const timelineSelection = dom.select(selector).selectAll('.' + cssPrefix);
     const nestedData = (typeof data !== 'undefined') ? transform(data) : timelineSelection.data();
     const timeline = timelineSelection.data(nestedData);
@@ -212,7 +224,7 @@ export default function milestones(selector) {
 
     // rightMargin compensates for the right most bullet position
     const rightMargin = 11;
-    const selectorWidth = parseFloat(dom.select(selector).style('width')) - rightMargin;
+    const selectorWidth = parseFloat(dom.select(selector).style(widthAttribute)) - rightMargin;
 
     if (typeof mapping.category !== 'undefined') {
       timelineEnter.append('div')
@@ -237,9 +249,9 @@ export default function milestones(selector) {
     const width = selectorWidth - maxCategoryLabelWidth - timelineLeftMargin;
     categoryLabels.style('width', maxCategoryLabelWidth + 'px');
     timelineMerge.selectAll('.data-js-timeline')
-      .style('margin-left', (maxCategoryLabelWidth + timelineLeftMargin) + 'px');
+      .style(marginTimeAttribute, (maxCategoryLabelWidth + timelineLeftMargin) + 'px');
     timelineMerge.selectAll('.' + cssLineClass)
-      .style('width', width + 'px');
+      .style(widthAttribute, width + 'px');
 
     const groupSelector = (typeof mapping.category === 'undefined')
       ? timelineMerge
@@ -274,27 +286,27 @@ export default function milestones(selector) {
       .attr('class', cssBulletClass);
 
     const groupMerge = groupEnter.merge(group)
-      .style('margin-left', d => x(aggregateFormatParse(d.key)) + 'px');
+      .style(marginTimeAttribute, d => x(aggregateFormatParse(d.key)) + 'px');
 
     if (useLabels) {
-      const label = groupMerge.selectAll('.' + cssLabelClass).data(d => [d]);
+      const label = groupMerge.selectAll('.' + cssLabelClass + '-' + orientation).data(d => [d]);
 
       const labelMerge = label.enter().append('div')
-        .attr('class', cssLabelClass)
+        .attr('class', cssLabelClass + '-' + orientation)
         .merge(label)
         .classed(cssLastClass, d => {
           const mostRightPosition = Math.round(x.range()[1]);
           const currentPosition = x(aggregateFormatParse(d.key));
           return mostRightPosition === currentPosition; // nestedData[d.timelineIndex].length === (d.index + 1);
         })
-        .classed(cssAboveClass, d => isAbove(d.index));
+        .classed(cssAboveClass + '-' + orientation, d => isAbove(d.index));
 
-      const text = labelMerge.selectAll('.' + cssTextClass).data(d => [d]);
+      const text = labelMerge.selectAll('.' + cssTextClass + '-' + orientation).data(d => [d]);
 
       const textEnter = text.enter().append('div')
-        .attr('class', cssTextClass)
+        .attr('class', cssTextClass + '-' + orientation)
         .merge(text)
-        .style('width', d => {
+        .style(widthAttribute, d => {
           // calculate the available width
           const offset = x(aggregateFormatParse(d.key));
           // get the next and previous item on the same lane
@@ -342,10 +354,13 @@ export default function milestones(selector) {
         .each(function(d) {
           const above = isAbove(d.index);
 
-          const element = dom.select(this);
-          element.html(null);
+          const wrapper = dom.select(this);
+          wrapper.html(null);
 
-          if (!above) {
+          const element = wrapper.append('div').classed('wrapper', true);
+
+
+          if (!above || orientation === 'vertical') {
             element.append('span')
               .classed(cssTitleClass, true)
               .text(labelFormat(aggregateFormatParse(d.key)));
@@ -401,7 +416,7 @@ export default function milestones(selector) {
             }
           });
 
-          if (above) {
+          if (above && orientation === 'horizontal') {
             element.append('br');
             element.append('span')
               .classed(cssTitleClass, true)
@@ -433,14 +448,21 @@ export default function milestones(selector) {
               const item = dom.selectAll(nodes[index]).data()[0];
               const offset = x(aggregateFormatParse(item.key));
               const currentNode = nodes[index][0];
+
+              const scrollCheckAttribute = orientation === 'horizontal' ? 'scrollWidth' : 'scrollHeight';
+              const offsetCheckAttribute = orientation === 'horizontal' ? 'offsetWidth' : 'offsetHeight';
+
               if (
-                currentNode.scrollWidth > currentNode.offsetWidth ||
-                currentNode.offsetWidth < 60
+                currentNode[scrollCheckAttribute] > currentNode[offsetCheckAttribute] ||
+                currentNode[offsetCheckAttribute] < 60
               ) {
                 optimizations++;
 
                 const domElement = dom.selectAll(nodes[index]);
-                const padding = isAbove(index) ? 'padding-bottom' : 'padding-top';
+                const paddingAbove = orientation === 'horizontal' ? 'padding-bottom' : 'padding-right';
+                const paddingBelow = orientation === 'horizontal' ? 'padding-top' : 'padding-left';
+                const padding = isAbove(index) ? paddingAbove : paddingBelow;
+                const offsetAttribute = orientation === 'horizontal' ? 'offsetHeight' : 'offsetWidth';
 
                 const getAvailableWidth = (nextCheck) => {
                   // get the height of the next group
@@ -448,7 +470,7 @@ export default function milestones(selector) {
                   const nextGroup = nodes[index + nextCheck];
                   let nextGroupHeight = 0;
                   if (typeof nextGroup !== 'undefined') {
-                    nextGroupHeight = nextGroup[0].offsetHeight + defaultPadding;
+                    nextGroupHeight = nextGroup[0][offsetAttribute] + defaultPadding;
                   }
                   domElement.style(padding, nextGroupHeight + 'px');
 
@@ -461,7 +483,7 @@ export default function milestones(selector) {
                     if (typeof nextTestItem === 'undefined') {
                       break;
                     }
-                  } while (nextGroupHeight >= (nextTestItem[0].offsetHeight));
+                  } while (nextGroupHeight >= (nextTestItem[0][offsetAttribute]));
                   let uberNextItem;
                   if (typeof mapping.category === 'undefined') {
                     uberNextItem = nestedData[d.timelineIndex][nextTestIndex];
@@ -469,7 +491,7 @@ export default function milestones(selector) {
                     uberNextItem = nestedData[d.timelineIndex].entries[nextTestIndex];
                   }
 
-                  let availableWidth = currentNode.offsetWidth;
+                  let availableWidth = currentNode[offsetCheckAttribute];
 
                   if (typeof uberNextItem !== 'undefined') {
                     const offsetUberNextItem = x(aggregateFormatParse(uberNextItem.key));
@@ -487,9 +509,10 @@ export default function milestones(selector) {
                   nextCheckIterator++;
                   runs++;
                   availableWidth = getAvailableWidth(nextCheckIterator);
-                } while (availableWidth < currentNode.scrollWidth && runs < 10);
+                } while (availableWidth < currentNode[scrollCheckAttribute] && runs < 10);
                 availableWidth = Math.min(labelMaxWidth, availableWidth);
-                domElement.style('width', availableWidth + 'px');
+                console.log(widthAttribute, availableWidth);
+                domElement.style(widthAttribute, availableWidth + 'px');
               }
             });
           });
@@ -499,18 +522,24 @@ export default function milestones(selector) {
         optimizeFn();
       }
     } else {
-      groupMerge.selectAll('.' + cssLabelClass).remove();
+      groupMerge.selectAll('.' + cssLabelClass + '-' + orientation).remove();
     }
 
-    // finally, adjust margin-top, height and width of the whole timeline
+    // finally, adjust offset, height and width of the whole timeline
     timelineMerge.each((d, i, node) => {
       const margin = 10;
-      const maxAboveHeight = max(dom.select(node[i]).selectAll('* .' + cssAboveClass)._groups[0], d => d.offsetHeight);
-      const maxBelowHeight = max(dom.select(node[i]).selectAll('* :not(.' + cssAboveClass + ')')._groups[0], d => d.offsetHeight);
+      const maxAboveHeight = max(dom.select(node[i]).selectAll('* .' + cssAboveClass + '-' + orientation)._groups[0], d => d.offsetHeight);
+      const maxBelowHeight = max(dom.select(node[i]).selectAll('* :not(.' + cssAboveClass + '-' + orientation + ')')._groups[0], d => d.offsetHeight);
 
-      dom.select(node[i])
-        .style('margin-top', (margin + (maxAboveHeight || 0)) + 'px')
-        .style('height', (margin + (maxBelowHeight || 0)) + 'px');
+      if (orientation === 'horizontal') {
+        dom.select(node[i])
+          .style('margin-top', (margin + (maxAboveHeight || 0)) + 'px')
+          .style('height', (margin + (maxBelowHeight || 0)) + 'px');
+      } else {
+        dom.select(node[i])
+          .style('margin-top', (margin + (maxAboveHeight || 0)) + 'px')
+          .style('margin-left', '50%');
+      }
     });
   }
 
@@ -518,6 +547,7 @@ export default function milestones(selector) {
     aggregateBy: setAggregateBy,
     mapping: assignMapping,
     optimize: setOptimizeLayout,
+    orientation: setOrientation,
     distribution: setDistribution,
     parseTime: setParseTime,
     labelFormat: setLabelFormat,

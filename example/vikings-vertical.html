@@ -15,11 +15,16 @@
     h1 {
       font-size: 1.5em;
     }
+
+    #timeline {
+      height: 960px;
+      width: 100%;
+    }
   </style>
 </head>
 
 <body id="home">
-  <h1>The Viking Timeline</h2>
+  <h1 style="text-align: center">The Viking Timeline (Vertical Edition)</h2>
   <div id="timeline"></div>
   <script src="../build/d3-milestones.js"></script>
   <script>
@@ -31,6 +36,7 @@
       .parseTime('%Y')
       .aggregateBy('year')
       .optimize(true)
+      .orientation('vertical')
       .render([
         { year: 789, title: 'Vikings begin attacks on England.' },
         { year: 800, title: 'The Oseberg Viking longship buried' },
