@@ -206,8 +206,6 @@ export default function milestones(selector) {
   }
 
   function render(data) {
-    console.log('render orientation: ', orientation);
-
     const widthAttribute = orientation === 'horizontal' ? 'width' : 'height';
     const marginTimeAttribute = orientation === 'horizontal' ? 'margin-left' : 'margin-top';
     const cssLineClass = orientation === 'horizontal' ? cssHorizontalLineClass : cssVerticalLineClass;
@@ -326,21 +324,23 @@ export default function milestones(selector) {
           }
 
           let availableWidth;
+          const compareItem1 = orientation === 'horizontal' ? nextItem : previousItem;
+          const compareItem2 = orientation === 'horizontal' ? previousItem : nextItem;
 
-          if (typeof nextItem !== 'undefined') {
-            const offsetNextItem = x(aggregateFormatParse(nextItem.key));
-            availableWidth = offsetNextItem - offset;
+          if (typeof compareItem1 !== 'undefined') {
+            const offsetNextItem = x(aggregateFormatParse(compareItem1.key));
+            availableWidth = orientation === 'horizontal' ? offsetNextItem - offset : offset - offsetNextItem;
 
             if ((itemNumTotal - itemNum) === 2) {
               availableWidth /= 2;
             }
           } else {
             if ((itemNumTotal - itemNum) === 1) {
-              availableWidth = width - offset;
+              availableWidth = orientation === 'horizontal' ? width - offset : offset;
             } else if ((itemNumTotal - itemNum) === 0) {
-              if (typeof previousItem !== 'undefined') {
-                const offsetPreviousItem = x(aggregateFormatParse(previousItem.key));
-                availableWidth = (width - offsetPreviousItem) / 2;
+              if (typeof compareItem2 !== 'undefined') {
+                const offsetPreviousItem = x(aggregateFormatParse(compareItem2.key));
+                availableWidth = orientation === 'horizontal' ? (width - offsetPreviousItem) / 2 : (offsetPreviousItem) / 2;
               } else {
                 availableWidth = width;
               }
@@ -348,7 +348,8 @@ export default function milestones(selector) {
           }
 
           const labelRightMargin = 6;
-          const finalWidth = Math.min(labelMaxWidth, (Math.max(0, availableWidth - labelRightMargin)));
+          const availableWidthWithMargin = (Math.max(0, availableWidth - labelRightMargin));
+          const finalWidth = Math.min(orientation === 'horizontal' ? labelMaxWidth : availableWidthWithMargin, availableWidthWithMargin);
           return finalWidth + 'px';
         })
         .each(function(d) {
@@ -444,17 +445,24 @@ export default function milestones(selector) {
             const nodes = d.values;
             nodes.forEach(node => {
               const d = dom.selectAll(node).data()[0];
-              const index = nodes.length - d.index - 1;
+              const index = orientation === 'horizontal' ? nodes.length - d.index - 1 : d.index;
               const item = dom.selectAll(nodes[index]).data()[0];
               const offset = x(aggregateFormatParse(item.key));
               const currentNode = nodes[index][0];
 
-              const scrollCheckAttribute = orientation === 'horizontal' ? 'scrollWidth' : 'scrollHeight';
-              const offsetCheckAttribute = orientation === 'horizontal' ? 'offsetWidth' : 'offsetHeight';
+              const scrollCheckAttribute = orientation === 'horizontal' ? 'offsetWidth' : 'offsetHeight';
+              const offsetCheckAttribute = orientation === 'horizontal' ? 'width' : 'height';
+              const offsetComparator = orientation === 'horizontal' ? 60 : 20;
+
+              function getAttribute(d) {
+                return parseInt(d.style[offsetCheckAttribute].replace('px', ''), 10);
+              }
+
+              const offsetCheck = getAttribute(currentNode);
 
               if (
-                currentNode[scrollCheckAttribute] > currentNode[offsetCheckAttribute] ||
-                currentNode[offsetCheckAttribute] < 60
+                currentNode[scrollCheckAttribute] > offsetCheck ||
+                offsetCheck < offsetComparator
               ) {
                 optimizations++;
 
@@ -467,7 +475,7 @@ export default function milestones(selector) {
                 const getAvailableWidth = (nextCheck) => {
                   // get the height of the next group
                   const defaultPadding = 3;
-                  const nextGroup = nodes[index + nextCheck];
+                  const nextGroup = orientation === 'horizontal' ? nodes[index + nextCheck] : nodes[index - nextCheck];
                   let nextGroupHeight = 0;
                   if (typeof nextGroup !== 'undefined') {
                     nextGroupHeight = nextGroup[0][offsetAttribute] + defaultPadding;
@@ -475,10 +483,14 @@ export default function milestones(selector) {
                   domElement.style(padding, nextGroupHeight + 'px');
 
                   // get the available width until the uber-next group
-                  let nextTestIndex = index + nextCheck;
+                  let nextTestIndex = orientation === 'horizontal' ? index + nextCheck : index - nextCheck;
                   let nextTestItem;
                   do {
-                    nextTestIndex += nextCheck;
+                    if (orientation === 'horizontal') {
+                      nextTestIndex += nextCheck;
+                    } else {
+                      nextTestIndex -= nextCheck;
+                    }
                     nextTestItem = textMerge._groups[nextTestIndex];
                     if (typeof nextTestItem === 'undefined') {
                       break;
@@ -491,27 +503,41 @@ export default function milestones(selector) {
                     uberNextItem = nestedData[d.timelineIndex].entries[nextTestIndex];
                   }
 
-                  let availableWidth = currentNode[offsetCheckAttribute];
+                  let availableWidth = getAttribute(currentNode);
 
                   if (typeof uberNextItem !== 'undefined') {
                     const offsetUberNextItem = x(aggregateFormatParse(uberNextItem.key));
-                    availableWidth = offsetUberNextItem - offset - labelRightMargin;
+                    if (orientation === 'horizontal') {
+                      availableWidth = offsetUberNextItem - offset - labelRightMargin;
+                    } else {
+                      availableWidth = offset - offsetUberNextItem - labelRightMargin;
+                    }
                   } else {
-                    availableWidth = width - offset - labelRightMargin;
+                    if (orientation === 'horizontal') {
+                      availableWidth = width - offset - labelRightMargin;
+                    } else {
+                      availableWidth = offset - labelRightMargin;
+                    }
+
                   }
 
                   return availableWidth;
                 };
                 let availableWidth = 0;
                 let runs = 0;
-                let nextCheckIterator = nextCheck - 1;
+                let nextCheckIterator = orientation === 'horizontal' ? nextCheck - 1 : nextCheck + 1;
                 do {
-                  nextCheckIterator++;
+                  if (orientation === 'horizontal') {
+                    nextCheckIterator++;
+                  } else {
+                    nextCheckIterator--;
+                  }
                   runs++;
                   availableWidth = getAvailableWidth(nextCheckIterator);
                 } while (availableWidth < currentNode[scrollCheckAttribute] && runs < 10);
-                availableWidth = Math.min(labelMaxWidth, availableWidth);
-                console.log(widthAttribute, availableWidth);
+                if (orientation === 'horizontal') {
+                  availableWidth = Math.min(labelMaxWidth, availableWidth);
+                }
                 domElement.style(widthAttribute, availableWidth + 'px');
               }
             });
@@ -536,8 +562,9 @@ export default function milestones(selector) {
           .style('margin-top', (margin + (maxAboveHeight || 0)) + 'px')
           .style('height', (margin + (maxBelowHeight || 0)) + 'px');
       } else {
+
         dom.select(node[i])
-          .style('margin-top', (margin + (maxAboveHeight || 0)) + 'px')
+          .style('margin-top', '50px')
           .style('margin-left', '50%');
       }
     });

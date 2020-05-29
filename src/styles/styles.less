@@ -60,12 +60,21 @@
 
     .milestones__group__label-vertical {
       padding-left: 10px;
-      padding-bottom: 5px;
+      padding-bottom: 0px;
       border-bottom: 1px solid #000;
       margin-bottom: -5.5px;
       margin-left: 10px;
       bottom: 100%;
-    }
+      overflow: visible;
+      .wrapper {
+        min-width: 100px;
+        max-width: 300px;
+        border-left: 1px solid black;
+        border-bottom: 1px solid white;
+        margin-bottom: -1px;
+        padding-left: 5px;
+      }
+  }
 
       .milestones__group__label-above-horizontal {
         bottom: 100%;
@@ -76,6 +85,12 @@
         padding-right: 10px;
         right: 100%;
         text-align: right;
+        .wrapper {
+          border-left: 0;
+          border-right: 1px solid black;
+          padding-left: 0px;
+          padding-right: 5px;
+        }
       }
 
       .milestones__group__label-last {
@@ -93,15 +108,9 @@
       }
 
       .milestones__group__label__text-vertical {
-        display: inline-flex;
-        align-items: flex-end;
-
-        .wrapper {
-          min-width: 100px;
-          max-width: 300px;
-          flex-grow: 1;
-        }
-    }
+        display: table-cell;
+        vertical-align: bottom;
+      }
 
       .milestones__group__label__text__title {
         color: #000;
