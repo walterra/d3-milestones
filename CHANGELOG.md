@@ -1,6 +1,10 @@
 ## [`master`](https://github.com/walterra/d3-milestones/tree/master)
 
-No public interface changes since `v1.0.0-alpha14`.
+No public interface changes since `v1.0.0-beta1`.
+
+## [`v1.0.0-beta1`](https://github.com/walterra/d3-milestones/tree/v1.0.0-beta1)
+
+- Added an option to switch between horizontal and vertical orientation of the timeline ([#1](https://github.com/walterra/d3-milestones/issues/1))
 
 ## [`v1.0.0-alpha14`](https://github.com/walterra/d3-milestones/tree/v1.0.0-alpha14)
 

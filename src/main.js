@@ -210,7 +210,6 @@ export default function milestones(selector) {
 
   function render(data) {
     const widthAttribute = orientation === 'horizontal' ? 'width' : 'height';
-    const nonWidthAttribute = orientation === 'horizontal' ? 'height' : 'width';
     const marginTimeAttribute = orientation === 'horizontal' ? 'margin-left' : 'margin-top';
     const cssLineClass = orientation === 'horizontal' ? cssHorizontalLineClass : cssVerticalLineClass;
     const labelMaxWidth = orientation === 'horizontal' ? 180 : 100;
