@@ -13,7 +13,7 @@ If you're using `d3-milestones` out in the wild I'd love to see what you came up
 
 ## Installing
 
-To use it via NPM, use `npm install d3-milestones`. 
+To use it via NPM, use `npm install d3-milestones`.
 
 The most quick way to get going is to use `unpkg.com` as a CDN to include the library directly into your HTML file.
 
@@ -45,7 +45,7 @@ Head over here to see this example in action: https://beta.observablehq.com/@wal
 
 ## Examples
 
-There are more examples included in the github repository. These examples should give you an idea how to work with the library. 
+There are more examples included in the github repository. These examples should give you an idea how to work with the library.
 
 - clone the repository and from within its directory run the following commands:
 - `npm install` should fetch all required dependencies and create the build files.
@@ -95,6 +95,10 @@ The method allows you to override single or multiple attributes to map them to f
 <a name="optimize" href="#optimize">#</a> vis.<b>optimize</b>(<i>boolean</i>)
 
 Enables/Disables the label optimizer. When enabled, the optimizer attempts to avoid label overlap by vertically displacing labels.
+
+<a name="orientation" href="#orientation">#</a> vis.<b>orientation</b>(<i>string</i>)
+
+Sets the orientation of the timeline, can be either `horizontal` or `vertical`. Defaults to `horizontal`.
 
 <a name="parseTime" href="#parseTime">#</a> vis.<b>parseTime</b>(<i>specifier</i>)
 

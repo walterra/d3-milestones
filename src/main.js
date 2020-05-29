@@ -17,6 +17,7 @@ const cssAboveClass = cssLabelClass + '-above';
 const cssTextClass = cssLabelClass + '__text';
 const cssTitleClass = cssTextClass + '__title';
 const cssEventClass = cssTextClass + '__event';
+const cssEventHoverClass = cssEventClass + '--hover';
 
 const labelRightMargin = 6;
 
@@ -44,6 +45,8 @@ export default function milestones(selector) {
   let orientation = 'horizontal';
   function setOrientation(d) {
     orientation = d;
+    // purge the DOM to avoid layout issues when switching orientation
+    dom.select(selector).html('');
   }
 
   let parseTime = isoParse;
@@ -87,7 +90,7 @@ export default function milestones(selector) {
   }
   function eventMouseOver(d) {
     if (typeof callBackMouseOver === 'function') {
-      dom.select(this).classed('milestones__group__label__text__event--hover', true);
+      dom.select(this).classed(cssEventHoverClass, true);
       callBackMouseOver(d);
     }
     return d;
@@ -100,7 +103,7 @@ export default function milestones(selector) {
   }
   function eventMouseLeave(d) {
     if (typeof callBackMouseOver === 'function') {
-      dom.select(this).classed('milestones__group__label__text__event--hover', false);
+      dom.select(this).classed(cssEventHoverClass, false);
       callBackMouseLeave(d);
     }
     return d;
@@ -207,6 +210,7 @@ export default function milestones(selector) {
 
   function render(data) {
     const widthAttribute = orientation === 'horizontal' ? 'width' : 'height';
+    const nonWidthAttribute = orientation === 'horizontal' ? 'height' : 'width';
     const marginTimeAttribute = orientation === 'horizontal' ? 'margin-left' : 'margin-top';
     const cssLineClass = orientation === 'horizontal' ? cssHorizontalLineClass : cssVerticalLineClass;
     const labelMaxWidth = orientation === 'horizontal' ? 180 : 100;

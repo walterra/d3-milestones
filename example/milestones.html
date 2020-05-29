@@ -45,10 +45,19 @@
             <option value="year">Year</option>
           </select>
         </td>
-      </td>
+      </tr>
+      <tr>
+        <td><label for="select-orientation">Orientation</label></td>
+        <td>
+          <select id="select-orientation">
+            <option value="horizontal">Horizontal</option>
+            <option value="vertical" selected>Vertical</option>
+          </select>
+        </td>
+      </tr>
     </table>
   </form>
-  <div id="timeline"></div>
+  <div id="timeline" style="height:900px"></div>
   <script src="../build/d3-milestones.js"></script>
   <script>
     var data = [
@@ -87,17 +96,20 @@
 
     var checkboxOptimize = document.getElementById('checkbox-optimize');
     var selectGroupBy = document.getElementById('select-groupby');
+    var selectOrientation = document.getElementById('select-orientation');
 
     function update() {
       timeline
         .parseTime('%Y-%m-%dT%H:%M')
         .aggregateBy(selectGroupBy.options[selectGroupBy.selectedIndex].value)
         .optimize(checkboxOptimize.checked)
+        .orientation(selectOrientation.options[selectOrientation.selectedIndex].value)
         .render(data);
     }
 
     checkboxOptimize.onclick = update;
     selectGroupBy.onchange = update;
+    selectOrientation.onchange = update;
 
     update();
 
