@@ -70,6 +70,10 @@ The returned object exposes the following API:
 
 Sets the aggregation interval for the event data, where *interval* can be one of `second`, `minute`, `hour`, `day`, `week`, `month`, `quarter` or `year`.
 
+<a name="distribution" href="#distribution">#</a> vis.<b>distribution</b>(<i>string</i>)
+
+Sets the label distribution, can be `top-bottom`, `top` or `bottom`. Defaults to `top-bottom`. The options don't change for vertical layouts. `top` refers to labels on the left and `bottom` to labels on the right for that layout.
+
 <a name="mapping" href="#mapping">#</a> vis.<b>mapping</b>(<i>configObject</i>)
 
 Sets overrides for the default attributes for the expected data structure of an event. This defaults to:

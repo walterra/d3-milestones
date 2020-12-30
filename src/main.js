@@ -536,7 +536,9 @@ export default function milestones(selector) {
                     nextCheckIterator--;
                   }
                   runs++;
-                  availableWidth = getAvailableWidth(nextCheckIterator);
+                  if (nextCheckIterator > 0) {
+                    availableWidth = getAvailableWidth(nextCheckIterator);
+                  }
                 } while (availableWidth < currentNode[scrollCheckAttribute] && runs < 10);
                 if (orientation === 'horizontal') {
                   availableWidth = Math.min(labelMaxWidth, availableWidth);
@@ -565,10 +567,11 @@ export default function milestones(selector) {
           .style('margin-top', (margin + (maxAboveHeight || 0)) + 'px')
           .style('height', (margin + (maxBelowHeight || 0)) + 'px');
       } else {
-
+        const percent = typeof mapping.category !== 'undefined' ? Math.round(100 / (nestedData.length + 1)) * (i + 1) : '50';
         dom.select(node[i])
           .style('margin-top', '50px')
-          .style('margin-left', '50%');
+          .style('margin-left', percent + '%')
+          .style('position', 'absolute');
       }
     });
   }

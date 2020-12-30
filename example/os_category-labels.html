@@ -17,8 +17,8 @@
     }
 
     #timeline {
-      border: 1px solid #999;
-      padding: 10px;
+      height: 600px;
+      width: 100%;
     }
   </style>
 </head>
@@ -34,6 +34,15 @@
         <tr>
           <td><label for="checkbox-labels">Show Labels</label></td>
           <td><input id="checkbox-labels" type="checkbox" checked /></td>
+        </tr>
+        <tr>
+          <td><label for="select-orientation">Orientation</label></td>
+          <td>
+            <select id="select-orientation">
+              <option value="horizontal" selected>Horizontal</option>
+              <option value="vertical">Vertical</option>
+            </select>
+          </td>
         </tr>
       </tbody></table>
     </form>
@@ -145,18 +154,21 @@
 
     var checkboxOptimize = document.getElementById('checkbox-optimize');
     var checkboxUseLabels = document.getElementById('checkbox-labels');
+    var selectOrientation = document.getElementById('select-orientation');
 
     function update() {
       timeline
         .parseTime('%Y')
         .aggregateBy('year')
         .optimize(checkboxOptimize.checked)
+        .orientation(selectOrientation.options[selectOrientation.selectedIndex].value)
         .useLabels(checkboxUseLabels.checked)
         .render(os);
     }
 
     checkboxOptimize.onclick = update;
     checkboxUseLabels.onclick = update;
+    selectOrientation.onchange = update;
 
     update();
 
