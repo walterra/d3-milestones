@@ -249,6 +249,10 @@ export default function milestones(selector) {
     const timelineLeftMargin = 10;
     const width = selectorWidth - maxCategoryLabelWidth - timelineLeftMargin;
     categoryLabels.style('width', maxCategoryLabelWidth + 'px');
+    if (orientation === 'vertical') {
+      categoryLabels.style('margin-left', '-50%');
+      categoryLabels.style('text-align', 'center');
+    }
     timelineMerge.selectAll('.data-js-timeline')
       .style(marginTimeAttribute, (maxCategoryLabelWidth + timelineLeftMargin) + 'px');
     timelineMerge.selectAll('.' + cssLineClass)
