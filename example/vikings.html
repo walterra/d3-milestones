@@ -40,6 +40,16 @@
             </select>
           </td>
         </tr>
+        <tr>
+          <td><label for="select-distribution">Label arrangement</label></td>
+          <td>
+            <select id="select-distribution">
+              <option value="top-bottom" selected>top-bottom</option>
+              <option value="top">top</option>
+              <option value="bottom" >bottom</option>
+            </select>
+          </td>
+        </tr>
       </table>
     </form>
     <div id="timeline"></div>
@@ -88,16 +98,19 @@
 
     var checkboxOptimize = document.getElementById('checkbox-optimize');
     var selectOrientation = document.getElementById('select-orientation');
+    var selectDistribution = document.getElementById('select-distribution');
 
     function update() {
       timeline
         .optimize(checkboxOptimize.checked)
         .orientation(selectOrientation.options[selectOrientation.selectedIndex].value)
+        .distribution(selectDistribution.options[selectDistribution.selectedIndex].value)
         .render(data);
     }
 
     checkboxOptimize.onclick = update;
     selectOrientation.onchange = update;
+    selectDistribution.onchange = update;
 
     update();
 </script>
