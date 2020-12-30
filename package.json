@@ -47,12 +47,9 @@
     "npm-watch": "0.6.0",
     "rollup": "^1.12.4",
     "rollup-plugin-buble": "^0.19.6",
-    "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-eslint": "^6.0.0",
-    "rollup-plugin-node-builtins": "^2.1.2",
-    "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-node-resolve": "^3.4.0",
-    "serve": "^11.0.2",
+    "serve": "^11.3.2",
     "tap-spec": "^5.0.0",
     "tape": "^4.9.1",
     "tape-run": "^6.0.1",
@@ -81,7 +78,6 @@
     }
   },
   "resolutions": {
-    "bl": ">=0.9.5",
     "cached-path-relative": "1.0.2",
     "extend": ">=3.0.2",
     "kind-of": "^6.0.3",
