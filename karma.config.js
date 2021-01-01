@@ -1,6 +1,6 @@
 const buble = require('rollup-plugin-buble');
 const tapSpec = require('tap-spec');
-const { eslint } = require('rollup-plugin-eslint');
+const eslint = require('@rollup/plugin-eslint');
 const nodeResolve = require('rollup-plugin-node-resolve');
 
 module.exports = (config) => {

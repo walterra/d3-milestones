@@ -1,5 +1,5 @@
 import buble from 'rollup-plugin-buble';
-import { eslint } from 'rollup-plugin-eslint';
+import eslint from '@rollup/plugin-eslint';
 import nodeResolve from 'rollup-plugin-node-resolve';
 
 export default {

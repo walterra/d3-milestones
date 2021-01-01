@@ -1,7 +1,9 @@
 {
-  "extends": "../.eslintrc.json",
+  "extends": [ "../.eslintrc.json", "plugin:jest/recommended" ],
   "env": {
     "browser": true,
-    "es6": true
+    "es6": true,
+    "jest/globals": true,
+    "node": false
   }
 }

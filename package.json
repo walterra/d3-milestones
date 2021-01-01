@@ -33,10 +33,14 @@
     "d3-time-format": "^2.0.5"
   },
   "devDependencies": {
+    "@rollup/plugin-eslint": "^8.0.1",
     "acorn": "^7.1.1",
     "browserify": "^16.2.3",
-    "eslint": ">=4.18.2",
+    "buble-jest": "1.0.1",
+    "eslint": "^7.16.0",
     "eslint-config-es5": "^0.5.0",
+    "eslint-plugin-jest": "^24.1.3",
+    "jest": "24.9.0",
     "karma": "^4.1.0",
     "karma-chrome-launcher": "^2.2.0",
     "karma-rollup-preprocessor": "^7.0.5",
@@ -47,7 +51,6 @@
     "npm-watch": "0.6.0",
     "rollup": "^1.12.4",
     "rollup-plugin-buble": "^0.19.6",
-    "rollup-plugin-eslint": "^6.0.0",
     "rollup-plugin-node-resolve": "^3.4.0",
     "serve": "^11.3.2",
     "tap-spec": "^5.0.0",
@@ -62,7 +65,9 @@
     "pretest": "browserify test/tape.js --standalone tape -o build/tape.js",
     "watch": "rm -rf build && mkdir build && rollup -c --watch | npm run watch-css | serve .",
     "lint": "eslint \"./src/**/*.js\" \"./test/**/*.js\"",
-    "test": "karma start karma.config.js",
+    "test": "npm run test-jest && npm run test-karma",
+    "test-karma": "karma start karma.config.js",
+    "test-jest": "jest",
     "test-watch": "karma start karma.config.js --no-single-run",
     "build-css": "lessc src/styles/styles.less > build/d3-milestones.css",
     "watch-css": "npm-watch build-css",
@@ -86,5 +91,10 @@
     "minimist": "^0.2.1",
     "semver": ">=4.3.2",
     "set-value": "^2.0.1"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx?$": "buble-jest"
+    }
   }
 }

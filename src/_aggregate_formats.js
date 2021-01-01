@@ -1,4 +1,4 @@
-// second, minute, hour, day, month, quarter, year
+// second, minute, hour, day, week, month, quarter, year
 export const aggregateFormats = {
   second: '%Y-%m-%d %H:%M:%S',
   minute: '%Y-%m-%d %H:%M',
