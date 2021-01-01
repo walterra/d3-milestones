@@ -1,9 +1,15 @@
 import * as dom from 'd3-selection';
 import * as scale from 'd3-scale';
-import { ascending, extent, max } from 'd3-array';
-import { nest } from 'd3-collection';
-import { isoParse, timeFormat as d3TimeFormat, timeParse as d3TimeParse } from 'd3-time-format';
+import { extent, max } from 'd3-array';
+import { isoParse } from 'd3-time-format';
+
+import { aggregateFormats } from './_aggregate_formats';
 import api from './_api';
+import { isAbove} from './_is_above';
+import { optimize as optimizeFn } from './_optimize';
+import { timeFormat } from './_time_format';
+import { timeParse } from './_time_parse';
+import { transform } from './_transform';
 
 const cssPrefix = 'milestones';
 const cssCategoryClass = cssPrefix + '__category_label';
@@ -19,22 +25,10 @@ const cssTitleClass = cssTextClass + '__title';
 const cssEventClass = cssTextClass + '__event';
 const cssEventHoverClass = cssEventClass + '--hover';
 
-const labelRightMargin = 6;
-
 export default function milestones(selector) {
   let distribution = 'top-bottom';
   function setDistribution(d) {
     distribution = d;
-  }
-
-  function isAbove(i) {
-    let above = i % 2;
-    if (distribution === 'top') {
-      above = true;
-    } else if (distribution === 'bottom') {
-      above = false;
-    }
-    return above;
   }
 
   let optimizeLayout = false;
@@ -121,55 +115,8 @@ export default function milestones(selector) {
     return d;
   }
 
-  // second, minute, hour, day, month, quarter, year
-  const aggregateFormats = {
-    second: '%Y-%m-%d %H:%M:%S',
-    minute: '%Y-%m-%d %H:%M',
-    hour: '%Y-%m-%d %H:00',
-    day: '%Y-%m-%d',
-    week: '%Y week %W',
-    month: '%Y-%m',
-    quarter: '%Y-Q%Q',
-    year: '%Y'
-  };
-
-  function timeFormat(f) {
-    if (f === '%Y-Q%Q') {
-      const quarterFormatter = d3TimeFormat(aggregateFormats.month);
-      return d => {
-        const formattedDate = quarterFormatter(d);
-        const month = formattedDate.split('-')[1];
-        const quarter = Math.ceil(parseInt(month) / 3);
-        return formattedDate.split('-')[0] + '-Q' + quarter;
-      };
-    }
-    return d3TimeFormat(f);
-  }
-
-  function timeParse(f) {
-    if (f === '%Y-Q%Q') {
-      const quarterParser = d3TimeParse(aggregateFormats.month);
-      return d => {
-        if (d.search('-Q') === -1) {
-          const quarter = Math.ceil(parseInt(d.split('-')[1]) / 3);
-          const quarterFirstMonthAsString = ((quarter * 3) - 2) + '';
-          const quarterFirstMonthLeadingZero = quarterFirstMonthAsString.length < 2 ? '0' + quarterFirstMonthAsString : quarterFirstMonthAsString;
-          return quarterParser(d.split('-')[0] + '-' + quarterFirstMonthLeadingZero);
-        } else {
-          const monthAsString = (parseInt(d.split('-')[1][1]) * 3) + '';
-          const monthLeadingZero = monthAsString.length < 2 ? '0' + monthAsString : monthAsString;
-          return quarterParser(d.split('-')[0] + '-' + monthLeadingZero);
-        }
-      };
-    }
-    return d3TimeParse(f);
-  }
-
   let aggregateFormat = timeFormat(aggregateFormats.minute);
   let aggregateFormatParse = timeParse(aggregateFormats.minute);
-  const groupBy = function(d) {
-    return aggregateFormat(parseTime(d[mapping.timestamp]));
-  };
 
   function setAggregateBy(d) {
     aggregateFormat = timeFormat(aggregateFormats[d]);
@@ -180,34 +127,6 @@ export default function milestones(selector) {
 
   window.addEventListener('resize', () => window.requestAnimationFrame(() => render()));
 
-  function transform(data) {
-    // test for different data structures
-    if (typeof mapping.category !== 'undefined' && typeof mapping.entries !== 'undefined') {
-      data = data.map((timeline, timelineIndex) => {
-        return {
-          category: timeline[mapping.category],
-          entries: getNestedEntries(timeline[mapping.entries], timelineIndex)
-        };
-      });
-      return data;
-    } else if (typeof data !== 'undefined' && !Array.isArray(data[0])) {
-      data = [data];
-    }
-
-    function getNestedEntries(t, tI) {
-      const nested = nest()
-        .key(groupBy).sortKeys(ascending)
-        .entries(t);
-      return nested.map((d, dI) => {
-        d.index = dI;
-        d.timelineIndex = tI;
-        return d;
-      });
-    }
-
-    return data.map((t, tI) => getNestedEntries(t, tI));
-  }
-
   function render(data) {
     const widthAttribute = orientation === 'horizontal' ? 'width' : 'height';
     const marginTimeAttribute = orientation === 'horizontal' ? 'margin-left' : 'margin-top';
@@ -215,7 +134,7 @@ export default function milestones(selector) {
     const labelMaxWidth = orientation === 'horizontal' ? 180 : 100;
 
     const timelineSelection = dom.select(selector).selectAll('.' + cssPrefix);
-    const nestedData = (typeof data !== 'undefined') ? transform(data) : timelineSelection.data();
+    const nestedData = (typeof data !== 'undefined') ? transform(aggregateFormat, data, mapping, parseTime) : timelineSelection.data();
     const timeline = timelineSelection.data(nestedData);
 
     const timelineEnter = timeline.enter().append('div')
@@ -304,7 +223,7 @@ export default function milestones(selector) {
           const currentPosition = x(aggregateFormatParse(d.key));
           return mostRightPosition === currentPosition; // nestedData[d.timelineIndex].length === (d.index + 1);
         })
-        .classed(cssAboveClass + '-' + orientation, d => isAbove(d.index));
+        .classed(cssAboveClass + '-' + orientation, d => isAbove(d.index, distribution));
 
       const text = labelMerge.selectAll('.' + cssTextClass + '-' + orientation).data(d => [d]);
 
@@ -360,7 +279,7 @@ export default function milestones(selector) {
           return finalWidth + 'px';
         })
         .each(function(d) {
-          const above = isAbove(d.index);
+          const above = isAbove(d.index, distribution);
 
           const wrapper = dom.select(this);
           wrapper.html(null);
@@ -439,122 +358,18 @@ export default function milestones(selector) {
         .style('padding-bottom', '0px');
 
       if (optimizeLayout) {
-        const optimizeFn = () => {
-          let optimizations = 0;
-          const nestedNodes = nest()
-            .key(d => {
-              return dom.selectAll(d).data()[0].timelineIndex;
-            })
-            .entries(textMerge._groups);
-
-          const nextCheck = (distribution === 'top-bottom') ? 2 : 1;
-          nestedNodes.forEach(d => {
-            const nodes = d.values;
-            nodes.forEach(node => {
-              const d = dom.selectAll(node).data()[0];
-              const index = orientation === 'horizontal' ? nodes.length - d.index - 1 : d.index;
-              const item = dom.selectAll(nodes[index]).data()[0];
-              const offset = x(aggregateFormatParse(item.key));
-              const currentNode = nodes[index][0];
-
-              const scrollCheckAttribute = orientation === 'horizontal' ? 'offsetWidth' : 'offsetHeight';
-              const offsetCheckAttribute = orientation === 'horizontal' ? 'width' : 'height';
-              const offsetComparator = orientation === 'horizontal' ? 60 : 20;
-
-              function getAttribute(d) {
-                return parseInt(d.style[offsetCheckAttribute].replace('px', ''), 10);
-              }
-
-              const offsetCheck = getAttribute(currentNode);
-
-              if (
-                currentNode[scrollCheckAttribute] > offsetCheck ||
-                offsetCheck < offsetComparator
-              ) {
-                optimizations++;
-
-                const domElement = dom.selectAll(nodes[index]);
-                const paddingAbove = orientation === 'horizontal' ? 'padding-bottom' : 'padding-right';
-                const paddingBelow = orientation === 'horizontal' ? 'padding-top' : 'padding-left';
-                const padding = isAbove(index) ? paddingAbove : paddingBelow;
-                const offsetAttribute = orientation === 'horizontal' ? 'offsetHeight' : 'offsetWidth';
-
-                const getAvailableWidth = (nextCheck) => {
-                  // get the height of the next group
-                  const defaultPadding = 3;
-                  const nextGroup = orientation === 'horizontal' ? nodes[index + nextCheck] : nodes[index - nextCheck];
-                  let nextGroupHeight = 0;
-                  if (typeof nextGroup !== 'undefined') {
-                    nextGroupHeight = nextGroup[0][offsetAttribute] + defaultPadding;
-                  }
-                  domElement.style(padding, nextGroupHeight + 'px');
-
-                  // get the available width until the uber-next group
-                  let nextTestIndex = orientation === 'horizontal' ? index + nextCheck : index - nextCheck;
-                  let nextTestItem;
-                  do {
-                    if (orientation === 'horizontal') {
-                      nextTestIndex += nextCheck;
-                    } else {
-                      nextTestIndex -= nextCheck;
-                    }
-                    nextTestItem = textMerge._groups[nextTestIndex];
-                    if (typeof nextTestItem === 'undefined') {
-                      break;
-                    }
-                  } while (nextGroupHeight >= (nextTestItem[0][offsetAttribute]));
-                  let uberNextItem;
-                  if (typeof mapping.category === 'undefined') {
-                    uberNextItem = nestedData[d.timelineIndex][nextTestIndex];
-                  } else {
-                    uberNextItem = nestedData[d.timelineIndex].entries[nextTestIndex];
-                  }
-
-                  let availableWidth = getAttribute(currentNode);
-
-                  if (typeof uberNextItem !== 'undefined') {
-                    const offsetUberNextItem = x(aggregateFormatParse(uberNextItem.key));
-                    if (orientation === 'horizontal') {
-                      availableWidth = offsetUberNextItem - offset - labelRightMargin;
-                    } else {
-                      availableWidth = offset - offsetUberNextItem - labelRightMargin;
-                    }
-                  } else {
-                    if (orientation === 'horizontal') {
-                      availableWidth = width - offset - labelRightMargin;
-                    } else {
-                      availableWidth = offset - labelRightMargin;
-                    }
-
-                  }
-
-                  return availableWidth;
-                };
-                let availableWidth = 0;
-                let runs = 0;
-                let nextCheckIterator = orientation === 'horizontal' ? nextCheck - 1 : nextCheck + 1;
-                do {
-                  if (orientation === 'horizontal') {
-                    nextCheckIterator++;
-                  } else {
-                    nextCheckIterator--;
-                  }
-                  runs++;
-                  if (nextCheckIterator > 0) {
-                    availableWidth = getAvailableWidth(nextCheckIterator);
-                  }
-                } while (availableWidth < currentNode[scrollCheckAttribute] && runs < 10);
-                if (orientation === 'horizontal') {
-                  availableWidth = Math.min(labelMaxWidth, availableWidth);
-                }
-                domElement.style(widthAttribute, availableWidth + 'px');
-              }
-            });
-          });
-
-          return optimizations;
-        };
-        optimizeFn();
+        optimizeFn(
+          aggregateFormatParse,
+          distribution,
+          labelMaxWidth,
+          mapping,
+          nestedData,
+          orientation,
+          textMerge,
+          width,
+          widthAttribute,
+          x
+        );
       }
     } else {
       groupMerge.selectAll('.' + cssLabelClass + '-' + orientation).remove();
