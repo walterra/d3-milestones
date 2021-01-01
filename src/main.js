@@ -5,7 +5,7 @@ import { isoParse } from 'd3-time-format';
 
 import { aggregateFormats } from './_aggregate_formats';
 import api from './_api';
-import { isAbove} from './_is_above';
+import { isAbove } from './_is_above';
 import { optimize as optimizeFn } from './_optimize';
 import { timeFormat } from './_time_format';
 import { timeParse } from './_time_parse';
@@ -52,7 +52,7 @@ export default function milestones(selector) {
     category: undefined,
     entries: undefined,
     timestamp: 'timestamp',
-    text: 'text'
+    text: 'text',
   };
   function assignMapping(d) {
     mapping = Object.assign(mapping, d);
@@ -124,36 +124,50 @@ export default function milestones(selector) {
     setLabelFormat(aggregateFormats[d]);
   }
 
-
-  window.addEventListener('resize', () => window.requestAnimationFrame(() => render()));
+  window.addEventListener('resize', () =>
+    window.requestAnimationFrame(() => render())
+  );
 
   function render(data) {
     const widthAttribute = orientation === 'horizontal' ? 'width' : 'height';
-    const marginTimeAttribute = orientation === 'horizontal' ? 'margin-left' : 'margin-top';
-    const cssLineClass = orientation === 'horizontal' ? cssHorizontalLineClass : cssVerticalLineClass;
+    const marginTimeAttribute =
+      orientation === 'horizontal' ? 'margin-left' : 'margin-top';
+    const cssLineClass =
+      orientation === 'horizontal'
+        ? cssHorizontalLineClass
+        : cssVerticalLineClass;
     const labelMaxWidth = orientation === 'horizontal' ? 180 : 100;
 
     const timelineSelection = dom.select(selector).selectAll('.' + cssPrefix);
-    const nestedData = (typeof data !== 'undefined') ? transform(aggregateFormat, data, mapping, parseTime) : timelineSelection.data();
+    const nestedData =
+      typeof data !== 'undefined'
+        ? transform(aggregateFormat, data, mapping, parseTime)
+        : timelineSelection.data();
     const timeline = timelineSelection.data(nestedData);
 
-    const timelineEnter = timeline.enter().append('div')
+    const timelineEnter = timeline
+      .enter()
+      .append('div')
       .attr('class', cssPrefix);
 
     timeline.exit().remove();
 
     // rightMargin compensates for the right most bullet position
     const rightMargin = 11;
-    const selectorWidth = parseFloat(dom.select(selector).style(widthAttribute)) - rightMargin;
+    const selectorWidth =
+      parseFloat(dom.select(selector).style(widthAttribute)) - rightMargin;
 
     if (typeof mapping.category !== 'undefined') {
-      timelineEnter.append('div')
+      timelineEnter
+        .append('div')
         .attr('class', cssCategoryClass)
-        .text(d => d.category);
+        .text((d) => d.category);
 
-      timelineEnter.append('div')
+      timelineEnter
+        .append('div')
         .attr('class', 'data-js-timeline')
-        .append('div').attr('class', cssLineClass);
+        .append('div')
+        .attr('class', cssLineClass);
     } else {
       timelineEnter.append('div').attr('class', cssLineClass);
     }
@@ -172,65 +186,83 @@ export default function milestones(selector) {
       categoryLabels.style('margin-left', '-50%');
       categoryLabels.style('text-align', 'center');
     }
-    timelineMerge.selectAll('.data-js-timeline')
-      .style(marginTimeAttribute, (maxCategoryLabelWidth + timelineLeftMargin) + 'px');
-    timelineMerge.selectAll('.' + cssLineClass)
+    timelineMerge
+      .selectAll('.data-js-timeline')
+      .style(
+        marginTimeAttribute,
+        maxCategoryLabelWidth + timelineLeftMargin + 'px'
+      );
+    timelineMerge
+      .selectAll('.' + cssLineClass)
       .style(widthAttribute, width + 'px');
 
-    const groupSelector = (typeof mapping.category === 'undefined')
-      ? timelineMerge
-      : timelineMerge.selectAll('.data-js-timeline');
+    const groupSelector =
+      typeof mapping.category === 'undefined'
+        ? timelineMerge
+        : timelineMerge.selectAll('.data-js-timeline');
     const groupSelection = groupSelector.selectAll('.' + cssGroupClass);
 
-    const group = groupSelection.data(d => {
-      return (typeof mapping.category === 'undefined') ? d : d.entries;
+    const group = groupSelection.data((d) => {
+      return typeof mapping.category === 'undefined' ? d : d.entries;
     });
 
     const allKeys = nestedData.reduce((keys, timeline) => {
-      const t = (typeof mapping.category === 'undefined') ? timeline : timeline.entries;
-      t.map(d => keys.push(d.key));
+      const t =
+        typeof mapping.category === 'undefined' ? timeline : timeline.entries;
+      t.map((d) => keys.push(d.key));
       return keys;
     }, []);
 
-    const domain = (typeof range !== 'undefined')
-      ? range.map(aggregateFormatParse)
-      : extent(allKeys, d => aggregateFormatParse(d));
+    const domain =
+      typeof range !== 'undefined'
+        ? range.map(aggregateFormatParse)
+        : extent(allKeys, (d) => aggregateFormatParse(d));
 
-    const x = scale.scaleTime()
+    const x = scale
+      .scaleTime()
       .rangeRound([0, width])
       // sets oldest and newest date as the scales domain
       .domain(domain);
 
-    const groupEnter = group.enter().append('div')
-      .attr('class', cssGroupClass);
+    const groupEnter = group.enter().append('div').attr('class', cssGroupClass);
 
     group.exit().remove();
 
-    groupEnter.append('div')
-      .attr('class', cssBulletClass);
+    groupEnter.append('div').attr('class', cssBulletClass);
 
-    const groupMerge = groupEnter.merge(group)
-      .style(marginTimeAttribute, d => x(aggregateFormatParse(d.key)) + 'px');
+    const groupMerge = groupEnter
+      .merge(group)
+      .style(marginTimeAttribute, (d) => x(aggregateFormatParse(d.key)) + 'px');
 
     if (useLabels) {
-      const label = groupMerge.selectAll('.' + cssLabelClass + '-' + orientation).data(d => [d]);
+      const label = groupMerge
+        .selectAll('.' + cssLabelClass + '-' + orientation)
+        .data((d) => [d]);
 
-      const labelMerge = label.enter().append('div')
+      const labelMerge = label
+        .enter()
+        .append('div')
         .attr('class', cssLabelClass + '-' + orientation)
         .merge(label)
-        .classed(cssLastClass, d => {
+        .classed(cssLastClass, (d) => {
           const mostRightPosition = Math.round(x.range()[1]);
           const currentPosition = x(aggregateFormatParse(d.key));
           return mostRightPosition === currentPosition; // nestedData[d.timelineIndex].length === (d.index + 1);
         })
-        .classed(cssAboveClass + '-' + orientation, d => isAbove(d.index, distribution));
+        .classed(cssAboveClass + '-' + orientation, (d) =>
+          isAbove(d.index, distribution)
+        );
 
-      const text = labelMerge.selectAll('.' + cssTextClass + '-' + orientation).data(d => [d]);
+      const text = labelMerge
+        .selectAll('.' + cssTextClass + '-' + orientation)
+        .data((d) => [d]);
 
-      const textEnter = text.enter().append('div')
+      const textEnter = text
+        .enter()
+        .append('div')
         .attr('class', cssTextClass + '-' + orientation)
         .merge(text)
-        .style(widthAttribute, d => {
+        .style(widthAttribute, (d) => {
           // calculate the available width
           const offset = x(aggregateFormatParse(d.key));
           // get the next and previous item on the same lane
@@ -238,35 +270,47 @@ export default function milestones(selector) {
           let previousItem;
           let itemNumTotal;
           const itemNum = d.index + 1;
-          const nextCheck = (distribution === 'top-bottom') ? 2 : 1;
+          const nextCheck = distribution === 'top-bottom' ? 2 : 1;
           if (typeof mapping.category === 'undefined') {
             nextItem = nestedData[d.timelineIndex][d.index + nextCheck];
             previousItem = nestedData[d.timelineIndex][d.index - nextCheck];
             itemNumTotal = nestedData[d.timelineIndex].length;
           } else {
             nextItem = nestedData[d.timelineIndex].entries[d.index + nextCheck];
-            previousItem = nestedData[d.timelineIndex].entries[d.index - nextCheck];
+            previousItem =
+              nestedData[d.timelineIndex].entries[d.index - nextCheck];
             itemNumTotal = nestedData[d.timelineIndex].entries.length;
           }
 
           let availableWidth;
-          const compareItem1 = orientation === 'horizontal' ? nextItem : previousItem;
-          const compareItem2 = orientation === 'horizontal' ? previousItem : nextItem;
+          const compareItem1 =
+            orientation === 'horizontal' ? nextItem : previousItem;
+          const compareItem2 =
+            orientation === 'horizontal' ? previousItem : nextItem;
 
           if (typeof compareItem1 !== 'undefined') {
             const offsetNextItem = x(aggregateFormatParse(compareItem1.key));
-            availableWidth = orientation === 'horizontal' ? offsetNextItem - offset : offset - offsetNextItem;
+            availableWidth =
+              orientation === 'horizontal'
+                ? offsetNextItem - offset
+                : offset - offsetNextItem;
 
-            if ((itemNumTotal - itemNum) === 2) {
+            if (itemNumTotal - itemNum === 2) {
               availableWidth /= 2;
             }
           } else {
-            if ((itemNumTotal - itemNum) === 1) {
-              availableWidth = orientation === 'horizontal' ? width - offset : offset;
-            } else if ((itemNumTotal - itemNum) === 0) {
+            if (itemNumTotal - itemNum === 1) {
+              availableWidth =
+                orientation === 'horizontal' ? width - offset : offset;
+            } else if (itemNumTotal - itemNum === 0) {
               if (typeof compareItem2 !== 'undefined') {
-                const offsetPreviousItem = x(aggregateFormatParse(compareItem2.key));
-                availableWidth = orientation === 'horizontal' ? (width - offsetPreviousItem) / 2 : (offsetPreviousItem) / 2;
+                const offsetPreviousItem = x(
+                  aggregateFormatParse(compareItem2.key)
+                );
+                availableWidth =
+                  orientation === 'horizontal'
+                    ? (width - offsetPreviousItem) / 2
+                    : offsetPreviousItem / 2;
               } else {
                 availableWidth = width;
               }
@@ -274,11 +318,19 @@ export default function milestones(selector) {
           }
 
           const labelRightMargin = 6;
-          const availableWidthWithMargin = (Math.max(0, availableWidth - labelRightMargin));
-          const finalWidth = Math.min(orientation === 'horizontal' ? labelMaxWidth : availableWidthWithMargin, availableWidthWithMargin);
+          const availableWidthWithMargin = Math.max(
+            0,
+            availableWidth - labelRightMargin
+          );
+          const finalWidth = Math.min(
+            orientation === 'horizontal'
+              ? labelMaxWidth
+              : availableWidthWithMargin,
+            availableWidthWithMargin
+          );
           return finalWidth + 'px';
         })
-        .each(function(d) {
+        .each(function (d) {
           const above = isAbove(d.index, distribution);
 
           const wrapper = dom.select(this);
@@ -286,9 +338,9 @@ export default function milestones(selector) {
 
           const element = wrapper.append('div').classed('wrapper', true);
 
-
           if (!above || orientation === 'vertical') {
-            element.append('span')
+            element
+              .append('span')
               .classed(cssTitleClass, true)
               .text(labelFormat(aggregateFormatParse(d.key)));
             element.append('br');
@@ -303,14 +355,18 @@ export default function milestones(selector) {
             let item;
             // test if text is an image filename,
             // if so return an image tag with the filename as the source
-            if (['jpg', 'jpeg', 'gif', 'png'].indexOf(t.split('.').pop()) > -1) {
-              item = element.append('img')
+            if (
+              ['jpg', 'jpeg', 'gif', 'png'].indexOf(t.split('.').pop()) > -1
+            ) {
+              item = element
+                .append('img')
                 .classed('milestones-label', true)
                 .classed('milestones-image-label', true)
                 .attr('height', '100')
                 .attr('src', t);
             } else {
-              item = element.append('span')
+              item = element
+                .append('span')
                 .classed('milestones-label', true)
                 .classed('milestones-text-label', true)
                 .text(t);
@@ -323,9 +379,9 @@ export default function milestones(selector) {
             });
 
             if (
-              typeof callbackClick === 'function'
-              || typeof callBackMouseLeave === 'function'
-              || typeof callBackMouseOver === 'function'
+              typeof callbackClick === 'function' ||
+              typeof callBackMouseLeave === 'function' ||
+              typeof callBackMouseOver === 'function'
             ) {
               item.classed(cssEventClass, true);
             }
@@ -345,7 +401,8 @@ export default function milestones(selector) {
 
           if (above && orientation === 'horizontal') {
             element.append('br');
-            element.append('span')
+            element
+              .append('span')
               .classed(cssTitleClass, true)
               .text(labelFormat(aggregateFormatParse(d.key)));
           }
@@ -353,9 +410,7 @@ export default function milestones(selector) {
 
       const textMerge = text.merge(textEnter);
 
-      textMerge
-        .style('padding-top', '0px')
-        .style('padding-bottom', '0px');
+      textMerge.style('padding-top', '0px').style('padding-bottom', '0px');
 
       if (optimizeLayout) {
         optimizeFn(
@@ -378,16 +433,31 @@ export default function milestones(selector) {
     // finally, adjust offset, height and width of the whole timeline
     timelineMerge.each((d, i, node) => {
       const margin = 10;
-      const maxAboveHeight = max(dom.select(node[i]).selectAll('* .' + cssAboveClass + '-' + orientation)._groups[0], d => d.offsetHeight);
-      const maxBelowHeight = max(dom.select(node[i]).selectAll('* :not(.' + cssAboveClass + '-' + orientation + ')')._groups[0], d => d.offsetHeight);
+      const maxAboveHeight = max(
+        dom.select(node[i]).selectAll('* .' + cssAboveClass + '-' + orientation)
+          ._groups[0],
+        (d) => d.offsetHeight
+      );
+      const maxBelowHeight = max(
+        dom
+          .select(node[i])
+          .selectAll('* :not(.' + cssAboveClass + '-' + orientation + ')')
+          ._groups[0],
+        (d) => d.offsetHeight
+      );
 
       if (orientation === 'horizontal') {
-        dom.select(node[i])
-          .style('margin-top', (margin + (maxAboveHeight || 0)) + 'px')
-          .style('height', (margin + (maxBelowHeight || 0)) + 'px');
+        dom
+          .select(node[i])
+          .style('margin-top', margin + (maxAboveHeight || 0) + 'px')
+          .style('height', margin + (maxBelowHeight || 0) + 'px');
       } else {
-        const percent = typeof mapping.category !== 'undefined' ? Math.round(100 / (nestedData.length + 1)) * (i + 1) : '50';
-        dom.select(node[i])
+        const percent =
+          typeof mapping.category !== 'undefined'
+            ? Math.round(100 / (nestedData.length + 1)) * (i + 1)
+            : '50';
+        dom
+          .select(node[i])
           .style('margin-top', '50px')
           .style('margin-left', percent + '%')
           .style('position', 'absolute');

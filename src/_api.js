@@ -1,4 +1,4 @@
-export default function(methods) {
+export default function (methods) {
   function methodChainer(wrapper, method) {
     return (d) => {
       method(d);

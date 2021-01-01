@@ -5,7 +5,7 @@ import { aggregateFormats } from './_aggregate_formats';
 export function timeFormat(f) {
   if (f === '%Y-Q%Q') {
     const quarterFormatter = d3TimeFormat(aggregateFormats.month);
-    return d => {
+    return (d) => {
       const formattedDate = quarterFormatter(d);
       const month = formattedDate.split('-')[1];
       const quarter = Math.ceil(parseInt(month) / 3);
@@ -14,4 +14,3 @@ export function timeFormat(f) {
   }
   return d3TimeFormat(f);
 }
-

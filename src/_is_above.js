@@ -7,4 +7,3 @@ export function isAbove(i, distribution) {
   }
   return above;
 }
-

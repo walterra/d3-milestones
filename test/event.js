@@ -2,16 +2,16 @@ import tape from 'tape';
 import milestones from '../src/main';
 import * as d3 from 'd3-selection';
 
-tape('should render a minimal milestones chart with attached events', t => {
+tape('should render a minimal milestones chart with attached events', (t) => {
   document.body.insertAdjacentHTML(
     'afterbegin',
     '<div id="wrapper_event"></div>'
   );
 
   const data = [
-    { 'timestamp': '2012-09-09T00:00', 'detail': 'v1.0.0' },
-    { 'timestamp': '2012-09-10T00:00', 'detail': 'v1.0.1' },
-    { 'timestamp': '2012-09-12T00:00', 'detail': 'v1.1.0' }
+    { timestamp: '2012-09-09T00:00', detail: 'v1.0.0' },
+    { timestamp: '2012-09-10T00:00', detail: 'v1.0.1' },
+    { timestamp: '2012-09-12T00:00', detail: 'v1.1.0' },
   ];
 
   const timeline = milestones('#wrapper_event')
@@ -26,7 +26,7 @@ tape('should render a minimal milestones chart with attached events', t => {
     })
     .mapping({
       timestamp: 'timestamp',
-      text: 'detail'
+      text: 'detail',
     });
 
   timeline
@@ -53,5 +53,4 @@ tape('should render a minimal milestones chart with attached events', t => {
   });
 
   t.end();
-
 });

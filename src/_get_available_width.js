@@ -6,7 +6,8 @@ export const getAvailableWidth = (
   aggregateFormatParse,
   currentNode,
   domElement,
-  index, mapping,
+  index,
+  mapping,
   nestedData,
   nestedNode,
   nextCheck,
@@ -22,7 +23,10 @@ export const getAvailableWidth = (
 ) => {
   // get the height of the next group
   const defaultPadding = 3;
-  const nextGroup = orientation === 'horizontal' ? nodes[index + nextCheck] : nodes[index - nextCheck];
+  const nextGroup =
+    orientation === 'horizontal'
+      ? nodes[index + nextCheck]
+      : nodes[index - nextCheck];
   let nextGroupHeight = 0;
   if (typeof nextGroup !== 'undefined') {
     nextGroupHeight = nextGroup[0][offsetAttribute] + defaultPadding;
@@ -30,7 +34,8 @@ export const getAvailableWidth = (
   domElement.style(padding, nextGroupHeight + 'px');
 
   // get the available width until the uber-next group
-  let nextTestIndex = orientation === 'horizontal' ? index + nextCheck : index - nextCheck;
+  let nextTestIndex =
+    orientation === 'horizontal' ? index + nextCheck : index - nextCheck;
   let nextTestItem;
   do {
     if (orientation === 'horizontal') {
@@ -42,7 +47,7 @@ export const getAvailableWidth = (
     if (typeof nextTestItem === 'undefined') {
       break;
     }
-  } while (nextGroupHeight >= (nextTestItem[0][offsetAttribute]));
+  } while (nextGroupHeight >= nextTestItem[0][offsetAttribute]);
   let uberNextItem;
   if (typeof mapping.category === 'undefined') {
     uberNextItem = nestedData[nestedNode.timelineIndex][nextTestIndex];
@@ -65,7 +70,6 @@ export const getAvailableWidth = (
     } else {
       availableWidth = offset - labelRightMargin;
     }
-
   }
 
   return availableWidth;

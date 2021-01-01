@@ -7,6 +7,5 @@ export const aggregateFormats = {
   week: '%Y week %W',
   month: '%Y-%m',
   quarter: '%Y-Q%Q',
-  year: '%Y'
+  year: '%Y',
 };
-

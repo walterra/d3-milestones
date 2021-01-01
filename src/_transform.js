@@ -2,16 +2,19 @@ import { ascending } from 'd3-array';
 import { nest } from 'd3-collection';
 
 export function transform(aggregateFormat, data, mapping, parseTime) {
-  const groupBy = function(d) {
+  const groupBy = function (d) {
     return aggregateFormat(parseTime(d[mapping.timestamp]));
   };
 
   // test for different data structures
-  if (typeof mapping.category !== 'undefined' && typeof mapping.entries !== 'undefined') {
+  if (
+    typeof mapping.category !== 'undefined' &&
+    typeof mapping.entries !== 'undefined'
+  ) {
     data = data.map((timeline, timelineIndex) => {
       return {
         category: timeline[mapping.category],
-        entries: getNestedEntries(timeline[mapping.entries], timelineIndex)
+        entries: getNestedEntries(timeline[mapping.entries], timelineIndex),
       };
     });
     return data;
@@ -20,9 +23,7 @@ export function transform(aggregateFormat, data, mapping, parseTime) {
   }
 
   function getNestedEntries(t, tI) {
-    const nested = nest()
-      .key(groupBy).sortKeys(ascending)
-      .entries(t);
+    const nested = nest().key(groupBy).sortKeys(ascending).entries(t);
     return nested.map((d, dI) => {
       d.index = dI;
       d.timelineIndex = tI;
@@ -32,5 +33,3 @@ export function transform(aggregateFormat, data, mapping, parseTime) {
 
   return data.map((t, tI) => getNestedEntries(t, tI));
 }
-
-
