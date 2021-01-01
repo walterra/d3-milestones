@@ -5,40 +5,31 @@ const labelRightMargin = 6;
 export const getAvailableWidth = (
   aggregateFormatParse,
   currentNode,
-  domElement,
   index,
   mapping,
   nestedData,
   nestedNode,
   nextCheck,
-  nodes,
+  nextGroupHeight,
   offset,
   offsetCheckAttribute,
   offsetAttribute,
   orientation,
-  padding,
   textMerge,
   width,
-  x
+  x,
+  useNext = true
 ) => {
-  // get the height of the next group
-  const defaultPadding = 3;
-  const nextGroup =
-    orientation === 'horizontal'
-      ? nodes[index + nextCheck]
-      : nodes[index - nextCheck];
-  let nextGroupHeight = 0;
-  if (typeof nextGroup !== 'undefined') {
-    nextGroupHeight = nextGroup[0][offsetAttribute] + defaultPadding;
-  }
-  domElement.style(padding, nextGroupHeight + 'px');
-
   // get the available width until the uber-next group
   let nextTestIndex =
-    orientation === 'horizontal' ? index + nextCheck : index - nextCheck;
+    orientation === 'horizontal' && useNext
+      ? index + nextCheck
+      : index - nextCheck;
+
   let nextTestItem;
+
   do {
-    if (orientation === 'horizontal') {
+    if (orientation === 'horizontal' && useNext) {
       nextTestIndex += nextCheck;
     } else {
       nextTestIndex -= nextCheck;
@@ -48,7 +39,9 @@ export const getAvailableWidth = (
       break;
     }
   } while (nextGroupHeight >= nextTestItem[0][offsetAttribute]);
+
   let uberNextItem;
+
   if (typeof mapping.category === 'undefined') {
     uberNextItem = nestedData[nestedNode.timelineIndex][nextTestIndex];
   } else {
@@ -59,14 +52,19 @@ export const getAvailableWidth = (
 
   if (typeof uberNextItem !== 'undefined') {
     const offsetUberNextItem = x(aggregateFormatParse(uberNextItem.key));
-    if (orientation === 'horizontal') {
+
+    if ((orientation === 'horizontal') & useNext) {
       availableWidth = offsetUberNextItem - offset - labelRightMargin;
+    } else if ((orientation === 'horizontal') & !useNext) {
+      availableWidth = offsetUberNextItem - labelRightMargin;
     } else {
       availableWidth = offset - offsetUberNextItem - labelRightMargin;
     }
   } else {
-    if (orientation === 'horizontal') {
+    if ((orientation === 'horizontal') & useNext) {
       availableWidth = width - offset - labelRightMargin;
+    } else if ((orientation === 'horizontal') & !useNext) {
+      availableWidth = offset - labelRightMargin;
     } else {
       availableWidth = offset - labelRightMargin;
     }

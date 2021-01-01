@@ -244,14 +244,14 @@ export default function milestones(selector) {
         .append('div')
         .attr('class', cssLabelClass + '-' + orientation)
         .merge(label)
-        .classed(cssLastClass, (d) => {
-          const mostRightPosition = Math.round(x.range()[1]);
-          const currentPosition = x(aggregateFormatParse(d.key));
-          return (
-            mostRightPosition === currentPosition &&
-            orientation === 'horizontal'
-          );
-        })
+        // .classed(cssLastClass, (d) => {
+        //   const mostRightPosition = Math.round(x.range()[1]);
+        //   const currentPosition = x(aggregateFormatParse(d.key));
+        //   return (
+        //     mostRightPosition === currentPosition &&
+        //     orientation === 'horizontal'
+        //   );
+        // })
         .classed(cssAboveClass + '-' + orientation, (d) =>
           isAbove(d.index, distribution)
         );
