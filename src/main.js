@@ -247,7 +247,10 @@ export default function milestones(selector) {
         .classed(cssLastClass, (d) => {
           const mostRightPosition = Math.round(x.range()[1]);
           const currentPosition = x(aggregateFormatParse(d.key));
-          return mostRightPosition === currentPosition; // nestedData[d.timelineIndex].length === (d.index + 1);
+          return (
+            mostRightPosition === currentPosition &&
+            orientation === 'horizontal'
+          );
         })
         .classed(cssAboveClass + '-' + orientation, (d) =>
           isAbove(d.index, distribution)
