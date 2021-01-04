@@ -1,6 +1,7 @@
 import * as dom from 'd3-selection';
 import { nest } from 'd3-collection';
 
+import { cssLastClass } from './_css';
 import { getAttribute } from './_get_attribute';
 import { getAvailableWidth } from './_get_available_width';
 import { getNextGroupHeight } from './_get_next_group_height';
@@ -26,7 +27,7 @@ export const optimize = (
 
   const nextCheck = distribution === 'top-bottom' ? 2 : 1;
 
-  const runOptimizer = () => {
+  const runOptimizer = (optimizerRuns) => {
     let updated = false;
 
     nestedNodes.forEach((d) => {
@@ -51,12 +52,19 @@ export const optimize = (
 
         const offsetCheck = getAttribute(currentNode, offsetCheckAttribute);
 
+        const domElement = dom.selectAll(nodes[index]);
+
+        const backwards = domElement
+          .select(function () {
+            return this.parentNode;
+          })
+          .classed(cssLastClass);
+
         if (
           currentNode[scrollCheckAttribute] > offsetCheck ||
-          offsetCheck < offsetComparator
+          offsetCheck < offsetComparator ||
+          backwards
         ) {
-          const domElement = dom.selectAll(nodes[index]);
-
           const paddingAbove =
             orientation === 'horizontal' ? 'padding-bottom' : 'padding-right';
 
@@ -104,7 +112,9 @@ export const optimize = (
                     )
                   : nextGroupHeight;
 
-              const useNext = nextGroupHeight <= previousGroupHeight;
+              const useNext =
+                nextGroupHeight <= previousGroupHeight &&
+                nextGroupHeight !== undefined;
 
               const groupHeight = useNext
                 ? nextGroupHeight
@@ -115,18 +125,19 @@ export const optimize = (
                 domElement.style(padding).replace('px', ''),
                 10
               );
-              console.log(item.key, existingGroupHeight, groupHeight);
-              if (existingGroupHeight != groupHeight) {
+              if (
+                existingGroupHeight != groupHeight &&
+                nextGroupHeight !== undefined
+              ) {
                 updated = true;
+                domElement.style(padding, groupHeight + 'px');
               }
-
-              domElement.style(padding, groupHeight + 'px');
 
               domElement
                 .select(function () {
                   return this.parentNode;
                 })
-                .classed('milestones__group__label-last', !useNext);
+                .classed(cssLastClass, !useNext);
 
               availableWidth = getAvailableWidth(
                 aggregateFormatParse,
@@ -157,6 +168,86 @@ export const optimize = (
           }
 
           domElement.style(widthAttribute, availableWidth + 'px');
+
+          // After the first optimizer run,
+          // reduce overlaps caused by left/right positioning
+          if (optimizerRuns > 0 && backwards && orientation === 'horizontal') {
+            const itemWidth = parseInt(
+              domElement.style('width').replace('px', ''),
+              10
+            );
+            const leftOffset = offset - itemWidth;
+
+            nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
+              const itemRowCheck = index % nextCheck;
+              const distributionCheck =
+                (overlapCheckIndex + itemRowCheck) % nextCheck;
+
+              const overlapCheckItem = dom
+                .selectAll(overlapCheckNode)
+                .data()[0];
+
+              if (
+                overlapCheckItem.key === item.key ||
+                distributionCheck !== 0
+              ) {
+                return;
+              }
+
+              let overlapCheckOffset = x(
+                aggregateFormatParse(overlapCheckItem.key)
+              );
+              const overlapItemOffsetAnchor = overlapCheckOffset;
+              const overlapCheckDomElement = dom.selectAll(
+                nodes[overlapCheckIndex]
+              );
+              const overlapCheckBackwards = overlapCheckDomElement
+                .select(function () {
+                  return this.parentNode;
+                })
+                .classed(cssLastClass);
+
+              if (!overlapCheckBackwards) {
+                const overlapCheckItemWidth = parseInt(
+                  overlapCheckDomElement.style('width').replace('px', ''),
+                  10
+                );
+                overlapCheckOffset =
+                  overlapCheckOffset + overlapCheckItemWidth + 5;
+              }
+
+              if (
+                overlapCheckOffset > leftOffset &&
+                overlapItemOffsetAnchor < offset
+              ) {
+                const overlapCheckHeight = overlapCheckNode[0][offsetAttribute];
+                const itemPadding = parseInt(
+                  domElement.style(padding).replace('px', ''),
+                  0
+                );
+
+                if (itemPadding < overlapCheckHeight) {
+                  // offsetComparator
+                  // find out if there's enough place to get rid of overlap
+                  // by adjusted the items width
+                  const checkWidth = overlapCheckOffset - leftOffset;
+                  const currentWidth = parseInt(
+                    domElement.style(widthAttribute).replace('px', ''),
+                    0
+                  );
+                  const reducedWidth = currentWidth - checkWidth;
+
+                  if (reducedWidth > offsetComparator) {
+                    availableWidth = Math.min(availableWidth, reducedWidth);
+                    domElement.style(widthAttribute, availableWidth + 'px');
+                  } else {
+                    domElement.style(padding, overlapCheckHeight + 'px');
+                    updated = true;
+                  }
+                }
+              }
+            });
+          }
         }
       });
     });
@@ -168,8 +259,7 @@ export const optimize = (
   let updated = false;
 
   do {
-    updated = runOptimizer();
+    updated = runOptimizer(optimizerRuns);
     optimizerRuns++;
-    console.log('layout', optimizerRuns, updated);
   } while (optimizerRuns < 10 && updated);
 };

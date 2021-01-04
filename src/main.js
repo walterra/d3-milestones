@@ -5,25 +5,25 @@ import { isoParse } from 'd3-time-format';
 
 import { aggregateFormats } from './_aggregate_formats';
 import api from './_api';
+import {
+  cssPrefix,
+  cssCategoryClass,
+  cssHorizontalLineClass,
+  cssVerticalLineClass,
+  cssGroupClass,
+  cssBulletClass,
+  cssLabelClass,
+  cssAboveClass,
+  cssTextClass,
+  cssTitleClass,
+  cssEventClass,
+  cssEventHoverClass,
+} from './_css';
 import { isAbove } from './_is_above';
 import { optimize as optimizeFn } from './_optimize';
 import { timeFormat } from './_time_format';
 import { timeParse } from './_time_parse';
 import { transform } from './_transform';
-
-const cssPrefix = 'milestones';
-const cssCategoryClass = cssPrefix + '__category_label';
-const cssHorizontalLineClass = cssPrefix + '__horizontal_line';
-const cssVerticalLineClass = cssPrefix + '__vertical_line';
-const cssGroupClass = cssPrefix + '__group';
-const cssBulletClass = cssGroupClass + '__bullet';
-const cssLabelClass = cssGroupClass + '__label';
-const cssLastClass = cssLabelClass + '-last';
-const cssAboveClass = cssLabelClass + '-above';
-const cssTextClass = cssLabelClass + '__text';
-const cssTitleClass = cssTextClass + '__title';
-const cssEventClass = cssTextClass + '__event';
-const cssEventHoverClass = cssEventClass + '--hover';
 
 export default function milestones(selector) {
   let distribution = 'top-bottom';

@@ -1,0 +1,13 @@
+export const cssPrefix = 'milestones';
+export const cssCategoryClass = cssPrefix + '__category_label';
+export const cssHorizontalLineClass = cssPrefix + '__horizontal_line';
+export const cssVerticalLineClass = cssPrefix + '__vertical_line';
+export const cssGroupClass = cssPrefix + '__group';
+export const cssBulletClass = cssGroupClass + '__bullet';
+export const cssLabelClass = cssGroupClass + '__label';
+export const cssLastClass = cssLabelClass + '-last';
+export const cssAboveClass = cssLabelClass + '-above';
+export const cssTextClass = cssLabelClass + '__text';
+export const cssTitleClass = cssTextClass + '__title';
+export const cssEventClass = cssTextClass + '__event';
+export const cssEventHoverClass = cssEventClass + '--hover';

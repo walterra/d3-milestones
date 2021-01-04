@@ -70,5 +70,5 @@ export const getAvailableWidth = (
     }
   }
 
-  return availableWidth;
+  return Math.min(offset, availableWidth);
 };
