@@ -7,6 +7,15 @@ import { getAvailableWidth } from './_get_available_width';
 import { getNextGroupHeight } from './_get_next_group_height';
 import { isAbove } from './_is_above';
 
+const getIntValueFromPxAttribute = (domElement, attribute) => {
+  return parseInt(domElement.style(attribute).replace('px', ''), 10);
+};
+
+const getParentElement = (domElement) =>
+  domElement.select(function () {
+    return this.parentNode;
+  });
+
 export const optimize = (
   aggregateFormatParse,
   distribution,
@@ -54,11 +63,7 @@ export const optimize = (
 
         const domElement = dom.selectAll(nodes[index]);
 
-        const backwards = domElement
-          .select(function () {
-            return this.parentNode;
-          })
-          .classed(cssLastClass);
+        const backwards = getParentElement(domElement).classed(cssLastClass);
 
         if (
           currentNode[scrollCheckAttribute] > offsetCheck ||
@@ -121,9 +126,9 @@ export const optimize = (
                 : previousGroupHeight;
               const check = useNext ? nextCheck : nextCheck * -1;
 
-              const existingGroupHeight = parseInt(
-                domElement.style(padding).replace('px', ''),
-                10
+              const existingGroupHeight = getIntValueFromPxAttribute(
+                domElement,
+                padding
               );
               if (
                 existingGroupHeight != groupHeight &&
@@ -133,11 +138,7 @@ export const optimize = (
                 domElement.style(padding, groupHeight + 'px');
               }
 
-              domElement
-                .select(function () {
-                  return this.parentNode;
-                })
-                .classed(cssLastClass, !useNext);
+              getParentElement(domElement).classed(cssLastClass, !useNext);
 
               availableWidth = getAvailableWidth(
                 aggregateFormatParse,
@@ -172,10 +173,7 @@ export const optimize = (
           // After the first optimizer run,
           // reduce overlaps caused by left/right positioning
           if (optimizerRuns > 0 && backwards && orientation === 'horizontal') {
-            const itemWidth = parseInt(
-              domElement.style('width').replace('px', ''),
-              10
-            );
+            const itemWidth = getIntValueFromPxAttribute(domElement, 'width');
             const leftOffset = offset - itemWidth;
 
             nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
@@ -201,16 +199,14 @@ export const optimize = (
               const overlapCheckDomElement = dom.selectAll(
                 nodes[overlapCheckIndex]
               );
-              const overlapCheckBackwards = overlapCheckDomElement
-                .select(function () {
-                  return this.parentNode;
-                })
-                .classed(cssLastClass);
+              const overlapCheckBackwards = getParentElement(
+                overlapCheckDomElement
+              ).classed(cssLastClass);
 
               if (!overlapCheckBackwards) {
-                const overlapCheckItemWidth = parseInt(
-                  overlapCheckDomElement.style('width').replace('px', ''),
-                  10
+                const overlapCheckItemWidth = getIntValueFromPxAttribute(
+                  overlapCheckDomElement,
+                  'width'
                 );
                 overlapCheckOffset =
                   overlapCheckOffset + overlapCheckItemWidth + 5;
@@ -221,9 +217,9 @@ export const optimize = (
                 overlapItemOffsetAnchor < offset
               ) {
                 const overlapCheckHeight = overlapCheckNode[0][offsetAttribute];
-                const itemPadding = parseInt(
-                  domElement.style(padding).replace('px', ''),
-                  0
+                const itemPadding = getIntValueFromPxAttribute(
+                  domElement,
+                  padding
                 );
 
                 if (itemPadding < overlapCheckHeight) {
@@ -231,9 +227,9 @@ export const optimize = (
                   // find out if there's enough place to get rid of overlap
                   // by adjusted the items width
                   const checkWidth = overlapCheckOffset - leftOffset;
-                  const currentWidth = parseInt(
-                    domElement.style(widthAttribute).replace('px', ''),
-                    0
+                  const currentWidth = getIntValueFromPxAttribute(
+                    domElement,
+                    widthAttribute
                   );
                   const reducedWidth = currentWidth - checkWidth;
 
