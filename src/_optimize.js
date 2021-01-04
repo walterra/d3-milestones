@@ -65,24 +65,24 @@ export const optimize = (
 
         const backwards = getParentElement(domElement).classed(cssLastClass);
 
+        const offsetAttribute =
+          orientation === 'horizontal' ? 'offsetHeight' : 'offsetWidth';
+
+        const paddingAbove =
+          orientation === 'horizontal' ? 'padding-bottom' : 'padding-right';
+
+        const paddingBelow =
+          orientation === 'horizontal' ? 'padding-top' : 'padding-left';
+
+        const padding = isAbove(index, distribution)
+          ? paddingAbove
+          : paddingBelow;
+
         if (
           currentNode[scrollCheckAttribute] > offsetCheck ||
           offsetCheck < offsetComparator ||
           backwards
         ) {
-          const paddingAbove =
-            orientation === 'horizontal' ? 'padding-bottom' : 'padding-right';
-
-          const paddingBelow =
-            orientation === 'horizontal' ? 'padding-top' : 'padding-left';
-
-          const padding = isAbove(index, distribution)
-            ? paddingAbove
-            : paddingBelow;
-
-          const offsetAttribute =
-            orientation === 'horizontal' ? 'offsetHeight' : 'offsetWidth';
-
           let availableWidth = 0;
           let runs = 0;
           let nextCheckIterator =
@@ -236,14 +236,80 @@ export const optimize = (
                   if (reducedWidth > offsetComparator) {
                     availableWidth = Math.min(availableWidth, reducedWidth);
                     domElement.style(widthAttribute, availableWidth + 'px');
+                    domElement.style(padding, 0 + 'px');
                   } else {
                     domElement.style(padding, overlapCheckHeight + 'px');
-                    updated = true;
                   }
+                  updated = true;
                 }
               }
             });
           }
+        }
+        if (optimizerRuns > 0 && !backwards && orientation === 'horizontal') {
+          const itemWidth = getIntValueFromPxAttribute(domElement, 'width');
+          const rightOffset = offset + itemWidth;
+          nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
+            const itemRowCheck = index % nextCheck;
+            const distributionCheck =
+              (overlapCheckIndex + itemRowCheck) % nextCheck;
+
+            const overlapCheckItem = dom.selectAll(overlapCheckNode).data()[0];
+
+            if (overlapCheckItem.key === item.key || distributionCheck !== 0) {
+              return;
+            }
+
+            let overlapCheckOffset = x(
+              aggregateFormatParse(overlapCheckItem.key)
+            );
+            const overlapItemOffsetAnchor = overlapCheckOffset;
+            const overlapCheckDomElement = dom.selectAll(
+              nodes[overlapCheckIndex]
+            );
+            const overlapCheckBackwards = getParentElement(
+              overlapCheckDomElement
+            ).classed(cssLastClass);
+
+            if (overlapCheckBackwards) {
+              const overlapCheckItemWidth = getIntValueFromPxAttribute(
+                overlapCheckDomElement,
+                'width'
+              );
+              overlapCheckOffset =
+                overlapCheckOffset - overlapCheckItemWidth - 5;
+            }
+
+            if (
+              rightOffset > overlapItemOffsetAnchor &&
+              overlapItemOffsetAnchor > offset
+            ) {
+              const overlapCheckHeight = overlapCheckNode[0][offsetAttribute];
+              const itemPadding = getIntValueFromPxAttribute(
+                domElement,
+                padding
+              );
+
+              if (itemPadding < overlapCheckHeight) {
+                // offsetComparator
+                // find out if there's enough place to get rid of overlap
+                // by adjusted the items width
+                const checkWidth = rightOffset - overlapItemOffsetAnchor + 10;
+                const currentWidth = getIntValueFromPxAttribute(
+                  domElement,
+                  widthAttribute
+                );
+                const reducedWidth = currentWidth - checkWidth;
+
+                if (reducedWidth > offsetComparator) {
+                  domElement.style(widthAttribute, reducedWidth + 'px');
+                } else {
+                  getParentElement(domElement).classed(cssLastClass, true);
+                }
+                updated = true;
+              }
+            }
+          });
         }
       });
     });
@@ -257,5 +323,5 @@ export const optimize = (
   do {
     updated = runOptimizer(optimizerRuns);
     optimizerRuns++;
-  } while (optimizerRuns < 10 && updated);
+  } while (optimizerRuns < 20 && updated);
 };
