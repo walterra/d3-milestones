@@ -144,17 +144,8 @@ export const optimize = (
                 : previousGroupHeight;
               const check = useNext ? nextCheck : nextCheck * -1;
 
-              const existingGroupHeight = getIntValueFromPxAttribute(
-                domElement,
-                padding
-              );
-              if (
-                existingGroupHeight <= groupHeight &&
-                nextGroupHeight !== undefined
-              ) {
-                updated++;
-                domElement.style(padding, groupHeight + 'px');
-              }
+              updated++;
+              domElement.style(padding, groupHeight + 'px');
 
               getParentElement(domElement).classed(cssLastClass, !useNext);
 
@@ -263,7 +254,6 @@ export const optimize = (
                   if (reducedWidth > offsetComparator) {
                     availableWidth = Math.min(availableWidth, reducedWidth);
                     domElement.style(widthAttribute, availableWidth + 'px');
-                    domElement.style(padding, 0 + 'px');
                   } else {
                     domElement.style(padding, overlapCheckHeight + 'px');
                   }
@@ -388,5 +378,10 @@ export const optimize = (
   do {
     updated = runOptimizer(optimizerRuns);
     optimizerRuns++;
+
+    // make sure we run a second optimizer call
+    if (optimizerRuns === 1) {
+      updated = 1;
+    }
   } while (optimizerRuns < MAX_OPTIMIZER_RUNS && updated > 0);
 };
