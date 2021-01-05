@@ -65,7 +65,7 @@ export const optimize = (
 
         const domElement = dom.selectAll(nodes[index]);
 
-        const backwards = getParentElement(domElement).classed(cssLastClass);
+        let backwards = getParentElement(domElement).classed(cssLastClass);
 
         const offsetAttribute =
           orientation === 'horizontal' ? 'offsetHeight' : 'offsetWidth';
@@ -83,8 +83,9 @@ export const optimize = (
         // Because on a resize a previous optimization could already have
         // repositioned items, we reset them on the first optimizer run
         if (optimizerRuns === 0) {
+          backwards = false;
           domElement.style(padding, '0px');
-          getParentElement(domElement).classed(cssLastClass, false);
+          getParentElement(domElement).classed(cssLastClass, backwards);
         }
 
         const overflow = backwards
@@ -179,7 +180,7 @@ export const optimize = (
 
           // because labels could be left or right aligned,
           // we shrink the available width to the inner text width
-          // so labels facing each will require less space.
+          // so labels facing each other will require less space.
           domElement.style(widthAttribute, availableWidth + 'px');
           const innerWidth = getIntValueFromPxAttribute(
             domElement.select('.wrapper'),
@@ -249,13 +250,13 @@ export const optimize = (
                     domElement,
                     widthAttribute
                   );
-                  const reducedWidth = currentWidth - checkWidth;
+                  const reducedWidth = currentWidth - checkWidth - 6;
 
                   if (reducedWidth > offsetComparator) {
                     availableWidth = Math.min(availableWidth, reducedWidth);
-                    domElement.style(widthAttribute, availableWidth + 'px');
+                    domElement.style(widthAttribute, `${availableWidth}px`);
                   } else {
-                    domElement.style(padding, overlapCheckHeight + 'px');
+                    domElement.style(padding, `${overlapCheckHeight + 5}px`);
                   }
                   updated++;
                 }
