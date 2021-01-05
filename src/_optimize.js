@@ -78,10 +78,15 @@ export const optimize = (
           ? paddingAbove
           : paddingBelow;
 
+        const overflow = backwards
+          ? offset - offsetCheck < 0
+          : offset + offsetCheck > width;
+
         if (
           currentNode[scrollCheckAttribute] > offsetCheck ||
           offsetCheck < offsetComparator ||
-          backwards
+          backwards ||
+          overflow
         ) {
           let availableWidth = 0;
           let runs = 0;
@@ -117,9 +122,13 @@ export const optimize = (
                     )
                   : nextGroupHeight;
 
-              const useNext =
+              let useNext =
                 nextGroupHeight <= previousGroupHeight &&
                 nextGroupHeight !== undefined;
+
+              if (!useNext) {
+                useNext = offset < offsetComparator;
+              }
 
               const groupHeight = useNext
                 ? nextGroupHeight
@@ -246,6 +255,7 @@ export const optimize = (
             });
           }
         }
+
         if (optimizerRuns > 0 && !backwards && orientation === 'horizontal') {
           const itemWidth = getIntValueFromPxAttribute(domElement, 'width');
           const rightOffset = offset + itemWidth;
