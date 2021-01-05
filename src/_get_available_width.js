@@ -70,5 +70,9 @@ export const getAvailableWidth = (
     }
   }
 
-  return Math.min(offset, availableWidth);
+  if (nextCheck < 0) {
+    return Math.min(offset, availableWidth);
+  } else {
+    return availableWidth;
+  }
 };

@@ -7,6 +7,8 @@ import { getAvailableWidth } from './_get_available_width';
 import { getNextGroupHeight } from './_get_next_group_height';
 import { isAbove } from './_is_above';
 
+const MAX_OPTIMIZER_RUNS = 20;
+
 const getIntValueFromPxAttribute = (domElement, attribute) => {
   return parseInt(domElement.style(attribute).replace('px', ''), 10);
 };
@@ -37,7 +39,7 @@ export const optimize = (
   const nextCheck = distribution === 'top-bottom' ? 2 : 1;
 
   const runOptimizer = (optimizerRuns) => {
-    let updated = false;
+    let updated = 0;
 
     nestedNodes.forEach((d) => {
       const nodes = d.values;
@@ -78,6 +80,13 @@ export const optimize = (
           ? paddingAbove
           : paddingBelow;
 
+        // Because on a resize a previous optimization could already have
+        // repositioned items, we reset them on the first optimizer run
+        if (optimizerRuns === 0) {
+          domElement.style(padding, '0px');
+          getParentElement(domElement).classed(cssLastClass, false);
+        }
+
         const overflow = backwards
           ? offset - offsetCheck < 0
           : offset + offsetCheck > width;
@@ -88,7 +97,7 @@ export const optimize = (
           backwards ||
           overflow
         ) {
-          let availableWidth = 0;
+          let availableWidth = null;
           let runs = 0;
           let nextCheckIterator =
             orientation === 'horizontal' ? nextCheck - 1 : nextCheck + 1;
@@ -140,10 +149,10 @@ export const optimize = (
                 padding
               );
               if (
-                existingGroupHeight != groupHeight &&
+                existingGroupHeight <= groupHeight &&
                 nextGroupHeight !== undefined
               ) {
-                updated = true;
+                updated++;
                 domElement.style(padding, groupHeight + 'px');
               }
 
@@ -170,17 +179,26 @@ export const optimize = (
             }
           } while (
             availableWidth < currentNode[scrollCheckAttribute] &&
-            runs < 10
+            runs < MAX_OPTIMIZER_RUNS
           );
 
           if (orientation === 'horizontal') {
             availableWidth = Math.min(labelMaxWidth, availableWidth);
           }
 
+          // because labels could be left or right aligned,
+          // we shrink the available width to the inner text width
+          // so labels facing each will require less space.
           domElement.style(widthAttribute, availableWidth + 'px');
+          const innerWidth = getIntValueFromPxAttribute(
+            domElement.select('.wrapper'),
+            'width'
+          );
+          if (innerWidth < availableWidth) {
+            availableWidth = innerWidth + 10;
+            domElement.style(widthAttribute, availableWidth + 'px');
+          }
 
-          // After the first optimizer run,
-          // reduce overlaps caused by left/right positioning
           if (optimizerRuns > 0 && backwards && orientation === 'horizontal') {
             const itemWidth = getIntValueFromPxAttribute(domElement, 'width');
             const leftOffset = offset - itemWidth;
@@ -249,7 +267,7 @@ export const optimize = (
                   } else {
                     domElement.style(padding, overlapCheckHeight + 'px');
                   }
-                  updated = true;
+                  updated++;
                 }
               }
             });
@@ -259,6 +277,9 @@ export const optimize = (
         if (optimizerRuns > 0 && !backwards && orientation === 'horizontal') {
           const itemWidth = getIntValueFromPxAttribute(domElement, 'width');
           const rightOffset = offset + itemWidth;
+
+          let minPadding = Number.POSITIVE_INFINITY;
+
           nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
             const itemRowCheck = index % nextCheck;
             const distributionCheck =
@@ -280,6 +301,12 @@ export const optimize = (
             const overlapCheckBackwards = getParentElement(
               overlapCheckDomElement
             ).classed(cssLastClass);
+
+            const overlapCheckItemPadding = getIntValueFromPxAttribute(
+              overlapCheckDomElement,
+              padding
+            );
+            minPadding = Math.min(minPadding, overlapCheckItemPadding);
 
             if (overlapCheckBackwards) {
               const overlapCheckItemWidth = getIntValueFromPxAttribute(
@@ -316,10 +343,38 @@ export const optimize = (
                 } else {
                   getParentElement(domElement).classed(cssLastClass, true);
                 }
-                updated = true;
+                updated++;
               }
             }
           });
+
+          // The optimizer might push all labels too far up. If all labels
+          // have a minimum padding of more than 0, we'll shrink all offsets
+          // back so the label with the smallest padding ends up directly
+          // at the timeline.
+          if (minPadding > 0) {
+            nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
+              const itemRowCheck = index % nextCheck;
+              const distributionCheck =
+                (overlapCheckIndex + itemRowCheck) % nextCheck;
+
+              if (distributionCheck !== 0) {
+                return;
+              }
+
+              const overlapCheckDomElement = dom.selectAll(
+                nodes[overlapCheckIndex]
+              );
+              const itemPadding = getIntValueFromPxAttribute(
+                overlapCheckDomElement,
+                padding
+              );
+              overlapCheckDomElement.style(
+                padding,
+                `${itemPadding - minPadding}px`
+              );
+            });
+          }
         }
       });
     });
@@ -328,10 +383,10 @@ export const optimize = (
   };
 
   let optimizerRuns = 0;
-  let updated = false;
+  let updated = 0;
 
   do {
     updated = runOptimizer(optimizerRuns);
     optimizerRuns++;
-  } while (optimizerRuns < 20 && updated);
+  } while (optimizerRuns < MAX_OPTIMIZER_RUNS && updated > 0);
 };
