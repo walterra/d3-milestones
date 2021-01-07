@@ -1,6 +1,10 @@
 ## [`master`](https://github.com/walterra/d3-milestones/tree/master)
 
-No public interface changes since `v1.0.0-beta2`.
+No public interface changes since `v1.0.0`.
+
+## [`v1.0.0`](https://github.com/walterra/d3-milestones/tree/v1.0.0)
+
+- Layout optimizations ([#16](https://github.com/walterra/d3-milestones/issues/16))
 
 ## [`v1.0.0-beta2`](https://github.com/walterra/d3-milestones/tree/v1.0.0-beta2)
 
