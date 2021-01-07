@@ -18,6 +18,13 @@ const getParentElement = (domElement) =>
     return this.parentNode;
   });
 
+const isSameDistribution = (index, nextCheck, overlapCheckIndex) => {
+  const itemRowCheck = index % nextCheck;
+  const distributionCheck = (overlapCheckIndex + itemRowCheck) % nextCheck;
+
+  return distributionCheck !== 0;
+};
+
 export const optimize = (
   aggregateFormatParse,
   distribution,
@@ -145,7 +152,6 @@ export const optimize = (
                 : previousGroupHeight;
               const check = useNext ? nextCheck : nextCheck * -1;
 
-              updated++;
               domElement.style(padding, groupHeight + 'px');
 
               getParentElement(domElement).classed(cssLastClass, !useNext);
@@ -187,33 +193,32 @@ export const optimize = (
             'width'
           );
           if (innerWidth < availableWidth) {
-            availableWidth = innerWidth + 10;
+            availableWidth = innerWidth + 6;
             domElement.style(widthAttribute, availableWidth + 'px');
           }
 
-          if (optimizerRuns > 0 && backwards && orientation === 'horizontal') {
+          if (optimizerRuns > 0 && orientation === 'horizontal') {
             const itemWidth = getIntValueFromPxAttribute(domElement, 'width');
-            const leftOffset = offset - itemWidth;
+            const checkOffset = backwards
+              ? offset - itemWidth
+              : offset + itemWidth;
+
+            let minPadding = Number.POSITIVE_INFINITY;
 
             nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
-              const itemRowCheck = index % nextCheck;
-              const distributionCheck =
-                (overlapCheckIndex + itemRowCheck) % nextCheck;
-
               const overlapCheckItem = dom
                 .selectAll(overlapCheckNode)
                 .data()[0];
 
               if (
                 overlapCheckItem.key === item.key ||
-                distributionCheck !== 0
+                isSameDistribution(index, nextCheck, overlapCheckIndex)
               ) {
                 return;
               }
 
-              let overlapCheckOffset = x(
-                aggregateFormatParse(overlapCheckItem.key)
-              );
+              let overlapCheckOffset =
+                x(aggregateFormatParse(overlapCheckItem.key)) - 5;
               const overlapItemOffsetAnchor = overlapCheckOffset;
               const overlapCheckDomElement = dom.selectAll(
                 nodes[overlapCheckIndex]
@@ -222,7 +227,7 @@ export const optimize = (
                 overlapCheckDomElement
               ).classed(cssLastClass);
 
-              if (!overlapCheckBackwards) {
+              if (backwards && !overlapCheckBackwards) {
                 const overlapCheckItemWidth = getIntValueFromPxAttribute(
                   overlapCheckDomElement,
                   'width'
@@ -231,10 +236,24 @@ export const optimize = (
                   overlapCheckOffset + overlapCheckItemWidth + 5;
               }
 
-              if (
-                overlapCheckOffset > leftOffset &&
-                overlapItemOffsetAnchor < offset
-              ) {
+              if (!backwards && overlapCheckBackwards) {
+                const overlapCheckItemWidth = getIntValueFromPxAttribute(
+                  overlapCheckDomElement,
+                  'width'
+                );
+                overlapCheckOffset =
+                  overlapCheckOffset - overlapCheckItemWidth - 5;
+              }
+
+              const overlapCheck1 = backwards
+                ? overlapCheckOffset > checkOffset
+                : checkOffset > overlapItemOffsetAnchor;
+
+              const overlapCheck2 = backwards
+                ? overlapItemOffsetAnchor < offset
+                : overlapItemOffsetAnchor > offset;
+
+              if (overlapCheck1 && overlapCheck2) {
                 const overlapCheckHeight = overlapCheckNode[0][offsetAttribute];
                 const itemPadding = getIntValueFromPxAttribute(
                   domElement,
@@ -245,7 +264,9 @@ export const optimize = (
                   // offsetComparator
                   // find out if there's enough place to get rid of overlap
                   // by adjusted the items width
-                  const checkWidth = overlapCheckOffset - leftOffset;
+                  const checkWidth = backwards
+                    ? overlapCheckOffset - checkOffset
+                    : checkOffset - overlapItemOffsetAnchor;
                   const currentWidth = getIntValueFromPxAttribute(
                     domElement,
                     widthAttribute
@@ -262,109 +283,34 @@ export const optimize = (
                 }
               }
             });
-          }
-        }
 
-        if (optimizerRuns > 0 && !backwards && orientation === 'horizontal') {
-          const itemWidth = getIntValueFromPxAttribute(domElement, 'width');
-          const rightOffset = offset + itemWidth;
+            // The optimizer might push all labels too far up. If all labels
+            // have a minimum padding of more than 0, we'll shrink all offsets
+            // back so the label with the smallest padding ends up directly
+            // at the timeline.
+            if (minPadding > 0) {
+              nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
+                const itemRowCheck = index % nextCheck;
+                const distributionCheck =
+                  (overlapCheckIndex + itemRowCheck) % nextCheck;
 
-          let minPadding = Number.POSITIVE_INFINITY;
-
-          nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
-            const itemRowCheck = index % nextCheck;
-            const distributionCheck =
-              (overlapCheckIndex + itemRowCheck) % nextCheck;
-
-            const overlapCheckItem = dom.selectAll(overlapCheckNode).data()[0];
-
-            if (overlapCheckItem.key === item.key || distributionCheck !== 0) {
-              return;
-            }
-
-            let overlapCheckOffset = x(
-              aggregateFormatParse(overlapCheckItem.key)
-            );
-            const overlapItemOffsetAnchor = overlapCheckOffset;
-            const overlapCheckDomElement = dom.selectAll(
-              nodes[overlapCheckIndex]
-            );
-            const overlapCheckBackwards = getParentElement(
-              overlapCheckDomElement
-            ).classed(cssLastClass);
-
-            const overlapCheckItemPadding = getIntValueFromPxAttribute(
-              overlapCheckDomElement,
-              padding
-            );
-            minPadding = Math.min(minPadding, overlapCheckItemPadding);
-
-            if (overlapCheckBackwards) {
-              const overlapCheckItemWidth = getIntValueFromPxAttribute(
-                overlapCheckDomElement,
-                'width'
-              );
-              overlapCheckOffset =
-                overlapCheckOffset - overlapCheckItemWidth - 5;
-            }
-
-            if (
-              rightOffset > overlapItemOffsetAnchor &&
-              overlapItemOffsetAnchor > offset
-            ) {
-              const overlapCheckHeight = overlapCheckNode[0][offsetAttribute];
-              const itemPadding = getIntValueFromPxAttribute(
-                domElement,
-                padding
-              );
-
-              if (itemPadding < overlapCheckHeight) {
-                // offsetComparator
-                // find out if there's enough place to get rid of overlap
-                // by adjusted the items width
-                const checkWidth = rightOffset - overlapItemOffsetAnchor + 10;
-                const currentWidth = getIntValueFromPxAttribute(
-                  domElement,
-                  widthAttribute
-                );
-                const reducedWidth = currentWidth - checkWidth;
-
-                if (reducedWidth > offsetComparator) {
-                  domElement.style(widthAttribute, reducedWidth + 'px');
-                } else {
-                  getParentElement(domElement).classed(cssLastClass, true);
+                if (distributionCheck !== 0) {
+                  return;
                 }
-                updated++;
-              }
+
+                const overlapCheckDomElement = dom.selectAll(
+                  nodes[overlapCheckIndex]
+                );
+                const itemPadding = getIntValueFromPxAttribute(
+                  overlapCheckDomElement,
+                  padding
+                );
+                overlapCheckDomElement.style(
+                  padding,
+                  `${itemPadding - minPadding}px`
+                );
+              });
             }
-          });
-
-          // The optimizer might push all labels too far up. If all labels
-          // have a minimum padding of more than 0, we'll shrink all offsets
-          // back so the label with the smallest padding ends up directly
-          // at the timeline.
-          if (minPadding > 0) {
-            nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
-              const itemRowCheck = index % nextCheck;
-              const distributionCheck =
-                (overlapCheckIndex + itemRowCheck) % nextCheck;
-
-              if (distributionCheck !== 0) {
-                return;
-              }
-
-              const overlapCheckDomElement = dom.selectAll(
-                nodes[overlapCheckIndex]
-              );
-              const itemPadding = getIntValueFromPxAttribute(
-                overlapCheckDomElement,
-                padding
-              );
-              overlapCheckDomElement.style(
-                padding,
-                `${itemPadding - minPadding}px`
-              );
-            });
           }
         }
       });
