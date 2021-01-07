@@ -5,5 +5,5 @@ export function isAbove(i, distribution) {
   } else if (distribution === 'bottom') {
     above = false;
   }
-  return above;
+  return above > 0;
 }
