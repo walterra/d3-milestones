@@ -1,23 +1,23 @@
-const buble = require('rollup-plugin-buble');
+const buble = require('@rollup/plugin-buble');
 const tapSpec = require('tap-spec');
 const eslint = require('@rollup/plugin-eslint');
-const nodeResolve = require('rollup-plugin-node-resolve');
+const { nodeResolve } = require('@rollup/plugin-node-resolve');
 
 module.exports = (config) => {
   const configuration = {
     autoWatch: false,
     // client: { captureConsole: false },
-    browsers: [ 'Chrome' ],
+    browsers: ['Chrome'],
     browserConsoleLogOptions: {
       level: 'error',
       format: '%b %T: %m',
-      terminal: false
+      terminal: false,
     },
     colors: true,
     files: [
       'build/d3-milestones.css',
       'build/tape.js',
-      { pattern: 'test/*-test.js', watched: false }
+      { pattern: 'test/*-test.js', watched: false },
     ],
     frameworks: ['tap'],
     // logLevel: config.LOG_DEBUG,
@@ -26,10 +26,10 @@ module.exports = (config) => {
       'karma-rollup-preprocessor',
       'karma-tap',
       'karma-tap-pretty-reporter',
-      'karma-chrome-launcher'
+      'karma-chrome-launcher',
     ],
     preprocessors: {
-      'test/*-test.js': [ 'rollup' ]
+      'test/*-test.js': ['rollup'],
     },
     reporters: ['tap-pretty'],
     rollupPreprocessor: {
@@ -38,24 +38,22 @@ module.exports = (config) => {
       output: {
         format: 'iife',
         globals: {
-          'tape': 'tape'
+          tape: 'tape',
         },
-        sourcemap: 'inline'
+        sourcemap: 'inline',
       },
       plugins: [
         eslint({
-          exclude: [
-            'src/styles/**',
-          ]
+          exclude: ['src/styles/**'],
         }),
         nodeResolve(),
-        buble()
-      ]
+        buble(),
+      ],
     },
     singleRun: true,
     tapReporter: {
-      prettify: tapSpec
-    }
+      prettify: tapSpec,
+    },
   };
 
   if (process.env.TRAVIS) {
@@ -65,8 +63,8 @@ module.exports = (config) => {
     configuration.customLaunchers = {
       Chrome_travis_ci: {
         base: 'Chrome',
-        flags: ['--no-sandbox']
-      }
+        flags: ['--no-sandbox'],
+      },
     };
 
     // Continuous Integration mode

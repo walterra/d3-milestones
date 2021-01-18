@@ -1,6 +1,6 @@
-import buble from 'rollup-plugin-buble';
+import buble from '@rollup/plugin-buble';
 import eslint from '@rollup/plugin-eslint';
-import nodeResolve from 'rollup-plugin-node-resolve';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 export default {
   input: 'src/main.js',
@@ -9,15 +9,13 @@ export default {
     format: 'umd',
     name: 'milestones',
     sourcemap: true,
-    sourcemapFile: 'build/d3-milestones.js'
+    sourcemapFile: 'build/d3-milestones.js',
   },
   plugins: [
     eslint({
-      exclude: [
-        'src/styles/**',
-      ]
+      exclude: ['src/styles/**'],
     }),
     nodeResolve(),
-    buble()
-  ]
+    buble(),
+  ],
 };
