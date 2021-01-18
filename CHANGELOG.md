@@ -1,6 +1,10 @@
 ## [`master`](https://github.com/walterra/d3-milestones/tree/master)
 
-No public interface changes since `v1.0.0`.
+No public interface changes since `v1.0.1`.
+
+## [`v1.0.1`](https://github.com/walterra/d3-milestones/tree/v1.0.1)
+
+- Fix build setup to no longer require `npx-force-resolutions` ([#27](https://github.com/walterra/d3-milestones/issues/27))
 
 ## [`v1.0.0`](https://github.com/walterra/d3-milestones/tree/v1.0.0)
 
