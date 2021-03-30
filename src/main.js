@@ -373,7 +373,8 @@ export default function milestones(selector) {
                 .append('a')
                 .classed('milestones-label', true)
                 .classed('milestones-link-label', true)
-                .attr('href', v[mapping.url]);
+                .attr('href', v[mapping.url])
+                .text(t);
             } else {
               item = element
                 .append('span')
