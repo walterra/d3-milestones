@@ -53,7 +53,7 @@ export default function milestones(selector) {
     entries: undefined,
     timestamp: 'timestamp',
     text: 'text',
-    url: undefined,
+    url: 'url',
   };
   function assignMapping(d) {
     mapping = Object.assign(mapping, d);
