@@ -53,6 +53,7 @@ export default function milestones(selector) {
     entries: undefined,
     timestamp: 'timestamp',
     text: 'text',
+    url: 'url',
   };
   function assignMapping(d) {
     mapping = Object.assign(mapping, d);
@@ -367,6 +368,13 @@ export default function milestones(selector) {
                 .classed('milestones-image-label', true)
                 .attr('height', '100')
                 .attr('src', t);
+            } else if (v[mapping.url]) {
+              item = element
+                .append('a')
+                .classed('milestones-label', true)
+                .classed('milestones-link-label', true)
+                .attr('href', v[mapping.url])
+                .text(t);
             } else {
               item = element
                 .append('span')
