@@ -10,7 +10,11 @@ tape('should render a minimal milestones chart', (t) => {
 
   const data = [
     { timestamp: '2012-09-09T00:00', detail: 'v1.0.0' },
-    { timestamp: '2012-09-10T00:00', detail: 'v1.0.1' },
+    {
+      timestamp: '2012-09-10T00:00',
+      detail: 'v1.0.1',
+      url: 'http://example.com',
+    },
     { timestamp: '2012-09-12T00:00', detail: 'v1.1.0' },
   ];
 
@@ -25,7 +29,7 @@ tape('should render a minimal milestones chart', (t) => {
     .optimize(true)
     .render(data);
 
-  t.plan(3);
+  t.plan(4);
 
   t.false(
     d3.select('#wrapper_milestones .milestones').empty(),
@@ -41,6 +45,11 @@ tape('should render a minimal milestones chart', (t) => {
     d3.selectAll('#wrapper_milestones .milestones .milestones__group').size(),
     3,
     'should render 3 .milestones__group elements'
+  );
+  t.equal(
+    d3.selectAll('#wrapper_milestones .milestones .milestones__group a').size(),
+    1,
+    'should render 1 link'
   );
 
   t.end();
