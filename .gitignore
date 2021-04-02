@@ -7,4 +7,3 @@ npm-debug.log
 .vscode
 .source.*.html
 build/
-.tool-versions
