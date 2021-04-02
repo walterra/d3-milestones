@@ -83,7 +83,8 @@ Sets overrides for the default attributes for the expected data structure of an 
     category: undefined,
     entries: undefined,
     timestamp: 'timestamp',
-    text: 'text'
+    text: 'text',
+    url: 'url'
   };
 ```
 
