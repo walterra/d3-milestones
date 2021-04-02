@@ -1,6 +1,10 @@
 ## [`master`](https://github.com/walterra/d3-milestones/tree/master)
 
-No public interface changes since `v1.0.1`.
+No public interface changes since `v1.1.0`.
+
+## [`v1.1.0`](https://github.com/walterra/d3-milestones/tree/v1.1.0)
+
+- Support for labels to be displayed as links ([#31](https://github.com/walterra/d3-milestones/issues/31))
 
 ## [`v1.0.1`](https://github.com/walterra/d3-milestones/tree/v1.0.1)
 
