@@ -88,8 +88,10 @@
     "elliptic": "6.5.4",
     "glob-parent": "5.1.2",
     "lodash": "4.17.21",
+    "minimist": ">=0.2.1",
+    "normalize-url": "4.5.1",
     "trim": "0.0.3",
-    "ua-parser-js": "0.7.24",
+    "ua-parser-js": ">=0.7.24",
     "ws": ">=7.4.6"
   },
   "jest": {
