@@ -58,6 +58,7 @@
     "tap-spec": "^5.0.0",
     "tape": "^4.13.3",
     "tape-run": "^9.0.0",
+    "trim": "0.0.3",
     "uglify-js": "^3.9.3"
   },
   "scripts": {
@@ -85,7 +86,8 @@
   },
   "resolutions": {
     "elliptic": "6.5.4",
-    "lodash": "4.17.21"
+    "lodash": "4.17.21",
+    "trim": "0.0.3"
   },
   "jest": {
     "transform": {
