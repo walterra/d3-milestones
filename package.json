@@ -57,7 +57,7 @@
     "serve": "^11.3.2",
     "tap-spec": "^5.0.0",
     "tape": "^4.13.3",
-    "tape-run": "^8.0.0",
+    "tape-run": "^9.0.0",
     "uglify-js": "^3.9.3"
   },
   "scripts": {
