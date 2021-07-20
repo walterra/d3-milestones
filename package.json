@@ -83,7 +83,9 @@
       "extensions": "less"
     }
   },
-  "resolutions": {},
+  "resolutions": {
+    "elliptic": "6.5.4"
+  },
   "jest": {
     "transform": {
       "^.+\\.jsx?$": "buble-jest"
