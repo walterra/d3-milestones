@@ -87,17 +87,17 @@ export const optimize = (
           ? paddingAbove
           : paddingBelow;
 
-        // Because on a resize a previous optimization could already have
-        // repositioned items, we reset them on the first optimizer run
-        if (optimizerRuns === 0) {
-          backwards = false;
-          domElement.style(padding, '0px');
-          getParentElement(domElement).classed(cssLastClass, backwards);
-        }
-
         const overflow = backwards
           ? offset - offsetCheck < 0
           : offset + offsetCheck > width;
+
+        // Because on a resize a previous optimization could already have
+        // repositioned items, we reset them on the first optimizer run
+        if (optimizerRuns === 0) {
+          backwards = overflow;
+          domElement.style(padding, '0px');
+          getParentElement(domElement).classed(cssLastClass, backwards);
+        }
 
         if (
           currentNode[scrollCheckAttribute] > offsetCheck ||
@@ -203,8 +203,6 @@ export const optimize = (
               ? offset - itemWidth
               : offset + itemWidth;
 
-            let minPadding = Number.POSITIVE_INFINITY;
-
             nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
               const overlapCheckItem = dom
                 .selectAll(overlapCheckNode)
@@ -288,6 +286,31 @@ export const optimize = (
             // have a minimum padding of more than 0, we'll shrink all offsets
             // back so the label with the smallest padding ends up directly
             // at the timeline.
+
+            let minPadding = Number.POSITIVE_INFINITY;
+            nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
+              const checkSameOrientation = isAbove(
+                overlapCheckIndex,
+                distribution
+              )
+                ? paddingAbove
+                : paddingBelow;
+
+              if (checkSameOrientation !== padding) {
+                return;
+              }
+
+              const overlapCheckDomElement = dom.selectAll(
+                nodes[overlapCheckIndex]
+              );
+
+              const itemPadding = getIntValueFromPxAttribute(
+                overlapCheckDomElement,
+                padding
+              );
+              minPadding = Math.min(minPadding, itemPadding);
+            });
+
             if (minPadding > 0) {
               nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
                 const itemRowCheck = index % nextCheck;
