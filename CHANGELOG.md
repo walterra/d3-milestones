@@ -1,4 +1,4 @@
-## [`master`](https://github.com/walterra/d3-milestones/tree/master)
+## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
 No public interface changes since `v1.1.0`.
 
