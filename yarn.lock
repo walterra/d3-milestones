@@ -6600,10 +6600,10 @@ table@^6.0.4:
     slice-ansi "^4.0.0"
     string-width "^4.2.0"
 
-tap-out@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/tap-out/-/tap-out-2.1.0.tgz#c093079a915036de8b835bfa3297f14458b15358"
-  integrity sha512-LJE+TBoVbOWhwdz4+FQk40nmbIuxJLqaGvj3WauQw3NYYU5TdjoV3C0x/yq37YAvVyi+oeBXmWnxWSjJ7IEyUw==
+tap-out@3.0.0, tap-out@^2.1.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/tap-out/-/tap-out-3.0.0.tgz#2edd86498cb1c0d7f33293d5717f9a44d939186d"
+  integrity sha512-JzlrjCL3anqI9xHGPfYb6Mo+6nYs60m0tDy6i0sWhYDlrBDVerYPNWoUo1buK3YeWQFdm42KQv8wu9qLf1tL5A==
   dependencies:
     re-emitter "1.1.3"
     readable-stream "2.2.9"
