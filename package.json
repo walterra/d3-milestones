@@ -33,6 +33,7 @@
     "d3-time-format": "^2.0.5"
   },
   "devDependencies": {
+    "@babel/plugin-transform-modules-commonjs": "^7.15.0",
     "@rollup/plugin-buble": "^0.21.3",
     "@rollup/plugin-eslint": "^8.0.1",
     "@rollup/plugin-node-resolve": "^11.1.0",
@@ -90,7 +91,6 @@
     "lodash": "4.17.21",
     "minimist": ">=0.2.1",
     "normalize-url": "4.5.1",
-    "trim": "0.0.3",
     "ua-parser-js": ">=0.7.24",
     "ws": ">=7.4.6"
   },
