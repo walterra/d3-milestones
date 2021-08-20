@@ -59,7 +59,6 @@
     "tap-spec": "^5.0.0",
     "tape": "^4.13.3",
     "tape-run": "^9.0.0",
-    "trim": "0.0.3",
     "uglify-js": "^3.9.3"
   },
   "scripts": {
@@ -92,6 +91,7 @@
     "minimist": ">=0.2.1",
     "normalize-url": "4.5.1",
     "tap-out": "3.0.0",
+    "trim": "0.0.3",
     "ua-parser-js": ">=0.7.24",
     "ws": ">=7.4.6"
   },
