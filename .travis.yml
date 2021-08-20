@@ -13,6 +13,6 @@ addons:
   chrome: stable
 
 script:
-  - npm run lint
-  - npm run build
-  - npm test
+  - yarn lint
+  - yarn build
+  - yarn test

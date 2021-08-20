@@ -13,7 +13,7 @@ If you're using `d3-milestones` out in the wild I'd love to see what you came up
 
 ## Installing
 
-To use it via NPM, use `npm install d3-milestones`.
+`yarn add d3-milestones`.
 
 The most quick way to get going is to use `unpkg.com` as a CDN to include the library directly into your HTML file.
 
@@ -48,8 +48,8 @@ Head over here to see this example in action: https://beta.observablehq.com/@wal
 There are more examples included in the github repository. These examples should give you an idea how to work with the library.
 
 - clone the repository and from within its directory run the following commands:
-- `npm install` should fetch all required dependencies and create the build files.
-- `npm start` spins up a web server. It will output the host/ip you should head your browser to, e.g.:
+- `yarn` should fetch all required dependencies and create the build files.
+- `yarn start` spins up a web server. It will output the host/ip you should head your browser to, e.g.:
   - http://localhost:8080/example/milestones.html
   - http://localhost:8080/example/vikings.html
   - http://localhost:8080/example/os_category-labels.html
