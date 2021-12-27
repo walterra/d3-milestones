@@ -5,12 +5,6 @@ object-assign
 */
 
 /*!
-  Copyright (c) 2017 Jed Watson.
-  Licensed under the MIT License (MIT), see
-  http://jedwatson.github.io/classnames
-*/
-
-/*!
  * Fuse.js v3.6.1 - Lightweight fuzzy-search (http://fusejs.io)
  * 
  * Copyright (c) 2012-2017 Kirollos Risk (http://kiro.me)
@@ -43,7 +37,7 @@ object-assign
  */
 
 /**
- * React Router DOM v6.0.2
+ * React Router DOM v6.2.1
  *
  * Copyright (c) Remix Software Inc.
  *
@@ -54,7 +48,7 @@ object-assign
  */
 
 /**
- * React Router v6.0.2
+ * React Router v6.2.1
  *
  * Copyright (c) Remix Software Inc.
  *
@@ -100,7 +94,7 @@ object-assign
  * LICENSE file in the root directory of this source tree.
  */
 
-/** @license React v17.0.1
+/** @license React v17.0.2
  * react-is.production.min.js
  *
  * Copyright (c) Facebook, Inc. and its affiliates.
