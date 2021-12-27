@@ -1,4 +1,6 @@
 import '../styles/styles.less';
+import './example_styles.less';
+
 import milestones from '../main';
 
 const DIV_ID = 'timeline';
@@ -8,6 +10,7 @@ let iteration = 0;
 export const createMilestones = ({
   data,
   distribution,
+  mapping,
   optimize,
   orientation,
 }) => {
@@ -15,13 +18,11 @@ export const createMilestones = ({
 
   iteration++;
   div.id = `${DIV_ID}-${iteration}`;
+  div.className = 'timeline';
 
   function render() {
     var timeline = milestones(`#${DIV_ID}-${iteration}`)
-      .mapping({
-        timestamp: 'year',
-        text: 'title',
-      })
+      .mapping(mapping)
       .parseTime('%Y')
       .aggregateBy('year');
 
