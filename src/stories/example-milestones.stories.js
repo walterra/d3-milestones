@@ -1,5 +1,5 @@
 import { createMilestones } from './milestones';
-import { os as osData } from './data-os-category-labels';
+import { data as milestonesData } from './data-milestones';
 
 export default {
   title: 'd3-milestones',
@@ -15,6 +15,22 @@ export default {
       options: ['horizontal', 'vertical'],
       control: { type: 'radio' },
     },
+    aggregateBy: {
+      options: [
+        'second',
+        'minute',
+        'hour',
+        'day',
+        'week',
+        'month',
+        'quarter',
+        'year',
+      ],
+      control: { type: 'select' },
+    },
+    parseTime: {
+      control: { type: 'text' },
+    },
     mapping: {
       control: { type: 'object' },
     },
@@ -26,16 +42,17 @@ export default {
 
 const Template = (args) => createMilestones(args);
 
-export const OsCategoryLabels = Template.bind({});
-OsCategoryLabels.args = {
+export const Milestones = Template.bind({});
+Milestones.args = {
   optimize: true,
+  aggregateBy: 'day',
   distribution: 'top-bottom',
   orientation: 'horizontal',
+  parseTime: '%Y-%m-%dT%H:%M',
   mapping: {
-    category: 'system',
-    entries: 'versions',
-    timestamp: 'year',
-    text: 'title',
+    timestamp: 'timestamp',
+    text: 'detail',
+    url: 'giturl',
   },
-  data: osData,
+  data: milestonesData,
 };

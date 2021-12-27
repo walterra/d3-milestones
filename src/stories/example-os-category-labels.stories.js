@@ -1,5 +1,5 @@
 import { createMilestones } from './milestones';
-import { data as dataVikings } from './data-vikings';
+import { os as osData } from './data-os-category-labels';
 
 export default {
   title: 'd3-milestones',
@@ -15,6 +15,13 @@ export default {
       options: ['horizontal', 'vertical'],
       control: { type: 'radio' },
     },
+    aggregateBy: {
+      options: ['year'],
+      control: { type: 'select' },
+    },
+    parseTime: {
+      control: { type: 'text' },
+    },
     mapping: {
       control: { type: 'object' },
     },
@@ -26,14 +33,18 @@ export default {
 
 const Template = (args) => createMilestones(args);
 
-export const Vikings = Template.bind({});
-Vikings.args = {
+export const OsCategoryLabels = Template.bind({});
+OsCategoryLabels.args = {
   optimize: true,
+  aggregateBy: 'year',
   distribution: 'top-bottom',
   orientation: 'horizontal',
+  parseTime: '%Y',
   mapping: {
+    category: 'system',
+    entries: 'versions',
     timestamp: 'year',
     text: 'title',
   },
-  data: dataVikings,
+  data: osData,
 };
