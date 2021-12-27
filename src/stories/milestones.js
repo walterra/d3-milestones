@@ -13,22 +13,22 @@ export const createMilestones = ({
   distribution,
   mapping,
   optimize,
+  onEventClick,
+  onEventMouseOver,
+  onEventMouseLeave,
   orientation,
   parseTime,
 }) => {
-  const div = document.createElement('div');
-
   iteration++;
-  div.id = `${DIV_ID}-${iteration}`;
-  div.className = 'timeline';
 
   function render() {
-    var timeline = milestones(`#${DIV_ID}-${iteration}`)
+    milestones(`#${DIV_ID}-${iteration}`)
       .mapping(mapping)
       .parseTime(parseTime)
-      .aggregateBy(aggregateBy);
-
-    timeline
+      .aggregateBy(aggregateBy)
+      .onEventClick(onEventClick)
+      .onEventMouseOver(onEventMouseOver)
+      .onEventMouseLeave(onEventMouseLeave)
       .optimize(optimize)
       .orientation(orientation)
       .distribution(distribution)
@@ -45,5 +45,8 @@ export const createMilestones = ({
   }
   checkElement();
 
+  const div = document.createElement('div');
+  div.id = `${DIV_ID}-${iteration}`;
+  div.className = 'timeline';
   return div;
 };
