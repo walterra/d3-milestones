@@ -7,7 +7,7 @@
 
 A d3 based timeline visualization.
 
-![The Viking Timeline](src/stories/assets/vikings.png)
+![The Viking Timeline](https://github.com/walterra/d3-milestones/raw/main/src/stories/assets/vikings.png)
 
 If you're using `d3-milestones` out in the wild I'd love to see what you came up with, just ping me on [twitter.com/walterra](https://www.twitter.com/walterra).
 
@@ -45,14 +45,10 @@ Head over here to see this example in action: https://beta.observablehq.com/@wal
 
 ## Examples
 
-There are more examples included in the github repository. These examples should give you an idea how to work with the library.
+Examples are included using storybook:
 
-- clone the repository and from within its directory run the following commands:
-- `yarn` should fetch all required dependencies and create the build files.
-- `yarn start` spins up a web server. It will output the host/ip you should head your browser to, e.g.:
-  - http://localhost:8080/example/milestones.html
-  - http://localhost:8080/example/vikings.html
-  - http://localhost:8080/example/os_category-labels.html
+- [Vikings Timeline](https://walterra.github.io/d3-milestones/?path=/story/d3-milestones--vikings)
+- [Windows/macOS Timeline](https://walterra.github.io/d3-milestones/?path=/story/d3-milestones--os-category-labels)
 
 ## API Reference
 
