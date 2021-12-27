@@ -42,8 +42,8 @@ export default {
 
 const Template = (args) => createMilestones(args);
 
-export const Milestones = Template.bind({});
-Milestones.args = {
+export const MilestonesReleases = Template.bind({});
+MilestonesReleases.args = {
   optimize: true,
   aggregateBy: 'day',
   distribution: 'top-bottom',
