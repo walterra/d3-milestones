@@ -9,17 +9,14 @@ let iteration = 0;
 export const argTypes = {
   optimize: {
     control: { type: 'boolean' },
-    defaultValue: true,
   },
   distribution: {
     options: ['top-bottom', 'top', 'bottom'],
     control: { type: 'radio' },
-    defaultValue: 'top-bottom',
   },
   orientation: {
     options: ['horizontal', 'vertical'],
     control: { type: 'radio' },
-    defaultValue: 'horizontal',
   },
   aggregateBy: {
     options: [
@@ -33,11 +30,9 @@ export const argTypes = {
       'year',
     ],
     control: { type: 'select' },
-    defaultValue: 'year',
   },
   parseTime: {
     control: { type: 'text' },
-    defaultValue: '%Y',
   },
   mapping: {
     control: { type: 'object' },
@@ -70,7 +65,6 @@ export const createMilestones = (
   const divId = `${DIV_ID}-${iteration}`;
 
   function render() {
-    console.log('render', divId, data);
     milestones(`#${divId}`)
       .mapping(mapping)
       .parseTime(parseTime)
