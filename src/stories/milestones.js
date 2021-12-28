@@ -3,8 +3,6 @@ import './example-styles.less';
 
 import milestones from '../main';
 
-const DIV_ID = 'timeline';
-
 // used to increment the wrapping DIV's id.
 let iteration = 0;
 
@@ -63,13 +61,16 @@ export const createMilestones = (
     onEventMouseLeave,
     orientation,
     parseTime,
-  }
+  },
+  DIV_ID = 'timeline',
+  style = ''
 ) => {
   iteration++;
 
   const divId = `${DIV_ID}-${iteration}`;
 
   function render() {
+    console.log('render', divId, data);
     milestones(`#${divId}`)
       .mapping(mapping)
       .parseTime(parseTime)
@@ -95,11 +96,17 @@ export const createMilestones = (
 
   checkElement();
 
+  const timeline = `<div id="${divId}" class="timeline" style="${style}"></div>`;
+
+  if (!title && !description) {
+    return timeline;
+  }
+
   return `
-<div class="d3Milestones">
-  <h2>${title}</h2>
-  ${description ? `<p>${description}</p>` : ''}
-  <div id="${divId}" class="timeline"></div>
-</div>
+    <div class="d3Milestones">
+      ${title ? `<h2>${title}</h2>` : ''}
+      ${description ? `<p>${description}</p>` : ''}
+      ${timeline}
+    </div>
   `;
 };
