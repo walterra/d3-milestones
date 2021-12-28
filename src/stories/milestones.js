@@ -49,18 +49,22 @@ export const argTypes = {
   },
 };
 
-export const createMilestones = ({
-  aggregateBy,
-  data,
-  distribution,
-  mapping,
-  optimize,
-  onEventClick,
-  onEventMouseOver,
-  onEventMouseLeave,
-  orientation,
-  parseTime,
-}) => {
+export const createMilestones = (
+  title,
+  description,
+  {
+    aggregateBy,
+    data,
+    distribution,
+    mapping,
+    optimize,
+    onEventClick,
+    onEventMouseOver,
+    onEventMouseLeave,
+    orientation,
+    parseTime,
+  }
+) => {
   iteration++;
 
   const divId = `${DIV_ID}-${iteration}`;
@@ -91,5 +95,11 @@ export const createMilestones = ({
 
   checkElement();
 
-  return `<div id="${divId}"></div>`;
+  return `
+<div class="d3Milestones">
+  <h2>${title}</h2>
+  ${description ? `<p>${description}</p>` : ''}
+  <div id="${divId}" class="timeline"></div>
+</div>
+  `;
 };

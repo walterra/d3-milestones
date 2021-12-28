@@ -6,7 +6,8 @@ export default {
   argTypes,
 };
 
-const Template = (args) => createMilestones(args);
+const Template = (args) =>
+  createMilestones('Windows / Mac OS Timelines with Labels', undefined, args);
 
 export const OsCategoryLabels = Template.bind({});
 OsCategoryLabels.args = {

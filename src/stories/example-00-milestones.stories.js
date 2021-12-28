@@ -6,7 +6,12 @@ export default {
   argTypes,
 };
 
-const Template = (args) => createMilestones(args);
+const Template = (args) =>
+  createMilestones(
+    'Version Milestones',
+    `The chart is responsive, try resizing the browser window. Use the storybook's options to trigger examples of the chart's features`,
+    args
+  );
 
 export const MilestonesReleases = Template.bind({});
 MilestonesReleases.args = {

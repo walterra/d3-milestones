@@ -6,7 +6,8 @@ export default {
   argTypes,
 };
 
-const Template = (args) => createMilestones(args);
+const Template = (args) =>
+  createMilestones('The Viking Timeline', undefined, args);
 
 export const Vikings = Template.bind({});
 Vikings.args = {
