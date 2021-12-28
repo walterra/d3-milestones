@@ -5,7 +5,49 @@ import milestones from '../main';
 
 const DIV_ID = 'timeline';
 
+// used to increment the wrapping DIV's id.
 let iteration = 0;
+
+export const argTypes = {
+  optimize: {
+    control: { type: 'boolean' },
+    defaultValue: true,
+  },
+  distribution: {
+    options: ['top-bottom', 'top', 'bottom'],
+    control: { type: 'radio' },
+    defaultValue: 'top-bottom',
+  },
+  orientation: {
+    options: ['horizontal', 'vertical'],
+    control: { type: 'radio' },
+    defaultValue: 'horizontal',
+  },
+  aggregateBy: {
+    options: [
+      'second',
+      'minute',
+      'hour',
+      'day',
+      'week',
+      'month',
+      'quarter',
+      'year',
+    ],
+    control: { type: 'select' },
+    defaultValue: 'year',
+  },
+  parseTime: {
+    control: { type: 'text' },
+    defaultValue: '%Y',
+  },
+  mapping: {
+    control: { type: 'object' },
+  },
+  data: {
+    control: { type: 'object' },
+  },
+};
 
 export const createMilestones = ({
   aggregateBy,
@@ -21,8 +63,10 @@ export const createMilestones = ({
 }) => {
   iteration++;
 
+  const divId = `${DIV_ID}-${iteration}`;
+
   function render() {
-    milestones(`#${DIV_ID}-${iteration}`)
+    milestones(`#${divId}`)
       .mapping(mapping)
       .parseTime(parseTime)
       .aggregateBy(aggregateBy)
@@ -35,18 +79,17 @@ export const createMilestones = ({
       .render(data);
   }
 
+  // Wait until the wrapping DIV exists, only then render.
   function checkElement() {
-    const wrapper = document.getElementById(`${DIV_ID}-${iteration}`);
+    const wrapper = document.getElementById(divId);
     if (!wrapper) {
       window.setTimeout(checkElement, 100);
     } else {
       render();
     }
   }
+
   checkElement();
 
-  const div = document.createElement('div');
-  div.id = `${DIV_ID}-${iteration}`;
-  div.className = 'timeline';
-  return div;
+  return `<div id="${divId}"></div>`;
 };
