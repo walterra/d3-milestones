@@ -39,6 +39,7 @@ const Template = (args) =>
 export const MoviePosters = Template.bind({});
 MoviePosters.args = {
   optimize: true,
+  autoResize: true,
   aggregateBy: 'year',
   distribution: 'top-bottom',
   orientation: 'horizontal',

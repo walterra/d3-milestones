@@ -13,6 +13,7 @@ export const Vikings = Template.bind({});
 Vikings.args = {
   aggregateBy: 'year',
   optimize: true,
+  autoResize: true,
   distribution: 'top-bottom',
   orientation: 'horizontal',
   parseTime: '%Y',

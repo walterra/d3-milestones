@@ -97,6 +97,10 @@ The method allows you to override single or multiple attributes to map them to f
 
 Enables/Disables the label optimizer. When enabled, the optimizer attempts to avoid label overlap by vertically displacing labels.
 
+<a name="autoResize" href="#autoResize">#</a> vis.<b>autoResize</b>(<i>boolean</i>)
+
+Enables/Disables auto resizing. Enabled by default, this adds listeners to resizing events of the browser window.
+
 <a name="orientation" href="#orientation">#</a> vis.<b>orientation</b>(<i>string</i>)
 
 Sets the orientation of the timeline, can be either `horizontal` or `vertical`. Defaults to `horizontal`.

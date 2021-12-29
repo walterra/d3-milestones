@@ -36,6 +36,7 @@ const Template = (args) => {
 export const LordOfTheRings = Template.bind({});
 LordOfTheRings.args = {
   optimize: true,
+  autoResize: true,
   aggregateBy: 'day',
   distribution: 'top-bottom',
   orientation: 'horizontal',

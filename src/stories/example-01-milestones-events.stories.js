@@ -26,6 +26,7 @@ const Template = (args) =>
 export const EventsAPI = Template.bind({});
 EventsAPI.args = {
   optimize: true,
+  autoResize: true,
   aggregateBy: 'day',
   distribution: 'top-bottom',
   orientation: 'horizontal',

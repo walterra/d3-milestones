@@ -12,6 +12,7 @@ const Template = (args) =>
 export const OsCategoryLabels = Template.bind({});
 OsCategoryLabels.args = {
   optimize: true,
+  autoResize: true,
   aggregateBy: 'year',
   distribution: 'top-bottom',
   orientation: 'horizontal',

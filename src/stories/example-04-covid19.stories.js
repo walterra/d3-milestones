@@ -11,6 +11,7 @@ const Template = (args) => createMilestones('COVID19 Quotes', undefined, args);
 export const COVID19 = Template.bind({});
 COVID19.args = {
   optimize: true,
+  autoResize: true,
   aggregateBy: 'day',
   distribution: 'top-bottom',
   orientation: 'horizontal',

@@ -10,6 +10,9 @@ export const argTypes = {
   optimize: {
     control: { type: 'boolean' },
   },
+  autoResize: {
+    control: { type: 'boolean' },
+  },
   distribution: {
     options: ['top-bottom', 'top', 'bottom'],
     control: { type: 'radio' },
@@ -56,6 +59,7 @@ export const createMilestones = (
     onEventMouseLeave,
     orientation,
     parseTime,
+    autoResize,
   },
   DIV_ID = 'timeline',
   style = ''
@@ -75,6 +79,7 @@ export const createMilestones = (
       .optimize(optimize)
       .orientation(orientation)
       .distribution(distribution)
+      .autoResize(autoResize)
       .render(data);
   }
 

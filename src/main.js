@@ -125,9 +125,25 @@ export default function milestones(selector) {
     setLabelFormat(aggregateFormats[d]);
   }
 
-  window.addEventListener('resize', () =>
-    window.requestAnimationFrame(() => render())
-  );
+  const resizeHandler = () => {
+    if (dom.select(selector).node() !== null) {
+      window.requestAnimationFrame(() => {
+        render();
+      });
+    } else {
+      window.removeEventListener('resize', resizeHandler);
+    }
+  };
+
+  let autoResize = true;
+  function setAutoResize(d) {
+    autoResize = d;
+    if (autoResize) {
+      window.addEventListener('resize', resizeHandler);
+    } else {
+      window.removeEventListener('resize', resizeHandler);
+    }
+  }
 
   function render(data) {
     const widthAttribute = orientation === 'horizontal' ? 'width' : 'height';
@@ -480,6 +496,7 @@ export default function milestones(selector) {
     aggregateBy: setAggregateBy,
     mapping: assignMapping,
     optimize: setOptimizeLayout,
+    autoResize: setAutoResize,
     orientation: setOrientation,
     distribution: setDistribution,
     parseTime: setParseTime,
