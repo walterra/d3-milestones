@@ -9,6 +9,10 @@ A d3 based timeline visualization.
 
 ![The Viking Timeline](https://github.com/walterra/d3-milestones/raw/main/src/stories/assets/vikings.png)
 
+- NPM: https://www.npmjs.com/package/d3-milestones
+- Github: https://github.com/walterra/d3-milestones
+- Storybook demos: https://walterra.github.io/d3-milestones
+
 If you're using `d3-milestones` out in the wild I'd love to see what you came up with, just ping me on [twitter.com/walterra](https://www.twitter.com/walterra).
 
 ## Installing
