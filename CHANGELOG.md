@@ -1,6 +1,11 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
-No public interface changes since `v1.1.0`.
+No public interface changes since `v1.2.0`.
+
+## [`v1.2.0`](https://github.com/walterra/d3-milestones/tree/v1.2.0)
+
+- Expose `autoResize` as an option. ([#46](https://github.com/walterra/d3-milestones/issues/46))
+- Fixes stale event listeners. ([#45](https://github.com/walterra/d3-milestones/issues/45))
 
 ## [`v1.1.0`](https://github.com/walterra/d3-milestones/tree/v1.1.0)
 
