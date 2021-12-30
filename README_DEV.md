@@ -1,3 +1,0 @@
-# d3-milestones development notes
-
-...

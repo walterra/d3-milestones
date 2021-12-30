@@ -13,3 +13,4 @@
   - `git push origin main`
   - `git push --tags`
   - `npm publish`
+  - Add version changelog to GitHub release https://github.com/walterra/d3-milestones/tags
