@@ -1,6 +1,10 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
-No public interface changes since `v1.2.0`.
+No public interface changes since `v1.2.1`.
+
+## [`v1.2.1`](https://github.com/walterra/d3-milestones/tree/v1.2.1)
+
+- Fix `autoResize` on load. Improved defaults handling. ([#47](https://github.com/walterra/d3-milestones/issues/47))
 
 ## [`v1.2.0`](https://github.com/walterra/d3-milestones/tree/v1.2.0)
 

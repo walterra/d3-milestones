@@ -110,4 +110,14 @@ export const data = [
     detail: 'v1.1.0',
     giturl: 'https://github.com/walterra/d3-milestones/releases/tag/v1.1.0',
   },
+  {
+    timestamp: '2021-12-29T00:00',
+    detail: 'v1.2.0',
+    giturl: 'https://github.com/walterra/d3-milestones/releases/tag/v1.2.0',
+  },
+  {
+    timestamp: '2021-12-30T00:00',
+    detail: 'v1.2.1',
+    giturl: 'https://github.com/walterra/d3-milestones/releases/tag/v1.2.1',
+  },
 ];
