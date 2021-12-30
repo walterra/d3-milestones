@@ -19,6 +19,7 @@ import {
   cssEventClass,
   cssEventHoverClass,
 } from './_css';
+import { DEFAULTS } from './_defaults';
 import { isAbove } from './_is_above';
 import { optimize as optimizeFn } from './_optimize';
 import { timeFormat } from './_time_format';
@@ -26,17 +27,17 @@ import { timeParse } from './_time_parse';
 import { transform } from './_transform';
 
 export default function milestones(selector) {
-  let distribution = 'top-bottom';
+  let distribution = DEFAULTS.DISTRIBUTION;
   function setDistribution(d) {
     distribution = d;
   }
 
-  let optimizeLayout = false;
+  let optimizeLayout = DEFAULTS.OPTIMIZE;
   function setOptimizeLayout(d) {
     optimizeLayout = d;
   }
 
-  let orientation = 'horizontal';
+  let orientation = DEFAULTS.ORIENTATION;
   function setOrientation(d) {
     orientation = d;
     // purge the DOM to avoid layout issues when switching orientation
@@ -48,22 +49,16 @@ export default function milestones(selector) {
     parseTime = timeParse(d);
   }
 
-  let mapping = {
-    category: undefined,
-    entries: undefined,
-    timestamp: 'timestamp',
-    text: 'text',
-    url: 'url',
-  };
+  let mapping = Object.assign({}, DEFAULTS.MAPPING);
   function assignMapping(d) {
-    mapping = Object.assign(mapping, d);
+    mapping = Object.assign({}, mapping, d);
   }
 
   let labelFormat;
   function setLabelFormat(d) {
     labelFormat = timeFormat(d);
   }
-  setLabelFormat('%Y-%m-%d %H:%M');
+  setLabelFormat(DEFAULTS.LABEL_FORMAT);
 
   let range;
   function setRange(d) {
@@ -76,7 +71,7 @@ export default function milestones(selector) {
   function setUseLabels(d) {
     useLabels = d;
   }
-  setUseLabels(true);
+  setUseLabels(DEFAULTS.USE_LABELS);
 
   // set callback for event mouseover
   let callBackMouseOver;
@@ -116,8 +111,8 @@ export default function milestones(selector) {
     return d;
   }
 
-  let aggregateFormat = timeFormat(aggregateFormats.minute);
-  let aggregateFormatParse = timeParse(aggregateFormats.minute);
+  let aggregateFormat = timeFormat(aggregateFormats[DEFAULTS.AGGREGATE_BY]);
+  let aggregateFormatParse = timeParse(aggregateFormats[DEFAULTS.AGGREGATE_BY]);
 
   function setAggregateBy(d) {
     aggregateFormat = timeFormat(aggregateFormats[d]);
@@ -135,7 +130,8 @@ export default function milestones(selector) {
     }
   };
 
-  let autoResize = true;
+  let autoResize = DEFAULTS.AUTO_RESIZE;
+  window.addEventListener('resize', resizeHandler);
   function setAutoResize(d) {
     autoResize = d;
     if (autoResize) {

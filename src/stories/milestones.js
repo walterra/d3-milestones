@@ -69,18 +69,20 @@ export const createMilestones = (
   const divId = `${DIV_ID}-${iteration}`;
 
   function render() {
-    milestones(`#${divId}`)
-      .mapping(mapping)
-      .parseTime(parseTime)
-      .aggregateBy(aggregateBy)
-      .onEventClick(onEventClick)
-      .onEventMouseOver(onEventMouseOver)
-      .onEventMouseLeave(onEventMouseLeave)
-      .optimize(optimize)
-      .orientation(orientation)
-      .distribution(distribution)
-      .autoResize(autoResize)
-      .render(data);
+    const m = milestones(`#${divId}`);
+
+    mapping && m.mapping(mapping);
+    aggregateBy && m.aggregateBy(aggregateBy);
+    distribution && m.distribution(distribution);
+    optimize && m.optimize(optimize);
+    onEventClick && m.onEventClick(onEventClick);
+    onEventMouseOver && m.onEventMouseOver(onEventMouseOver);
+    onEventMouseLeave && m.onEventMouseLeave(onEventMouseLeave);
+    orientation && m.orientation(orientation);
+    parseTime && m.parseTime(parseTime);
+    autoResize && m.autoResize(autoResize);
+
+    m.render(data);
   }
 
   // Wait until the wrapping DIV exists, only then render.

@@ -16,11 +16,7 @@ const Template = (args) =>
 export const MilestonesReleases = Template.bind({});
 MilestonesReleases.args = {
   optimize: true,
-  autoResize: true,
   aggregateBy: 'day',
-  distribution: 'top-bottom',
-  orientation: 'horizontal',
-  parseTime: '%Y-%m-%dT%H:%M',
   mapping: {
     timestamp: 'timestamp',
     text: 'detail',
