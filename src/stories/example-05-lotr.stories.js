@@ -1,5 +1,5 @@
 import { argTypes, createMilestones } from './milestones';
-import { data as lotrData } from './data-lotr';
+import data from './assets/lotr.json';
 
 export default {
   title: 'd3-milestones',
@@ -38,5 +38,5 @@ LordOfTheRings.args = {
   optimize: true,
   aggregateBy: 'day',
   parseTime: '%d.%m.%Y',
-  data: lotrData,
+  data,
 };

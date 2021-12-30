@@ -1,5 +1,5 @@
 import { argTypes, createMilestones } from './milestones';
-import { data as dataVikings } from './data-vikings';
+import data from './assets/vikings.json';
 
 export default {
   title: 'd3-milestones',
@@ -18,5 +18,5 @@ Vikings.args = {
     timestamp: 'year',
     text: 'title',
   },
-  data: dataVikings,
+  data,
 };

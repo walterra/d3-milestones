@@ -1,5 +1,5 @@
 import { argTypes, createMilestones } from './milestones';
-import { os as osData } from './data-os-category-labels';
+import data from './assets/os-category-labels.json';
 
 export default {
   title: 'd3-milestones',
@@ -20,5 +20,5 @@ OsCategoryLabels.args = {
     timestamp: 'year',
     text: 'title',
   },
-  data: osData,
+  data,
 };

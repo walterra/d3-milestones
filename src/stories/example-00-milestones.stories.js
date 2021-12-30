@@ -1,5 +1,5 @@
 import { argTypes, createMilestones } from './milestones';
-import { data as milestonesData } from './data-milestones';
+import data from './assets/milestones.json';
 
 export default {
   title: 'd3-milestones',
@@ -22,5 +22,5 @@ MilestonesReleases.args = {
     text: 'detail',
     url: 'giturl',
   },
-  data: milestonesData,
+  data,
 };

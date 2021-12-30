@@ -1,5 +1,5 @@
 import { argTypes, createMilestones } from './milestones';
-import { data as covid19Data } from './data-covid19';
+import data from './assets/covid19.json';
 
 export default {
   title: 'd3-milestones',
@@ -17,5 +17,5 @@ COVID19.args = {
     timestamp: 'date',
     text: 'title',
   },
-  data: covid19Data,
+  data,
 };

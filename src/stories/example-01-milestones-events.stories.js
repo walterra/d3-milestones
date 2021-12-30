@@ -1,5 +1,5 @@
 import { argTypes, createMilestones } from './milestones';
-import { data as milestonesDataEvents } from './data-milestones-events';
+import data from './assets/milestones-events.json';
 
 export default {
   title: 'd3-milestones',
@@ -31,5 +31,5 @@ EventsAPI.args = {
     timestamp: 'timestamp',
     text: 'detail',
   },
-  data: milestonesDataEvents,
+  data,
 };
