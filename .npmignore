@@ -12,3 +12,5 @@ example/
 test/
 karma.config.js
 rollup.config.js
+.storybook
+storybook-static
