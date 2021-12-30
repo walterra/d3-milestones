@@ -19,7 +19,7 @@ export const getNextGroupHeight = (
 
   const nextGroup = getNextGroup(orientation, nodes, index, nextCheck);
 
-  let nextGroupHeight;
+  let nextGroupHeight = 0;
 
   if (typeof nextGroup !== 'undefined') {
     nextGroupHeight = nextGroup[0][offsetAttribute] + defaultPadding;

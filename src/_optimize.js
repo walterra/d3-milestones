@@ -53,6 +53,8 @@ export const optimize = (
       nodes.forEach((node) => {
         const d = dom.selectAll(node).data()[0];
 
+        const offsetComparator = orientation === 'horizontal' ? 60 : 20;
+
         const index =
           orientation === 'horizontal' ? nodes.length - d.index - 1 : d.index;
 
@@ -60,19 +62,24 @@ export const optimize = (
         const offset = x(aggregateFormatParse(item.key));
         const currentNode = nodes[index][0];
 
+        let isLast = index === nodes.length - 1;
+        if (!isLast && distribution === 'top-bottom') {
+          isLast = index === nodes.length - 2 && width - offset < 60;
+        }
+
         const scrollCheckAttribute =
           orientation === 'horizontal' ? 'offsetWidth' : 'offsetHeight';
 
         const offsetCheckAttribute =
           orientation === 'horizontal' ? 'width' : 'height';
 
-        const offsetComparator = orientation === 'horizontal' ? 60 : 20;
-
         const offsetCheck = getAttribute(currentNode, offsetCheckAttribute);
 
         const domElement = dom.selectAll(nodes[index]);
 
-        let backwards = getParentElement(domElement).classed(cssLastClass);
+        let backwards = isLast
+          ? true
+          : getParentElement(domElement).classed(cssLastClass);
 
         const offsetAttribute =
           orientation === 'horizontal' ? 'offsetHeight' : 'offsetWidth';
@@ -94,7 +101,7 @@ export const optimize = (
         // Because on a resize a previous optimization could already have
         // repositioned items, we reset them on the first optimizer run
         if (optimizerRuns === 0) {
-          backwards = overflow;
+          backwards = isLast ? true : overflow;
           domElement.style(padding, '0px');
           getParentElement(domElement).classed(cssLastClass, backwards);
         }
@@ -139,17 +146,16 @@ export const optimize = (
                     )
                   : nextGroupHeight;
 
-              let useNext =
-                nextGroupHeight <= previousGroupHeight &&
-                nextGroupHeight !== undefined;
+              let useNext = nextGroupHeight <= previousGroupHeight && !isLast;
 
-              if (!useNext) {
+              if (!useNext && !isLast) {
                 useNext = offset < offsetComparator;
               }
 
-              const groupHeight = useNext
-                ? nextGroupHeight
-                : previousGroupHeight;
+              let groupHeight = useNext ? nextGroupHeight : previousGroupHeight;
+              if (isLast) {
+                groupHeight = 0;
+              }
               const check = useNext ? nextCheck : nextCheck * -1;
 
               domElement.style(padding, groupHeight + 'px');
