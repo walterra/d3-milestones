@@ -1,6 +1,10 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
-No public interface changes since `v1.2.2`.
+No public interface changes since `v1.3.0`.
+
+## [`v1.3.0`](https://github.com/walterra/d3-milestones/tree/v1.3.0)
+
+- Expose option `urlTarget` to be able to set the `target` attribute when labels are rendered as links. ([#44](https://github.com/walterra/d3-milestones/issues/44))
 
 ## [`v1.2.2`](https://github.com/walterra/d3-milestones/tree/v1.2.2)
 
