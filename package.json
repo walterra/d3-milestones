@@ -102,6 +102,7 @@
     }
   },
   "resolutions": {
+    "async": "2.6.4",
     "elliptic": "6.5.4",
     "glob-parent": "5.1.2",
     "lodash": "4.17.21",
