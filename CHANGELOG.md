@@ -1,6 +1,10 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
-No public interface changes since `v1.3.0`.
+No public interface changes since `v1.4.0`.
+
+## [`v1.4.0`](https://github.com/walterra/d3-milestones/tree/v1.4.0)
+
+- Support for custom styles for text elements. ([#11](https://github.com/walterra/d3-milestones/issues/11))
 
 ## [`v1.3.0`](https://github.com/walterra/d3-milestones/tree/v1.3.0)
 

@@ -113,5 +113,10 @@
      "timestamp":"2022-07-05T00:00",
      "detail":"v1.3.0",
      "giturl":"https://github.com/walterra/d3-milestones/releases/tag/v1.3.0"
-  }
+  },
+  {
+     "timestamp":"2022-07-05T00:00",
+     "detail":"v1.4.0",
+     "giturl":"https://github.com/walterra/d3-milestones/releases/tag/v1.4.0"
+   }
 ]
