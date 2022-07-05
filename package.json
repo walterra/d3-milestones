@@ -103,6 +103,7 @@
   },
   "resolutions": {
     "async": "2.6.4",
+    "cached-path-relative": "1.1.0",
     "elliptic": "6.5.4",
     "follow-redirects": "1.14.8",
     "glob-parent": "5.1.2",
