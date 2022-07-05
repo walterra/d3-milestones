@@ -1,0 +1,42 @@
+[
+  {
+    "text": "Default Title",
+    "year": 1980
+  },
+  {
+    "text": "Green Title",
+    "year": 1990,
+    "titleStyle": { "color": "#2BFD00"}
+  },
+  {
+    "text": "Bold text",
+    "year": 1990,
+    "textStyle": { "font-weight": "bold"}
+  },
+  {
+    "text": "Red Title (Not applied)",
+    "year": 2000,
+    "titleStyle": { "color": "#E12800"}
+  },
+  {
+    "text": "Blue Title",
+    "year": 2000,
+    "titleStyle": { "color": "#5BC6FF"}
+  },
+  {
+    "text": "Red Text, Blue Title",
+    "year": 2010,
+    "textStyle": { "color": "#E12800"},
+    "titleStyle": { "color": "#5BC6FF"}
+  },
+  {
+    "text": "Italic text",
+    "year": 2010,
+    "textStyle": { "font-style": "italic"}
+  }
+]
+
+
+
+
+

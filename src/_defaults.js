@@ -8,6 +8,8 @@ export const DEFAULTS = {
     timestamp: 'timestamp',
     text: 'text',
     url: 'url',
+    textStyle: 'textStyle',
+    titleStyle: 'titleStyle',
   },
   LABEL_FORMAT: '%Y-%m-%d %H:%M',
   USE_LABELS: true,

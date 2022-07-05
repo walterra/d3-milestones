@@ -363,13 +363,25 @@ export default function milestones(selector) {
           const wrapper = dom.select(this);
           wrapper.html(null);
 
+          const titleStyle = d.values.reduce((p, c) => {
+            if (c[mapping.titleStyle] !== undefined) {
+              return Object.assign(p, c[mapping.titleStyle]);
+            }
+            return p;
+          }, {});
+
           const element = wrapper.append('div').classed('wrapper', true);
 
           if (!above || orientation === 'vertical') {
-            element
+            const titleSpan = element
               .append('span')
               .classed(cssTitleClass, true)
               .text(labelFormat(aggregateFormatParse(d.key)));
+
+            Object.entries(titleStyle).forEach(([prop, val]) =>
+              titleSpan.style(prop, val)
+            );
+
             element.append('br');
           }
 
@@ -377,6 +389,8 @@ export default function milestones(selector) {
             if (i > 0) {
               element.append('br');
             }
+
+            const textStyle = Object.assign({}, v[mapping.textStyle]);
 
             const t = v[mapping.text];
             let item;
@@ -432,14 +446,22 @@ export default function milestones(selector) {
             if (typeof callBackMouseOver === 'function') {
               item.on('mouseover', eventMouseOver);
             }
+
+            Object.entries(textStyle).forEach(([prop, val]) =>
+              item.style(prop, val)
+            );
           });
 
           if (above && orientation === 'horizontal') {
             element.append('br');
-            element
+            const titleSpan = element
               .append('span')
               .classed(cssTitleClass, true)
               .text(labelFormat(aggregateFormatParse(d.key)));
+
+            Object.entries(titleStyle).forEach(([prop, val]) =>
+              titleSpan.style(prop, val)
+            );
           }
         });
 
