@@ -67,7 +67,7 @@
     "npm-watch": "^0.11.0",
     "prettier": "^2.2.1",
     "rollup": "^1.12.4",
-    "serve": "^12.0.0",
+    "serve": "^13.0.2",
     "style-loader": "^3.3.1",
     "tap-spec": "^5.0.0",
     "tape": "^4.13.3",
