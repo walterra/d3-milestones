@@ -117,6 +117,10 @@ Specifies the formatter for the timestamp field. The specifier string is expecte
 
 The `labelFormat` for the time label for each milestones defaults to `'%Y-%m-%d %H:%M'`. Using `aggregateBy`, `labelFormat` will be set automatically to a reasonable format corresponding to the aggregation level. Still, this method is available to override this behavior with a custom `labelFormat`.
 
+<a name="urlTarget" href="#urlTarget">#</a> vis.<b>urlTarget</b>(<i>string</i>)
+
+Customizes the `target` attribute when labels are provided with a URL. Can be `_blank`, `_self`, `_parent` or  `_top`.
+
 <a name="useLabels" href="#useLabels">#</a> vis.<b>useLabels</b>(<i>boolean</i>)
 
 Enables/Disables the display of labels.

@@ -13,4 +13,5 @@ export const DEFAULTS = {
   USE_LABELS: true,
   AGGREGATE_BY: 'minute',
   AUTO_RESIZE: true,
+  URL_TARGET: '_self',
 };

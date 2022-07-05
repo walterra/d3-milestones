@@ -1,6 +1,6 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
-No public interface changes since `v1.2.1`.
+No public interface changes since `v1.2.2`.
 
 ## [`v1.2.2`](https://github.com/walterra/d3-milestones/tree/v1.2.2)
 

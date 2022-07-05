@@ -73,6 +73,17 @@ export default function milestones(selector) {
   }
   setUseLabels(DEFAULTS.USE_LABELS);
 
+  let urlTarget;
+  function setUrlTarget(d) {
+    if (
+      typeof d === 'string' &&
+      ['_blank', '_self', '_parent', '_top'].includes(d.toLowerCase())
+    ) {
+      urlTarget = d;
+    }
+  }
+  setUrlTarget(DEFAULTS.URL_TARGET);
+
   // set callback for event mouseover
   let callBackMouseOver;
   function setEventMouseOverCallback(callback) {
@@ -386,6 +397,7 @@ export default function milestones(selector) {
                 .classed('milestones-label', true)
                 .classed('milestones-link-label', true)
                 .attr('href', v[mapping.url])
+                .attr('target', urlTarget)
                 .text(t);
             } else {
               item = element
@@ -497,6 +509,7 @@ export default function milestones(selector) {
     distribution: setDistribution,
     parseTime: setParseTime,
     labelFormat: setLabelFormat,
+    urlTarget: setUrlTarget,
     useLabels: setUseLabels,
     range: setRange,
     render: render,

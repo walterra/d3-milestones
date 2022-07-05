@@ -22,5 +22,6 @@ MilestonesReleases.args = {
     text: 'detail',
     url: 'giturl',
   },
+  urlTarget: '_blank',
   data,
 };

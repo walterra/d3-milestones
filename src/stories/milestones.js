@@ -43,6 +43,10 @@ export const argTypes = {
   data: {
     control: { type: 'object' },
   },
+  urlTarget: {
+    options: ['_blank', '_self', '_parent', '_top'],
+    control: { type: 'radio' },
+  },
 };
 
 export const createMilestones = (
@@ -60,6 +64,7 @@ export const createMilestones = (
     orientation,
     parseTime,
     autoResize,
+    urlTarget,
   },
   DIV_ID = 'timeline',
   style = ''
@@ -81,6 +86,7 @@ export const createMilestones = (
     orientation && m.orientation(orientation);
     parseTime && m.parseTime(parseTime);
     autoResize && m.autoResize(autoResize);
+    urlTarget && m.urlTarget(urlTarget);
 
     m.render(data);
   }
