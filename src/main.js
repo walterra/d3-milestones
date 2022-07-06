@@ -144,7 +144,9 @@ export default function milestones(selector) {
   };
 
   const resizeObserver = new ResizeObserver(resizeHandler);
-  resizeObserver.observe(document.querySelector(selector));
+  resizeObserver.observe(
+    typeof selector === 'string' ? document.querySelector(selector) : selector
+  );
 
   function setAutoResize(d) {
     autoResize.current = d;
