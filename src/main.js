@@ -131,25 +131,23 @@ export default function milestones(selector) {
     setLabelFormat(aggregateFormats[d]);
   }
 
+  const autoResize = { current: DEFAULTS.AUTO_RESIZE };
+
   const resizeHandler = () => {
     if (dom.select(selector).node() !== null) {
       window.requestAnimationFrame(() => {
-        render();
+        if (autoResize.current) {
+          render();
+        }
       });
-    } else {
-      window.removeEventListener('resize', resizeHandler);
     }
   };
 
-  let autoResize = DEFAULTS.AUTO_RESIZE;
-  window.addEventListener('resize', resizeHandler);
+  const resizeObserver = new ResizeObserver(resizeHandler);
+  resizeObserver.observe(document.querySelector(selector));
+
   function setAutoResize(d) {
-    autoResize = d;
-    if (autoResize) {
-      window.addEventListener('resize', resizeHandler);
-    } else {
-      window.removeEventListener('resize', resizeHandler);
-    }
+    autoResize.current = d;
   }
 
   function render(data) {

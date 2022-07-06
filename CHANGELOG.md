@@ -1,6 +1,6 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
-No public interface changes since `v1.4.0`.
+- Fix `autoResize` to consider wrapping element instead of overall browser window. ([#62](https://github.com/walterra/d3-milestones/issues/62))
 
 ## [`v1.4.0`](https://github.com/walterra/d3-milestones/tree/v1.4.0)
 
