@@ -1,6 +1,10 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
-No public interface changes since `v1.4.1`.
+No public interface changes since `v1.4.2`.
+
+## [`v1.4.2`](https://github.com/walterra/d3-milestones/tree/v1.4.2)
+
+- Fix `autoResize` if passed in `selector` is already an element and not just a string. (a25b41a)
 
 ## [`v1.4.1`](https://github.com/walterra/d3-milestones/tree/v1.4.1)
 
