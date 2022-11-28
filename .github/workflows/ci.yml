@@ -4,7 +4,7 @@ jobs:
   ui-test:
     runs-on: ubuntu-latest
     env:
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
+      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'false'
       CI: 'true'
     steps:
       - uses: actions/checkout@v3
