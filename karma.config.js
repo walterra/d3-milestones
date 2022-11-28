@@ -1,4 +1,4 @@
-const buble = require('@rollup/plugin-buble');
+const babel = require('@rollup/plugin-babel');
 const tapSpec = require('tap-spec');
 const eslint = require('@rollup/plugin-eslint');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
@@ -47,7 +47,7 @@ module.exports = (config) => {
           exclude: ['src/styles/**'],
         }),
         nodeResolve(),
-        buble(),
+        babel({ babelHelpers: 'bundled' }),
       ],
     },
     singleRun: true,

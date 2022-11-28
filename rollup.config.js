@@ -1,4 +1,4 @@
-import buble from '@rollup/plugin-buble';
+import babel from '@rollup/plugin-babel';
 import eslint from '@rollup/plugin-eslint';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
@@ -16,6 +16,6 @@ export default {
       exclude: ['src/styles/**'],
     }),
     nodeResolve(),
-    buble(),
+    babel({ babelHelpers: 'bundled' }),
   ],
 };

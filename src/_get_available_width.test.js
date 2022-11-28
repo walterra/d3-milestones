@@ -1,3 +1,5 @@
+import 'regenerator-runtime/runtime';
+
 import * as scale from 'd3-scale';
 import { extent } from 'd3-array';
 
