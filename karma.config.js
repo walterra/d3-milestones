@@ -6,9 +6,6 @@ const { nodeResolve } = require('@rollup/plugin-node-resolve');
 //No proxy
 process.env.NO_PROXY = 'localhost, 0.0.0.0/4201, 127.0.0.1:9876/';
 
-// Binary path for ChromeHeadless
-process.env.CHROME_BIN = require('puppeteer').executablePath();
-
 module.exports = (config) => {
   const configuration = {
     autoWatch: false,
@@ -19,7 +16,7 @@ module.exports = (config) => {
         base: 'Chrome',
         flags: [
           '--disable-gpu',
-          '--headless',
+          // '--headless',
           '--no-sandbox',
           '--remote-debugging-port=9222',
         ],
