@@ -73,7 +73,6 @@
     "style-loader": "^3.3.1",
     "tap-spec": "^5.0.0",
     "tape": "^5.6.1",
-    "tape-run": "^10.0.0",
     "uglify-js": "^3.9.3"
   },
   "scripts": {
@@ -107,6 +106,7 @@
     "async": "2.6.4",
     "cached-path-relative": "1.1.0",
     "elliptic": "6.5.4",
+    "engine.io": "6.2.1",
     "follow-redirects": "1.14.8",
     "glob-parent": "5.1.2",
     "loader-utils": "1.4.2",
