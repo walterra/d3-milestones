@@ -3,29 +3,11 @@ const tapSpec = require('tap-spec');
 const eslint = require('@rollup/plugin-eslint');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 
-//No proxy
-process.env.NO_PROXY = 'localhost, 0.0.0.0/4201, 127.0.0.1:9876/';
-
-// Binary path for ChromeHeadless
-process.env.CHROME_BIN =
-  process.env.PUPPETEER_EXEC_PATH ?? require('puppeteer').executablePath();
-
 module.exports = (config) => {
   const configuration = {
     autoWatch: false,
     // client: { captureConsole: false },
-    browsers: ['ChromeHeadless'],
-    customLaunchers: {
-      ChromeHeadless: {
-        base: 'Chrome',
-        flags: [
-          // '--disable-gpu',
-          // '--headless',
-          '--no-sandbox',
-          '--remote-debugging-port=9222',
-        ],
-      },
-    },
+    browsers: ['Firefox'],
     browserConsoleLogOptions: {
       level: 'error',
       format: '%b %T: %m',
@@ -44,7 +26,7 @@ module.exports = (config) => {
       'karma-rollup-preprocessor',
       'karma-tap',
       'karma-tap-pretty-reporter',
-      'karma-chrome-launcher',
+      'karma-firefox-launcher',
     ],
     preprocessors: {
       'test/*-test.js': ['rollup'],
