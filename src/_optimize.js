@@ -58,11 +58,19 @@ export const optimize = (
     let orangeCount = 1;
     let iterations = 0;
 
+    // get all upper nodes
     const aboveNodes = timeline.values.filter((tn) =>
       getParentElement(dom.select(tn[0])).classed(
         `${cssAboveClass}-${orientation}`
       )
     );
+
+    // reset padding and "last" class before starting the optimization
+    for (const aboveNode of aboveNodes) {
+      const parentElement = getParentElement(dom.selectAll(aboveNode));
+      parentElement.classed(cssLastClass, false);
+      parentElement.style(padding, '0px');
+    }
 
     while (orangeCount > 0 && iterations < MAX_OPTIMIZER_RUNS) {
       // debugger;
