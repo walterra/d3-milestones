@@ -409,30 +409,12 @@ export default function milestones(selector) {
               orientation === 'horizontal'
                 ? offsetNextItem - offset
                 : offset - offsetNextItem;
-
-            if (itemNumTotal - itemNum === 2) {
-              availableWidth /= 2;
-            }
           } else {
             if (itemNumTotal - itemNum === 1) {
               availableWidth =
                 orientation === 'horizontal' ? width - offset : offset;
             } else if (itemNumTotal - itemNum === 0) {
-              if (typeof compareItem2 !== 'undefined') {
-                // Pass scale type to previous item
-                compareItem2.scaleType = scaleType;
-                const prevValue =
-                  scaleType === 'ordinal'
-                    ? compareItem2.key
-                    : aggregateFormatParse(compareItem2.key);
-                const offsetPreviousItem = x(prevValue);
-                availableWidth =
-                  orientation === 'horizontal'
-                    ? (width - offsetPreviousItem) / 2
-                    : offsetPreviousItem / 2;
-              } else {
-                availableWidth = width;
-              }
+              availableWidth = width;
             }
           }
 
