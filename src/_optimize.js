@@ -26,7 +26,6 @@ const getParentElement = (domElement) =>
 // };
 
 const LABEL_MIN_WIDTH = 60;
-const LABEL_MAX_WIDTH = 180;
 
 export const optimize = (
   aggregateFormatParse,
@@ -130,8 +129,6 @@ export const optimize = (
                 (!d.backwards && d.offset + d.width > width))
           );
 
-          console.log('reduce', p && p.text, c.text);
-
           return leftEl !== undefined || rightEl !== undefined ? c : p;
         }, undefined);
 
@@ -152,7 +149,8 @@ export const optimize = (
             const checkOrange = boundingsRects.find(
               (d) =>
                 d.index === lowestGreen.index + 1 &&
-                (d.width < LABEL_MIN_WIDTH || d.offset + d.width > width)
+                (d.width < LABEL_MIN_WIDTH ||
+                  (!d.backwards && d.offset + d.width > width))
             );
             if (
               lowestOrange === undefined ||
