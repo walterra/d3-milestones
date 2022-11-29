@@ -115,6 +115,7 @@ export const optimize = (
       const canvas = document.getElementById('bitmap');
       dom.select(canvas).attr('width', width);
       dom.select(canvas).attr('height', bitmap.length);
+
       if (canvas.getContext) {
         const ctx = canvas.getContext('2d');
 
@@ -170,6 +171,28 @@ export const optimize = (
           }
 
           if (lowestOrange !== undefined) {
+            // create bitmap of all elements without current lowest orange
+            for (const rect of boundingsRects) {
+              if (rect.index !== lowestOrange.index) {
+                const rX = Math.round(
+                  rect.offset - (rect.backwards ? rect.width : 0)
+                );
+                const rY = Math.round(
+                  bitmap.length -
+                    rect.height -
+                    (rect.padding !== undefined ? rect.padding : 0)
+                );
+                const rW = Math.round(rect.width);
+                const rH = Math.round(rect.height);
+
+                for (const [rowI, rB] of Array(rH).fill(true).entries()) {
+                  for (const [colI, cB] of Array(rW).fill(true).entries()) {
+                    bitmap[rY + rowI - 1][rX + colI - 1] = true;
+                  }
+                }
+              }
+            }
+
             const loVolume = lowestOrange.width * lowestOrange.height;
             const newHeight = loVolume / LABEL_MIN_WIDTH;
             const newYOffset = lowestGreen.height + lowestGreen.padding + 2;
@@ -209,24 +232,34 @@ export const optimize = (
           }
         }
 
-        for (const rect of boundingsRects) {
-          const alpha = 0.3 + (rect.height / maxHeight) * 0.9;
+        const alpha = 0.3;
+        ctx.fillStyle = `rgba(0,192,128,${alpha})`;
+        bitmap.forEach((row, yIndex) => {
+          row.forEach((pixel, xIndex) => {
+            if (pixel) {
+              ctx.fillRect(xIndex, yIndex, 1, 1);
+            }
+          });
+        });
 
-          if (rect.width >= LABEL_MIN_WIDTH) {
-            ctx.fillStyle = `rgba(0,192,128,${alpha})`;
-          } else {
-            orangeCount++;
-            ctx.fillStyle = `rgba(255,128,0,${alpha})`;
+        if (lowestGreen === undefined) {
+          for (const rect of boundingsRects) {
+            const alpha = 0.3 + (rect.height / maxHeight) * 0.9;
+            if (rect.width >= LABEL_MIN_WIDTH) {
+              ctx.fillStyle = `rgba(0,192,128,${alpha})`;
+            } else {
+              orangeCount++;
+              ctx.fillStyle = `rgba(255,128,0,${alpha})`;
+            }
+            ctx.fillRect(
+              rect.offset - (rect.backwards ? rect.width : 0),
+              bitmap.length -
+                rect.height -
+                (rect.padding !== undefined ? rect.padding : 0),
+              rect.width,
+              rect.height
+            );
           }
-
-          ctx.fillRect(
-            rect.offset - (rect.backwards ? rect.width : 0),
-            bitmap.length -
-              rect.height -
-              (rect.padding !== undefined ? rect.padding : 0),
-            rect.width,
-            rect.height
-          );
         }
       }
     }
