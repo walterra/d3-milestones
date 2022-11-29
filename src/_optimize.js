@@ -40,8 +40,6 @@ export const optimize = (
   x
 ) => {
   // console.log('width', width);
-  let orangeCount = 1;
-  let iterations = 0;
 
   const paddingAbove =
     orientation === 'horizontal' ? 'padding-bottom' : 'padding-right';
@@ -49,24 +47,27 @@ export const optimize = (
     orientation === 'horizontal' ? 'padding-top' : 'padding-left';
   const padding = paddingAbove;
 
-  let maxHeight = 0;
+  const nestedNodes = nest()
+    .key((d) => {
+      return dom.selectAll(d).data()[0].timelineIndex;
+    })
+    .entries(textMerge._groups);
 
-  while (orangeCount > 0 && iterations < MAX_OPTIMIZER_RUNS) {
-    // debugger;
-    orangeCount = 0;
-    iterations++;
-    const nestedNodes = nest()
-      .key((d) => {
-        return dom.selectAll(d).data()[0].timelineIndex;
-      })
-      .entries(textMerge._groups);
+  for (const timeline of nestedNodes) {
+    let maxHeight = 0;
+    let orangeCount = 1;
+    let iterations = 0;
 
-    for (const timeline of nestedNodes) {
-      const aboveNodes = timeline.values.filter((tn) =>
-        getParentElement(dom.select(tn[0])).classed(
-          `${cssAboveClass}-${orientation}`
-        )
-      );
+    const aboveNodes = timeline.values.filter((tn) =>
+      getParentElement(dom.select(tn[0])).classed(
+        `${cssAboveClass}-${orientation}`
+      )
+    );
+
+    while (orangeCount > 0 && iterations < MAX_OPTIMIZER_RUNS) {
+      // debugger;
+      orangeCount = 0;
+      iterations++;
 
       const boundingsRects = Array(aboveNodes.length);
       let totalHeight = 0;
@@ -169,11 +170,13 @@ export const optimize = (
                 ? lowestOrange.offset
                 : lowestOrange.offset - LABEL_MIN_WIDTH - 2;
 
+            const newWidth = LABEL_MIN_WIDTH;
+
             ctx.fillStyle = `rgba(192,0,128,1)`;
             ctx.fillRect(
               newX,
               bitmap.length - newYOffset - newHeight,
-              LABEL_MIN_WIDTH,
+              newWidth,
               newHeight
             );
 
@@ -188,10 +191,10 @@ export const optimize = (
               padding,
               `${lowestGreen.height + lowestGreen.padding + 2}px`
             );
-            domElement.style(widthAttribute, `${LABEL_MIN_WIDTH + 5}px`);
+            domElement.style(widthAttribute, `${newWidth + 5}px`);
             dom
               .select(aboveNodes[lowestOrange.index][0])
-              .style(widthAttribute, `${LABEL_MIN_WIDTH}px`);
+              .style(widthAttribute, `${newWidth}px`);
 
             boundingsRects[lowestOrange.index].padding =
               lowestGreen.height + lowestGreen.padding;
