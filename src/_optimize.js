@@ -8,6 +8,7 @@ import { cssAboveClass, cssLastClass } from './_css';
 // import { isAbove } from './_is_above';
 
 const MAX_OPTIMIZER_RUNS = 20;
+const ADJUST_PIXEL = 10;
 
 // const getIntValueFromPxAttribute = (domElement, attribute) => {
 //   return parseInt(domElement.style(attribute).replace('px', ''), 10);
@@ -25,7 +26,7 @@ const getParentElement = (domElement) =>
 //   return distributionCheck !== 0;
 // };
 
-const LABEL_MIN_WIDTH = 60;
+const LABEL_MIN_WIDTH = 66;
 
 export const optimize = (
   aggregateFormatParse,
@@ -73,6 +74,7 @@ export const optimize = (
     }
 
     while (orangeCount > 0 && iterations < MAX_OPTIMIZER_RUNS) {
+      // debugger;
       orangeCount = 0;
       iterations++;
 
@@ -187,6 +189,18 @@ export const optimize = (
                     bitmap[rY + rowI - 1][rX + colI - 1] = true;
                   }
                 }
+
+                if (rW >= LABEL_MIN_WIDTH) {
+                  const columnHeight = Math.floor(
+                    rect.padding !== undefined ? rect.padding : 0
+                  );
+                  for (const [rowI, cB] of Array(columnHeight)
+                    .fill(true)
+                    .entries()) {
+                    bitmap[rY + rH + rowI - 1][rX - 1] = true;
+                    bitmap[rY + rH + rowI - 1][rX + rW - 1] = true;
+                  }
+                }
               }
             }
 
@@ -241,11 +255,11 @@ export const optimize = (
               }
 
               if (overlap) {
-                if (newTestWith - 20 > LABEL_MIN_WIDTH) {
-                  newTestWith -= 20;
+                if (newTestWith - ADJUST_PIXEL >= LABEL_MIN_WIDTH) {
+                  newTestWith -= ADJUST_PIXEL;
                 } else {
                   newTestWith = labelMaxWidth;
-                  newYOffset += 20;
+                  newYOffset += ADJUST_PIXEL;
                 }
               }
             }
