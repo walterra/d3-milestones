@@ -326,7 +326,17 @@ export default function milestones(selector) {
               availableWidth =
                 orientation === 'horizontal' ? width - offset : offset;
             } else if (itemNumTotal - itemNum === 0) {
-              availableWidth = width;
+              if (typeof compareItem2 !== 'undefined') {
+                const offsetPreviousItem = x(
+                  aggregateFormatParse(compareItem2.key)
+                );
+                availableWidth =
+                  orientation === 'horizontal'
+                    ? (width - offsetPreviousItem) / 2
+                    : offsetPreviousItem / 2;
+              } else {
+                availableWidth = width;
+              }
             }
           }
 
