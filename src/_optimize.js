@@ -7,7 +7,7 @@ import { cssAboveClass, cssLastClass } from './_css';
 // import { getNextGroupHeight } from './_get_next_group_height';
 // import { isAbove } from './_is_above';
 
-// const MAX_OPTIMIZER_RUNS = 20;
+const MAX_OPTIMIZER_RUNS = 20;
 
 // const getIntValueFromPxAttribute = (domElement, attribute) => {
 //   return parseInt(domElement.style(attribute).replace('px', ''), 10);
@@ -44,7 +44,15 @@ export const optimize = (
   let orangeCount = 1;
   let iterations = 0;
 
-  while (orangeCount > 0 && iterations < 10) {
+  const paddingAbove =
+    orientation === 'horizontal' ? 'padding-bottom' : 'padding-right';
+  const paddingBelow =
+    orientation === 'horizontal' ? 'padding-top' : 'padding-left';
+  const padding = paddingAbove;
+
+  let maxHeight = 0;
+
+  while (orangeCount > 0 && iterations < MAX_OPTIMIZER_RUNS) {
     // debugger;
     orangeCount = 0;
     iterations++;
@@ -63,23 +71,34 @@ export const optimize = (
 
       const boundingsRects = Array(aboveNodes.length);
       let totalHeight = 0;
-      let maxHeight = 0;
 
       for (const [i, aboveNode] of aboveNodes.entries()) {
         const item = dom.selectAll(aboveNode).data()[0];
+
+        const parentElement = getParentElement(dom.selectAll(aboveNode));
+        const backwards = parentElement.classed(cssLastClass);
+        const paddingPx = parentElement.style(padding);
+
         const offset = x(aggregateFormatParse(item.key));
-        const boundingRect = getParentElement(dom.select(aboveNode[0]))
+        const boundingRect = dom
+          .select(aboveNode[0])
           .node()
           .getBoundingClientRect();
 
         totalHeight += boundingRect.height;
         maxHeight = Math.max(maxHeight, boundingRect.height);
 
+        boundingRect.padding = parseFloat(paddingPx.split('px')[0]);
+        boundingRect.backwards = backwards;
         boundingRect.text = item.key;
         boundingRect.index = i;
         boundingRect.offset = offset;
         boundingsRects[i] = boundingRect;
       }
+
+      orangeCount = boundingsRects.reduce((p, c) => {
+        return p + (c.width < LABEL_MIN_WIDTH) ? 1 : 0;
+      }, 0);
 
       const bitmap = Array.from({ length: totalHeight }, () =>
         Array.from({ length: width }, () => false)
@@ -92,22 +111,28 @@ export const optimize = (
         const ctx = canvas.getContext('2d');
 
         const lowestGreen = boundingsRects.reduce((p, c) => {
-          const pHeight = p ? p.height : maxHeight;
+          const pHeight = p ? p.height + p.padding : Number.POSITIVE_INFINITY;
 
-          if (pHeight < c.height) return p;
+          if (c.width < LABEL_MIN_WIDTH) return p;
+          if (pHeight < c.height + c.padding) return p;
 
           const leftEl = boundingsRects.find(
             (d) => d.index === c.index - 1 && d.width < LABEL_MIN_WIDTH
           );
 
           const rightEl = boundingsRects.find(
-            (d) => d.index === c.index + 1 && d.width < LABEL_MIN_WIDTH
+            (d) =>
+              d.index === c.index + 1 &&
+              (d.width < LABEL_MIN_WIDTH ||
+                (!d.backwards && d.offset + d.width > width))
           );
+
+          console.log('reduce', p && p.text, c.text);
 
           return leftEl !== undefined || rightEl !== undefined ? c : p;
         }, undefined);
 
-        orangeCount = lowestGreen === undefined ? 0 : 1;
+        console.log('lowest', lowestGreen);
 
         if (lowestGreen !== undefined) {
           let lowestOrange;
@@ -123,51 +148,56 @@ export const optimize = (
           if (lowestGreen.index < boundingsRects.length) {
             const checkOrange = boundingsRects.find(
               (d) =>
-                d.index === lowestGreen.index + 1 && d.width < LABEL_MIN_WIDTH
+                d.index === lowestGreen.index + 1 &&
+                (d.width < LABEL_MIN_WIDTH || d.offset + d.width > width)
             );
             if (
               lowestOrange === undefined ||
               (checkOrange !== undefined &&
-                lowestOrange.height > checkOrange.height)
+                lowestOrange.height + lowestOrange.padding >
+                  checkOrange.height + checkOrange.padding)
             ) {
               lowestOrange = checkOrange;
               side = 'after';
             }
           }
 
-          const loVolume = lowestOrange.width * lowestOrange.height;
-          const newHeight = loVolume / LABEL_MIN_WIDTH;
-          const newYOffset = lowestGreen.height + 2;
-          const newX =
-            side === 'before'
-              ? lowestOrange.offset
-              : lowestOrange.offset - LABEL_MIN_WIDTH - 2;
+          if (lowestOrange !== undefined) {
+            const loVolume = lowestOrange.width * lowestOrange.height;
+            const newHeight = loVolume / LABEL_MIN_WIDTH;
+            const newYOffset = lowestGreen.height + lowestGreen.padding + 2;
+            const newX =
+              side === 'before'
+                ? lowestOrange.offset
+                : lowestOrange.offset - LABEL_MIN_WIDTH - 2;
 
-          ctx.fillStyle = `rgba(192,0,128,1)`;
-          ctx.fillRect(
-            newX,
-            bitmap.length - newYOffset - newHeight,
-            LABEL_MIN_WIDTH,
-            newHeight
-          );
+            ctx.fillStyle = `rgba(192,0,128,1)`;
+            ctx.fillRect(
+              newX,
+              bitmap.length - newYOffset - newHeight,
+              LABEL_MIN_WIDTH,
+              newHeight
+            );
 
-          const backwards = side === 'after';
-          const paddingAbove =
-            orientation === 'horizontal' ? 'padding-bottom' : 'padding-right';
-          const paddingBelow =
-            orientation === 'horizontal' ? 'padding-top' : 'padding-left';
-          const padding = paddingAbove;
+            const backwards = side === 'after';
 
-          const domElement = getParentElement(
-            dom.select(aboveNodes[lowestOrange.index][0])
-          );
+            const domElement = getParentElement(
+              dom.select(aboveNodes[lowestOrange.index][0])
+            );
 
-          domElement.classed(cssLastClass, backwards);
-          domElement.style(padding, `${lowestGreen.height}px`);
-          domElement.style(widthAttribute, `${LABEL_MIN_WIDTH + 5}px`);
-          dom
-            .select(aboveNodes[lowestOrange.index][0])
-            .style(widthAttribute, `${LABEL_MIN_WIDTH}px`);
+            domElement.classed(cssLastClass, backwards);
+            domElement.style(
+              padding,
+              `${lowestGreen.height + lowestGreen.padding + 2}px`
+            );
+            domElement.style(widthAttribute, `${LABEL_MIN_WIDTH + 5}px`);
+            dom
+              .select(aboveNodes[lowestOrange.index][0])
+              .style(widthAttribute, `${LABEL_MIN_WIDTH}px`);
+
+            boundingsRects[lowestOrange.index].padding =
+              lowestGreen.height + lowestGreen.padding;
+          }
         }
 
         for (const rect of boundingsRects) {
@@ -179,9 +209,12 @@ export const optimize = (
             orangeCount++;
             ctx.fillStyle = `rgba(255,128,0,${alpha})`;
           }
+
           ctx.fillRect(
-            rect.offset,
-            bitmap.length - rect.height,
+            rect.offset - (rect.backwards ? rect.width : 0),
+            bitmap.length -
+              rect.height -
+              (rect.padding !== undefined ? rect.padding : 0),
             rect.width,
             rect.height
           );
