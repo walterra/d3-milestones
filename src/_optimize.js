@@ -2,18 +2,10 @@ import * as dom from 'd3-selection';
 import { nest } from 'd3-collection';
 
 import { cssAboveClass, cssLastClass } from './_css';
-// import { getAttribute } from './_get_attribute';
-// import { getAvailableWidth } from './_get_available_width';
-// import { getNextGroupHeight } from './_get_next_group_height';
-// import { isAbove } from './_is_above';
 
 const MAX_OPTIMIZER_RUNS = 20;
 const ADJUST_PIXEL = 10;
 const DEBUG_CHART = true;
-
-// const getIntValueFromPxAttribute = (domElement, attribute) => {
-//   return parseInt(domElement.style(attribute).replace('px', ''), 10);
-// };
 
 const getDebugCanvasContext = (width, height) => {
   const canvas = document.getElementById('bitmap');
@@ -33,13 +25,6 @@ const getParentElement = (domElement) =>
     return this.parentNode;
   });
 
-// const isSameDistribution = (index, nextCheck, overlapCheckIndex) => {
-//   const itemRowCheck = index % nextCheck;
-//   const distributionCheck = (overlapCheckIndex + itemRowCheck) % nextCheck;
-
-//   return distributionCheck !== 0;
-// };
-
 const LABEL_MIN_WIDTH = 66;
 
 export const optimize = (
@@ -56,8 +41,8 @@ export const optimize = (
 ) => {
   const paddingAbove =
     orientation === 'horizontal' ? 'padding-bottom' : 'padding-right';
-  // const paddingBelow =
-  //   orientation === 'horizontal' ? 'padding-top' : 'padding-left';
+  const paddingBelow =
+    orientation === 'horizontal' ? 'padding-top' : 'padding-left';
   const padding = paddingAbove;
 
   const nestedNodes = nest()

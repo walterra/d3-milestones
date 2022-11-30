@@ -110,8 +110,8 @@ export const createMilestones = (
   }
 
   return `
-  <canvas id="bitmap" style="display:none; border: 1px solid gray;margin-left:5.5px"></canvas>
-  <div class="d3Milestones">
+    <canvas id="bitmap" style="display:none; border: 1px solid gray;margin-left:5.5px"></canvas>
+    <div class="d3Milestones">
       ${title ? `<h2>${title}</h2>` : ''}
       ${description ? `<p>${description}</p>` : ''}
       ${timeline}
