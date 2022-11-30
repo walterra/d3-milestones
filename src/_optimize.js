@@ -128,11 +128,8 @@ export const optimize = (
           return p + (c.width < LABEL_MIN_WIDTH) ? 1 : 0;
         }, 0);
 
-        const bitmap = Array.from({ length: totalHeight }, () =>
-          Array.from({ length: width }, () => false)
-        );
-
-        const ctx = getDebugCanvasContext(width, bitmap.length);
+        let bitmap;
+        let ctx;
 
         const lowestGreen = boundingsRects.reduce((p, c) => {
           const pHeight = p ? p.height + p.padding : Number.POSITIVE_INFINITY;
@@ -191,6 +188,11 @@ export const optimize = (
 
           if (lowestOrange !== undefined) {
             // create bitmap of all elements without current lowest orange
+            bitmap = Array.from({ length: totalHeight }, () =>
+              Array.from({ length: width }, () => false)
+            );
+            ctx = getDebugCanvasContext(width, bitmap.length);
+
             for (const rect of boundingsRects) {
               if (rect.index !== lowestOrange.index) {
                 const rX = Math.round(
