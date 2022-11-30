@@ -22,6 +22,16 @@ const getDebugCanvasContext = (width, height) => {
   }
 };
 
+const getTextWidth = (p) => {
+  const range = document.createRange();
+  // const p = document.getElementById('good');
+  const text = p.childNodes[0];
+  range.setStartBefore(text);
+  range.setEndAfter(text);
+  const clientRect = range.getBoundingClientRect();
+  return Math.round(clientRect.width);
+};
+
 const getParentElement = (domElement) =>
   domElement.select(function () {
     return this.parentNode;
@@ -66,7 +76,6 @@ export const optimize = (
         `${cssBelowClass}-${orientation}`
       )
     );
-    console.log('belowNodes', belowNodes);
 
     const optimizeLayout = (nodes, isAbove) => {
       let maxHeight = 0;
@@ -149,6 +158,7 @@ export const optimize = (
           let lowestOrange;
           let side;
 
+          // get an eventual orange element left of the green one
           if (lowestGreen.index > 0) {
             lowestOrange = boundingsRects.find(
               (d) =>
@@ -156,7 +166,12 @@ export const optimize = (
             );
             side = 'before';
           }
-          if (lowestGreen.index < boundingsRects.length) {
+
+          // get an eventual orange element right of the green one
+          if (
+            lowestOrange === undefined &&
+            lowestGreen.index < boundingsRects.length
+          ) {
             const checkOrange = boundingsRects.find(
               (d) =>
                 d.index === lowestGreen.index + 1 &&
@@ -211,7 +226,7 @@ export const optimize = (
 
             let overlap = true;
             let iterations = 0;
-            let newTestWith = labelMaxWidth;
+            let newTestWidth = labelMaxWidth;
             let newYOffset = Math.round(
               lowestGreen.height + lowestGreen.padding + 2
             );
@@ -222,15 +237,15 @@ export const optimize = (
               const loVolume = lowestOrange.width * lowestOrange.height;
               const newHeight = Math.max(
                 20,
-                Math.round(loVolume / newTestWith)
+                Math.round(loVolume / newTestWidth)
               );
               const newX = Math.round(
                 side === 'before'
                   ? lowestOrange.offset
-                  : lowestOrange.offset - newTestWith - 2
+                  : lowestOrange.offset - newTestWidth - 2
               );
               const newY = Math.round(bitmap.length - newYOffset - newHeight);
-              const newWidth = Math.round(newTestWith);
+              const newWidth = Math.round(newTestWidth);
 
               if (DEBUG_CHART && ctx) {
                 ctx.fillStyle = `rgba(192,0,128,0.1)`;
@@ -262,10 +277,10 @@ export const optimize = (
               }
 
               if (overlap) {
-                if (newTestWith - ADJUST_PIXEL >= LABEL_MIN_WIDTH) {
-                  newTestWith -= ADJUST_PIXEL;
+                if (newTestWidth - ADJUST_PIXEL >= LABEL_MIN_WIDTH) {
+                  newTestWidth -= ADJUST_PIXEL;
                 } else {
-                  newTestWith = labelMaxWidth;
+                  newTestWidth = labelMaxWidth;
                   newYOffset += ADJUST_PIXEL;
                 }
               }
@@ -279,10 +294,21 @@ export const optimize = (
 
             domElement.classed(cssLastClass, backwards);
             domElement.style(padding, `${newYOffset}px`);
-            domElement.style(widthAttribute, `${newTestWith + 5}px`);
+
+            // apply the new width to parent and text element
+            domElement.style(widthAttribute, `${newTestWidth + 5}px`);
             dom
               .select(nodes[lowestOrange.index][0])
-              .style(widthAttribute, `${newTestWith}px`);
+              .style(widthAttribute, `${newTestWidth}px`);
+
+            // shrink the width to fit the text
+            const shrinkedWidth = getTextWidth(nodes[lowestOrange.index][0]);
+            if (shrinkedWidth + 5 < newTestWidth) {
+              domElement.style(widthAttribute, `${shrinkedWidth + 10}px`);
+              dom
+                .select(nodes[lowestOrange.index][0])
+                .style(widthAttribute, `${shrinkedWidth + 5}px`);
+            }
 
             boundingsRects[lowestOrange.index].padding =
               lowestGreen.height + lowestGreen.padding;
