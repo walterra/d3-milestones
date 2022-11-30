@@ -22,10 +22,9 @@ const getDebugCanvasContext = (width, height) => {
   }
 };
 
-const getTextWidth = (p) => {
+const getTextWidth = (el) => {
   const range = document.createRange();
-  // const p = document.getElementById('good');
-  const text = p.childNodes[0];
+  const text = el.childNodes[0];
   range.setStartBefore(text);
   range.setEndAfter(text);
   const clientRect = range.getBoundingClientRect();
@@ -55,7 +54,12 @@ const getBitmapWithoutElement = (width, height, rects, withoutRect) => {
 
       for (const [rowI] of Array(rH).fill(true).entries()) {
         for (const [colI] of Array(rW).fill(true).entries()) {
-          bitmap[rY + rowI - 1][rX + colI - 1] = true;
+          if (
+            bitmap[rY + rowI - 1] &&
+            bitmap[rY + rowI - 1][rX + colI - 1] !== undefined
+          ) {
+            bitmap[rY + rowI - 1][rX + colI - 1] = true;
+          }
         }
       }
 
@@ -64,8 +68,16 @@ const getBitmapWithoutElement = (width, height, rects, withoutRect) => {
           rect.padding !== undefined ? rect.padding : 0
         );
         for (const [rowI] of Array(columnHeight).fill(true).entries()) {
-          bitmap[rY + rH + rowI - 1][rX - 1] = true;
-          bitmap[rY + rH + rowI - 1][rX + rW - 2] = true;
+          if (bitmap[rY + rH + rowI - 1]) {
+            if (
+              !rect.backwards &&
+              bitmap[rY + rH + rowI - 1][rX - 1] !== undefined
+            ) {
+              bitmap[rY + rH + rowI - 1][rX - 1] = true;
+            } else if (bitmap[rY + rH + rowI - 1][rX + rW - 2] !== undefined) {
+              bitmap[rY + rH + rowI - 1][rX + rW - 2] = true;
+            }
+          }
         }
       }
     }
@@ -135,6 +147,7 @@ export const optimize = (
       }
 
       while (orangeCount > 0 && iterations < MAX_OPTIMIZER_RUNS) {
+        // debugger;
         orangeCount = 0;
         iterations++;
 
@@ -166,7 +179,9 @@ export const optimize = (
         }, 0);
 
         let bitmap;
-        let ctx;
+        const ctx = getDebugCanvasContext(width, totalHeight);
+        let lowestOrange;
+        let side;
 
         const lowestGreen = boundingsRects.reduce((p, c) => {
           const pHeight = p ? p.height + p.padding : Number.POSITIVE_INFINITY;
@@ -189,9 +204,6 @@ export const optimize = (
         }, undefined);
 
         if (lowestGreen !== undefined) {
-          let lowestOrange;
-          let side;
-
           // get an eventual orange element left of the green one
           if (lowestGreen.index > 0) {
             lowestOrange = boundingsRects.find(
@@ -231,14 +243,11 @@ export const optimize = (
               boundingsRects,
               lowestOrange
             );
-            ctx = getDebugCanvasContext(width, bitmap.length);
 
             let overlap = true;
             let iterations = 0;
             let newTestWidth = labelMaxWidth;
-            let newYOffset = Math.round(
-              lowestGreen.height + lowestGreen.padding + 2
-            );
+            let newYOffset = 0;
 
             while (overlap === true && iterations < 10000) {
               iterations++;
@@ -320,7 +329,7 @@ export const optimize = (
           }
         }
 
-        if (DEBUG_CHART && ctx) {
+        if (DEBUG_CHART && ctx && bitmap) {
           const alpha = 0.3;
           ctx.fillStyle = `rgba(0,192,128,${alpha})`;
           bitmap.forEach((row, yIndex) => {
@@ -348,6 +357,93 @@ export const optimize = (
                 rect.width,
                 rect.height
               );
+            }
+          }
+        }
+
+        // if all orange elements are resolved, do another overlap test.
+        if (orangeCount === 0) {
+          for (const rect of boundingsRects) {
+            // debugger;
+            if (DEBUG_CHART && ctx) {
+              ctx.clearRect(0, 0, width, totalHeight);
+            }
+            bitmap = getBitmapWithoutElement(
+              width,
+              totalHeight,
+              boundingsRects,
+              rect
+            );
+
+            let overlap = true;
+            let iterations = 0;
+
+            const rX = Math.round(
+              rect.offset - (rect.backwards ? rect.width : 0)
+            );
+            const rY = Math.round(
+              bitmap.length -
+                rect.height -
+                (rect.padding !== undefined ? rect.padding : 0)
+            );
+            const rW = Math.round(rect.width);
+            const rH = Math.round(rect.height);
+
+            if (DEBUG_CHART && ctx) {
+              const alpha = 0.3;
+              ctx.fillStyle = `rgba(0,192,128,${alpha})`;
+              bitmap.forEach((row, yIndex) => {
+                row.forEach((pixel, xIndex) => {
+                  if (pixel) {
+                    ctx.fillRect(xIndex, yIndex, 1, 1);
+                  }
+                });
+              });
+
+              ctx.fillStyle = `rgba(255,128,0,${alpha})`;
+              ctx.fillRect(rX, rY, rW, rH);
+            }
+
+            while (overlap === true && iterations < 10000) {
+              iterations++;
+
+              overlap = false;
+
+              for (const [rowI] of Array(rH).fill(true).entries()) {
+                for (const [colI] of Array(rW).fill(true).entries()) {
+                  if (
+                    bitmap[rY + rowI - 1] &&
+                    bitmap[rY + rowI - 1][rX + colI - 1]
+                  ) {
+                    overlap = true;
+                    break;
+                  }
+                }
+                if (overlap) {
+                  break;
+                }
+              }
+
+              if (overlap) {
+                orangeCount++;
+                const domElement = getParentElement(
+                  dom.select(nodes[rect.index][0])
+                );
+
+                domElement.classed(cssLastClass, false);
+                domElement.style(padding, `0px`);
+
+                // apply the new width to parent and text element
+                domElement.style(
+                  widthAttribute,
+                  `${LABEL_MIN_WIDTH - 10 + 5}px`
+                );
+                dom
+                  .select(nodes[rect.index][0])
+                  .style(widthAttribute, `${LABEL_MIN_WIDTH - 10}px`);
+
+                boundingsRects[rect.index].padding = 0;
+              }
             }
           }
         }
