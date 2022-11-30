@@ -37,6 +37,43 @@ const getParentElement = (domElement) =>
     return this.parentNode;
   });
 
+const getBitmapWithoutElement = (width, height, rects, withoutRect) => {
+  const bitmap = Array.from({ length: height }, () =>
+    Array.from({ length: width }, () => false)
+  );
+
+  for (const rect of rects) {
+    if (rect.index !== withoutRect.index) {
+      const rX = Math.round(rect.offset - (rect.backwards ? rect.width : 0));
+      const rY = Math.round(
+        bitmap.length -
+          rect.height -
+          (rect.padding !== undefined ? rect.padding : 0)
+      );
+      const rW = Math.round(rect.width);
+      const rH = Math.round(rect.height);
+
+      for (const [rowI] of Array(rH).fill(true).entries()) {
+        for (const [colI] of Array(rW).fill(true).entries()) {
+          bitmap[rY + rowI - 1][rX + colI - 1] = true;
+        }
+      }
+
+      if (rW >= LABEL_MIN_WIDTH) {
+        const columnHeight = Math.floor(
+          rect.padding !== undefined ? rect.padding : 0
+        );
+        for (const [rowI] of Array(columnHeight).fill(true).entries()) {
+          bitmap[rY + rH + rowI - 1][rX - 1] = true;
+          bitmap[rY + rH + rowI - 1][rX + rW - 2] = true;
+        }
+      }
+    }
+  }
+
+  return bitmap;
+};
+
 const LABEL_MIN_WIDTH = 66;
 
 export const optimize = (
@@ -188,43 +225,13 @@ export const optimize = (
 
           if (lowestOrange !== undefined) {
             // create bitmap of all elements without current lowest orange
-            bitmap = Array.from({ length: totalHeight }, () =>
-              Array.from({ length: width }, () => false)
+            bitmap = getBitmapWithoutElement(
+              width,
+              totalHeight,
+              boundingsRects,
+              lowestOrange
             );
             ctx = getDebugCanvasContext(width, bitmap.length);
-
-            for (const rect of boundingsRects) {
-              if (rect.index !== lowestOrange.index) {
-                const rX = Math.round(
-                  rect.offset - (rect.backwards ? rect.width : 0)
-                );
-                const rY = Math.round(
-                  bitmap.length -
-                    rect.height -
-                    (rect.padding !== undefined ? rect.padding : 0)
-                );
-                const rW = Math.round(rect.width);
-                const rH = Math.round(rect.height);
-
-                for (const [rowI, rB] of Array(rH).fill(true).entries()) {
-                  for (const [colI, cB] of Array(rW).fill(true).entries()) {
-                    bitmap[rY + rowI - 1][rX + colI - 1] = true;
-                  }
-                }
-
-                if (rW >= LABEL_MIN_WIDTH) {
-                  const columnHeight = Math.floor(
-                    rect.padding !== undefined ? rect.padding : 0
-                  );
-                  for (const [rowI, cB] of Array(columnHeight)
-                    .fill(true)
-                    .entries()) {
-                    bitmap[rY + rH + rowI - 1][rX - 1] = true;
-                    bitmap[rY + rH + rowI - 1][rX + rW - 2] = true;
-                  }
-                }
-              }
-            }
 
             let overlap = true;
             let iterations = 0;
@@ -261,12 +268,8 @@ export const optimize = (
               } else if (newX < 0) {
                 overlap = true;
               } else {
-                for (const [rowI, rB] of Array(newHeight)
-                  .fill(true)
-                  .entries()) {
-                  for (const [colI, cB] of Array(newWidth)
-                    .fill(true)
-                    .entries()) {
+                for (const [rowI] of Array(newHeight).fill(true).entries()) {
+                  for (const [colI] of Array(newWidth).fill(true).entries()) {
                     if (bitmap[newY + rowI - 1][newX + colI - 1]) {
                       overlap = true;
                       break;
