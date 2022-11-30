@@ -15,6 +15,19 @@ const DEBUG_CHART = true;
 //   return parseInt(domElement.style(attribute).replace('px', ''), 10);
 // };
 
+const getDebugCanvasContext = (width, height) => {
+  const canvas = document.getElementById('bitmap');
+
+  const domCanvas = dom.select(canvas);
+  domCanvas.attr('width', width);
+  domCanvas.attr('height', height);
+  domCanvas.style('display', 'block');
+
+  if (canvas && canvas.getContext) {
+    return canvas.getContext('2d');
+  }
+};
+
 const getParentElement = (domElement) =>
   domElement.select(function () {
     return this.parentNode;
@@ -41,12 +54,10 @@ export const optimize = (
   widthAttribute,
   x
 ) => {
-  // console.log('width', width);
-
   const paddingAbove =
     orientation === 'horizontal' ? 'padding-bottom' : 'padding-right';
-  const paddingBelow =
-    orientation === 'horizontal' ? 'padding-top' : 'padding-left';
+  // const paddingBelow =
+  //   orientation === 'horizontal' ? 'padding-top' : 'padding-left';
   const padding = paddingAbove;
 
   const nestedNodes = nest()
@@ -119,210 +130,193 @@ export const optimize = (
         Array.from({ length: width }, () => false)
       );
 
-      const canvas = document.getElementById('bitmap');
-      if (DEBUG_CHART) {
-        const domCanvas = dom.select(canvas);
-        domCanvas.attr('width', width);
-        domCanvas.attr('height', bitmap.length);
-        domCanvas.style('display', 'block');
-      }
+      const ctx = getDebugCanvasContext(width, bitmap.length);
 
-      if (canvas.getContext) {
-        const ctx = canvas.getContext('2d');
+      const lowestGreen = boundingsRects.reduce((p, c) => {
+        const pHeight = p ? p.height + p.padding : Number.POSITIVE_INFINITY;
 
-        const lowestGreen = boundingsRects.reduce((p, c) => {
-          const pHeight = p ? p.height + p.padding : Number.POSITIVE_INFINITY;
+        if (c.width < LABEL_MIN_WIDTH) return p;
+        if (pHeight < c.height + c.padding) return p;
 
-          if (c.width < LABEL_MIN_WIDTH) return p;
-          if (pHeight < c.height + c.padding) return p;
+        const leftEl = boundingsRects.find(
+          (d) => d.index === c.index - 1 && d.width < LABEL_MIN_WIDTH
+        );
 
-          const leftEl = boundingsRects.find(
-            (d) => d.index === c.index - 1 && d.width < LABEL_MIN_WIDTH
-          );
+        const rightEl = boundingsRects.find(
+          (d) =>
+            d.index === c.index + 1 &&
+            (d.width < LABEL_MIN_WIDTH ||
+              (!d.backwards && d.offset + d.width > width))
+        );
 
-          const rightEl = boundingsRects.find(
+        return leftEl !== undefined || rightEl !== undefined ? c : p;
+      }, undefined);
+
+      if (lowestGreen !== undefined) {
+        let lowestOrange;
+        let side;
+
+        if (lowestGreen.index > 0) {
+          lowestOrange = boundingsRects.find(
             (d) =>
-              d.index === c.index + 1 &&
+              d.index === lowestGreen.index - 1 && d.width < LABEL_MIN_WIDTH
+          );
+          side = 'before';
+        }
+        if (lowestGreen.index < boundingsRects.length) {
+          const checkOrange = boundingsRects.find(
+            (d) =>
+              d.index === lowestGreen.index + 1 &&
               (d.width < LABEL_MIN_WIDTH ||
                 (!d.backwards && d.offset + d.width > width))
           );
-
-          return leftEl !== undefined || rightEl !== undefined ? c : p;
-        }, undefined);
-
-        if (lowestGreen !== undefined) {
-          let lowestOrange;
-          let side;
-
-          if (lowestGreen.index > 0) {
-            lowestOrange = boundingsRects.find(
-              (d) =>
-                d.index === lowestGreen.index - 1 && d.width < LABEL_MIN_WIDTH
-            );
-            side = 'before';
-          }
-          if (lowestGreen.index < boundingsRects.length) {
-            const checkOrange = boundingsRects.find(
-              (d) =>
-                d.index === lowestGreen.index + 1 &&
-                (d.width < LABEL_MIN_WIDTH ||
-                  (!d.backwards && d.offset + d.width > width))
-            );
-            if (
-              lowestOrange === undefined ||
-              (checkOrange !== undefined &&
-                lowestOrange.height + lowestOrange.padding >
-                  checkOrange.height + checkOrange.padding)
-            ) {
-              lowestOrange = checkOrange;
-              side = 'after';
-            }
-          }
-
-          if (lowestOrange !== undefined) {
-            // create bitmap of all elements without current lowest orange
-            for (const rect of boundingsRects) {
-              if (rect.index !== lowestOrange.index) {
-                const rX = Math.round(
-                  rect.offset - (rect.backwards ? rect.width : 0)
-                );
-                const rY = Math.round(
-                  bitmap.length -
-                    rect.height -
-                    (rect.padding !== undefined ? rect.padding : 0)
-                );
-                const rW = Math.round(rect.width);
-                const rH = Math.round(rect.height);
-
-                for (const [rowI, rB] of Array(rH).fill(true).entries()) {
-                  for (const [colI, cB] of Array(rW).fill(true).entries()) {
-                    bitmap[rY + rowI - 1][rX + colI - 1] = true;
-                  }
-                }
-
-                if (rW >= LABEL_MIN_WIDTH) {
-                  const columnHeight = Math.floor(
-                    rect.padding !== undefined ? rect.padding : 0
-                  );
-                  for (const [rowI, cB] of Array(columnHeight)
-                    .fill(true)
-                    .entries()) {
-                    bitmap[rY + rH + rowI - 1][rX - 1] = true;
-                    bitmap[rY + rH + rowI - 1][rX + rW - 2] = true;
-                  }
-                }
-              }
-            }
-
-            let overlap = true;
-            let iterations = 0;
-            let newTestWith = labelMaxWidth;
-            let newYOffset = Math.round(
-              lowestGreen.height + lowestGreen.padding + 2
-            );
-
-            while (overlap === true && iterations < 10000) {
-              iterations++;
-
-              const loVolume = lowestOrange.width * lowestOrange.height;
-              const newHeight = Math.max(
-                20,
-                Math.round(loVolume / newTestWith)
-              );
-              const newX = Math.round(
-                side === 'before'
-                  ? lowestOrange.offset
-                  : lowestOrange.offset - newTestWith - 2
-              );
-              const newY = Math.round(bitmap.length - newYOffset - newHeight);
-              const newWidth = Math.round(newTestWith);
-
-              if (DEBUG_CHART) {
-                ctx.fillStyle = `rgba(192,0,128,0.1)`;
-                ctx.fillRect(newX, newY, newWidth, newHeight);
-              }
-
-              overlap = false;
-
-              if (newX + newWidth > width && side === 'after') {
-                overlap = true;
-              } else if (newX < 0) {
-                overlap = true;
-              } else {
-                for (const [rowI, rB] of Array(newHeight)
-                  .fill(true)
-                  .entries()) {
-                  for (const [colI, cB] of Array(newWidth)
-                    .fill(true)
-                    .entries()) {
-                    if (bitmap[newY + rowI - 1][newX + colI - 1]) {
-                      overlap = true;
-                      break;
-                    }
-                  }
-                  if (overlap) {
-                    break;
-                  }
-                }
-              }
-
-              if (overlap) {
-                if (newTestWith - ADJUST_PIXEL >= LABEL_MIN_WIDTH) {
-                  newTestWith -= ADJUST_PIXEL;
-                } else {
-                  newTestWith = labelMaxWidth;
-                  newYOffset += ADJUST_PIXEL;
-                }
-              }
-            }
-
-            const backwards = side === 'after';
-
-            const domElement = getParentElement(
-              dom.select(aboveNodes[lowestOrange.index][0])
-            );
-
-            domElement.classed(cssLastClass, backwards);
-            domElement.style(padding, `${newYOffset}px`);
-            domElement.style(widthAttribute, `${newTestWith + 5}px`);
-            dom
-              .select(aboveNodes[lowestOrange.index][0])
-              .style(widthAttribute, `${newTestWith}px`);
-
-            boundingsRects[lowestOrange.index].padding =
-              lowestGreen.height + lowestGreen.padding;
+          if (
+            lowestOrange === undefined ||
+            (checkOrange !== undefined &&
+              lowestOrange.height + lowestOrange.padding >
+                checkOrange.height + checkOrange.padding)
+          ) {
+            lowestOrange = checkOrange;
+            side = 'after';
           }
         }
 
-        if (DEBUG_CHART) {
-          const alpha = 0.3;
-          ctx.fillStyle = `rgba(0,192,128,${alpha})`;
-          bitmap.forEach((row, yIndex) => {
-            row.forEach((pixel, xIndex) => {
-              if (pixel) {
-                ctx.fillRect(xIndex, yIndex, 1, 1);
-              }
-            });
-          });
-
-          if (lowestGreen === undefined) {
-            for (const rect of boundingsRects) {
-              const alpha = 0.3 + (rect.height / maxHeight) * 0.9;
-              if (rect.width >= LABEL_MIN_WIDTH) {
-                ctx.fillStyle = `rgba(0,192,128,${alpha})`;
-              } else {
-                orangeCount++;
-                ctx.fillStyle = `rgba(255,128,0,${alpha})`;
-              }
-              ctx.fillRect(
-                rect.offset - (rect.backwards ? rect.width : 0),
+        if (lowestOrange !== undefined) {
+          // create bitmap of all elements without current lowest orange
+          for (const rect of boundingsRects) {
+            if (rect.index !== lowestOrange.index) {
+              const rX = Math.round(
+                rect.offset - (rect.backwards ? rect.width : 0)
+              );
+              const rY = Math.round(
                 bitmap.length -
                   rect.height -
-                  (rect.padding !== undefined ? rect.padding : 0),
-                rect.width,
-                rect.height
+                  (rect.padding !== undefined ? rect.padding : 0)
               );
+              const rW = Math.round(rect.width);
+              const rH = Math.round(rect.height);
+
+              for (const [rowI, rB] of Array(rH).fill(true).entries()) {
+                for (const [colI, cB] of Array(rW).fill(true).entries()) {
+                  bitmap[rY + rowI - 1][rX + colI - 1] = true;
+                }
+              }
+
+              if (rW >= LABEL_MIN_WIDTH) {
+                const columnHeight = Math.floor(
+                  rect.padding !== undefined ? rect.padding : 0
+                );
+                for (const [rowI, cB] of Array(columnHeight)
+                  .fill(true)
+                  .entries()) {
+                  bitmap[rY + rH + rowI - 1][rX - 1] = true;
+                  bitmap[rY + rH + rowI - 1][rX + rW - 2] = true;
+                }
+              }
             }
+          }
+
+          let overlap = true;
+          let iterations = 0;
+          let newTestWith = labelMaxWidth;
+          let newYOffset = Math.round(
+            lowestGreen.height + lowestGreen.padding + 2
+          );
+
+          while (overlap === true && iterations < 10000) {
+            iterations++;
+
+            const loVolume = lowestOrange.width * lowestOrange.height;
+            const newHeight = Math.max(20, Math.round(loVolume / newTestWith));
+            const newX = Math.round(
+              side === 'before'
+                ? lowestOrange.offset
+                : lowestOrange.offset - newTestWith - 2
+            );
+            const newY = Math.round(bitmap.length - newYOffset - newHeight);
+            const newWidth = Math.round(newTestWith);
+
+            if (DEBUG_CHART && ctx) {
+              ctx.fillStyle = `rgba(192,0,128,0.1)`;
+              ctx.fillRect(newX, newY, newWidth, newHeight);
+            }
+
+            overlap = false;
+
+            if (newX + newWidth > width && side === 'after') {
+              overlap = true;
+            } else if (newX < 0) {
+              overlap = true;
+            } else {
+              for (const [rowI, rB] of Array(newHeight).fill(true).entries()) {
+                for (const [colI, cB] of Array(newWidth).fill(true).entries()) {
+                  if (bitmap[newY + rowI - 1][newX + colI - 1]) {
+                    overlap = true;
+                    break;
+                  }
+                }
+                if (overlap) {
+                  break;
+                }
+              }
+            }
+
+            if (overlap) {
+              if (newTestWith - ADJUST_PIXEL >= LABEL_MIN_WIDTH) {
+                newTestWith -= ADJUST_PIXEL;
+              } else {
+                newTestWith = labelMaxWidth;
+                newYOffset += ADJUST_PIXEL;
+              }
+            }
+          }
+
+          const backwards = side === 'after';
+
+          const domElement = getParentElement(
+            dom.select(aboveNodes[lowestOrange.index][0])
+          );
+
+          domElement.classed(cssLastClass, backwards);
+          domElement.style(padding, `${newYOffset}px`);
+          domElement.style(widthAttribute, `${newTestWith + 5}px`);
+          dom
+            .select(aboveNodes[lowestOrange.index][0])
+            .style(widthAttribute, `${newTestWith}px`);
+
+          boundingsRects[lowestOrange.index].padding =
+            lowestGreen.height + lowestGreen.padding;
+        }
+      }
+
+      if (DEBUG_CHART && ctx) {
+        const alpha = 0.3;
+        ctx.fillStyle = `rgba(0,192,128,${alpha})`;
+        bitmap.forEach((row, yIndex) => {
+          row.forEach((pixel, xIndex) => {
+            if (pixel) {
+              ctx.fillRect(xIndex, yIndex, 1, 1);
+            }
+          });
+        });
+
+        if (lowestGreen === undefined) {
+          for (const rect of boundingsRects) {
+            const alpha = 0.3 + (rect.height / maxHeight) * 0.9;
+            if (rect.width >= LABEL_MIN_WIDTH) {
+              ctx.fillStyle = `rgba(0,192,128,${alpha})`;
+            } else {
+              orangeCount++;
+              ctx.fillStyle = `rgba(255,128,0,${alpha})`;
+            }
+            ctx.fillRect(
+              rect.offset - (rect.backwards ? rect.width : 0),
+              bitmap.length -
+                rect.height -
+                (rect.padding !== undefined ? rect.padding : 0),
+              rect.width,
+              rect.height
+            );
           }
         }
       }
