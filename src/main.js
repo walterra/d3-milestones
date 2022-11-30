@@ -14,6 +14,7 @@ import {
   cssBulletClass,
   cssLabelClass,
   cssAboveClass,
+  cssBelowClass,
   cssTextClass,
   cssTitleClass,
   cssEventClass,
@@ -278,6 +279,10 @@ export default function milestones(selector) {
         // })
         .classed(cssAboveClass + '-' + orientation, (d) =>
           isAbove(d.index, distribution)
+        )
+        .classed(
+          cssBelowClass + '-' + orientation,
+          (d) => !isAbove(d.index, distribution)
         );
 
       const text = labelMerge
