@@ -3,7 +3,8 @@ import { nest } from 'd3-collection';
 
 import { cssAboveClass, cssBelowClass, cssLastClass } from './_css';
 
-const MAX_OPTIMIZER_RUNS = 20;
+const LABEL_MIN_WIDTH = 60;
+const MAX_OPTIMIZER_RUNS = 100;
 const ADJUST_PIXEL = 10;
 const DEBUG_CHART = false;
 
@@ -28,7 +29,7 @@ const getTextWidth = (el) => {
   range.setStartBefore(text);
   range.setEndAfter(text);
   const clientRect = range.getBoundingClientRect();
-  return Math.round(clientRect.width);
+  return Math.max(LABEL_MIN_WIDTH, Math.round(clientRect.width));
 };
 
 const getParentElement = (domElement) =>
@@ -74,7 +75,10 @@ const getBitmapWithoutElement = (width, height, rects, withoutRect) => {
               bitmap[rY + rH + rowI - 1][rX - 1] !== undefined
             ) {
               bitmap[rY + rH + rowI - 1][rX - 1] = true;
-            } else if (bitmap[rY + rH + rowI - 1][rX + rW - 2] !== undefined) {
+            } else if (
+              rect.backwards &&
+              bitmap[rY + rH + rowI - 1][rX + rW - 2] !== undefined
+            ) {
               bitmap[rY + rH + rowI - 1][rX + rW - 2] = true;
             }
           }
@@ -85,8 +89,6 @@ const getBitmapWithoutElement = (width, height, rects, withoutRect) => {
 
   return bitmap;
 };
-
-const LABEL_MIN_WIDTH = 66;
 
 export const optimize = (
   aggregateFormatParse,
@@ -291,7 +293,7 @@ export const optimize = (
               }
 
               if (overlap) {
-                if (newTestWidth - ADJUST_PIXEL >= LABEL_MIN_WIDTH) {
+                if (newTestWidth - ADJUST_PIXEL > LABEL_MIN_WIDTH) {
                   newTestWidth -= ADJUST_PIXEL;
                 } else {
                   newTestWidth = labelMaxWidth;
@@ -346,7 +348,6 @@ export const optimize = (
               if (rect.width >= LABEL_MIN_WIDTH) {
                 ctx.fillStyle = `rgba(0,192,128,${alpha})`;
               } else {
-                orangeCount++;
                 ctx.fillStyle = `rgba(255,128,0,${alpha})`;
               }
               ctx.fillRect(
@@ -404,7 +405,7 @@ export const optimize = (
               ctx.fillRect(rX, rY, rW, rH);
             }
 
-            while (overlap === true && iterations < 10000) {
+            while (overlap === true && iterations < 1000) {
               iterations++;
 
               overlap = false;
@@ -413,7 +414,7 @@ export const optimize = (
                 for (const [colI] of Array(rW).fill(true).entries()) {
                   if (
                     bitmap[rY + rowI - 1] &&
-                    bitmap[rY + rowI - 1][rX + colI - 1]
+                    bitmap[rY + rowI - 1][rX + colI - 1] === true
                   ) {
                     overlap = true;
                     break;
@@ -424,7 +425,31 @@ export const optimize = (
                 }
               }
 
+              if (!overlap) {
+                const columnHeight = Math.floor(
+                  rect.padding !== undefined ? rect.padding : 0
+                );
+                for (const [rowI] of Array(columnHeight).fill(true).entries()) {
+                  if (bitmap[rY + rH + rowI - 1]) {
+                    if (
+                      !rect.backwards &&
+                      bitmap[rY + rH + rowI - 1][rX - 1] === true
+                    ) {
+                      overlap = true;
+                      break;
+                    } else if (
+                      rect.backwards &&
+                      bitmap[rY + rH + rowI - 1][rX + rW - 2] === true
+                    ) {
+                      overlap = true;
+                      break;
+                    }
+                  }
+                }
+              }
+
               if (overlap) {
+                overlap = false;
                 orangeCount++;
                 const domElement = getParentElement(
                   dom.select(nodes[rect.index][0])
