@@ -5,10 +5,10 @@ import { cssAboveClass, cssBelowClass, cssLastClass } from './_css';
 
 const LABEL_MIN_WIDTH = 60;
 const MAX_OPTIMIZER_RUNS = 100;
-const ADJUST_PIXEL = 10;
+const ADJUST_PIXEL_STEP = 10;
 const DEBUG_CHART = false;
 
-const getDebugCanvasContext = (width, height) => {
+const getDebugCanvasContext = (width, height, marginBottom) => {
   if (!DEBUG_CHART) return;
 
   const canvas = document.getElementById('bitmap');
@@ -17,6 +17,7 @@ const getDebugCanvasContext = (width, height) => {
   domCanvas.attr('width', width);
   domCanvas.attr('height', height);
   domCanvas.style('display', 'block');
+  domCanvas.style('margin-bottom', `${marginBottom}px`);
 
   if (canvas && canvas.getContext) {
     return canvas.getContext('2d');
@@ -37,7 +38,7 @@ const getParentElement = (domElement) =>
     return this.parentNode;
   });
 
-const getBitmapWithoutElement = (width, height, rects, withoutRect) => {
+const getBitmapWithoutElement = (width, height, rects, withoutRect, nodes) => {
   const bitmap = Array.from({ length: height }, () =>
     Array.from({ length: width }, () => false)
   );
@@ -50,6 +51,8 @@ const getBitmapWithoutElement = (width, height, rects, withoutRect) => {
           rect.height -
           (rect.padding !== undefined ? rect.padding : 0)
       );
+
+      // const textWidth = getTextWidth(nodes[rect.index][0]);
       const rW = Math.round(rect.width);
       const rH = Math.round(rect.height);
 
@@ -181,7 +184,7 @@ export const optimize = (
         }, 0);
 
         let bitmap;
-        const ctx = getDebugCanvasContext(width, totalHeight);
+        const ctx = getDebugCanvasContext(width, totalHeight, maxHeight);
         let lowestOrange;
         let side;
 
@@ -243,7 +246,8 @@ export const optimize = (
               width,
               totalHeight,
               boundingsRects,
-              lowestOrange
+              lowestOrange,
+              nodes
             );
 
             let overlap = true;
@@ -293,11 +297,11 @@ export const optimize = (
               }
 
               if (overlap) {
-                if (newTestWidth - ADJUST_PIXEL > LABEL_MIN_WIDTH) {
-                  newTestWidth -= ADJUST_PIXEL;
+                if (newTestWidth - ADJUST_PIXEL_STEP > LABEL_MIN_WIDTH) {
+                  newTestWidth -= ADJUST_PIXEL_STEP;
                 } else {
                   newTestWidth = labelMaxWidth;
-                  newYOffset += ADJUST_PIXEL;
+                  newYOffset += ADJUST_PIXEL_STEP;
                 }
               }
             }
@@ -373,7 +377,8 @@ export const optimize = (
               width,
               totalHeight,
               boundingsRects,
-              rect
+              rect,
+              nodes
             );
 
             let overlap = true;
