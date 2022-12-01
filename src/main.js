@@ -480,7 +480,6 @@ export default function milestones(selector) {
           orientation,
           textMerge,
           width,
-          widthAttribute,
           x
         );
       }

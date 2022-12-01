@@ -3,7 +3,7 @@ import { nest } from 'd3-collection';
 
 import { cssAboveClass, cssBelowClass, cssLastClass } from './_css';
 
-const LABEL_MIN_WIDTH = 60;
+const LABEL_MIN_WIDTH = { horizontal: 60, vertical: 20 };
 const MAX_OPTIMIZER_RUNS = 100;
 const ADJUST_PIXEL_STEP = 10;
 const DEBUG_CHART = false;
@@ -25,13 +25,16 @@ const getDebugCanvasContext = (width, height, marginBottom) => {
   }
 };
 
-const getTextWidth = (el) => {
+const getTextWidth = (el, isHorizontal) => {
   const range = document.createRange();
   const text = el.childNodes[0];
   range.setStartBefore(text);
   range.setEndAfter(text);
   const clientRect = range.getBoundingClientRect();
-  return Math.max(LABEL_MIN_WIDTH, Math.round(clientRect.width));
+  return Math.max(
+    LABEL_MIN_WIDTH[isHorizontal ? 'horizontal' : 'vertical'],
+    Math.round(clientRect.width)
+  );
 };
 
 const getParentElement = (domElement) =>
@@ -39,23 +42,27 @@ const getParentElement = (domElement) =>
     return this.parentNode;
   });
 
-const getBitmap = (width, height, rects, nodes) => {
+const getBitmap = (width, height, rects, nodes, isHorizontal) => {
   const bitmap = Array.from({ length: height }, () =>
     Array.from({ length: width }, () => false)
   );
 
   for (const rect of rects) {
     const bitmapIndex = rect.index + 1;
-    const rX = Math.round(rect.offset - (rect.backwards ? rect.width : 0));
+
+    const rectWidth = isHorizontal ? rect.width : rect.height;
+    const rectHeight = isHorizontal ? rect.height : rect.width;
+
+    const rX = Math.round(rect.offset - (rect.backwards ? rectWidth : 0));
     const rY = Math.round(
       bitmap.length -
-        rect.height -
+        rectHeight -
         (rect.padding !== undefined ? rect.padding : 0)
     );
 
-    // const textWidth = getTextWidth(nodes[rect.index][0]);
-    const rW = Math.round(rect.width);
-    const rH = Math.round(rect.height);
+    // const textWidth = getTextWidth(nodes[rect.index][0], isHorizontal);
+    const rW = Math.round(rectWidth);
+    const rH = Math.round(rectHeight);
 
     for (const [rowI] of Array(rH).fill(true).entries()) {
       for (const [colI] of Array(rW).fill(true).entries()) {
@@ -105,16 +112,18 @@ export const optimize = (
   orientation,
   textMerge,
   width,
-  widthAttribute,
   x
 ) => {
   if (DEBUG_TIME) {
     console.time('optimize');
   }
-  const paddingAbove =
-    orientation === 'horizontal' ? 'padding-bottom' : 'padding-right';
-  const paddingBelow =
-    orientation === 'horizontal' ? 'padding-top' : 'padding-left';
+
+  const isHorizontal = orientation === 'horizontal';
+  const heightAttr = isHorizontal ? 'height' : 'width';
+  const widthAttr = isHorizontal ? 'width' : 'height';
+
+  const paddingAbove = isHorizontal ? 'padding-bottom' : 'padding-right';
+  const paddingBelow = isHorizontal ? 'padding-top' : 'padding-left';
 
   const nestedNodes = nest()
     .key((d) => {
@@ -148,11 +157,6 @@ export const optimize = (
         const parentElement = getParentElement(dom.selectAll(node));
         parentElement.classed(cssLastClass, false);
         parentElement.style(padding, '0px');
-
-        // const boundingRect = dom.select(node[0]).node().getBoundingClientRect();
-
-        // totalHeight += boundingRect.height;
-        // maxHeight = Math.max(maxHeight, boundingRect.height);
       }
 
       while (orangeCount > 0 && iterations < MAX_OPTIMIZER_RUNS) {
@@ -189,30 +193,47 @@ export const optimize = (
         }
 
         orangeCount = boundingsRects.reduce((p, c) => {
-          return p + (c.width < LABEL_MIN_WIDTH) ? 1 : 0;
+          return p + (c[widthAttr] < LABEL_MIN_WIDTH[orientation]) ? 1 : 0;
         }, 0);
 
         // create bitmap of all elements
-        const bitmap = getBitmap(width, totalHeight, boundingsRects, nodes);
-        const ctx = getDebugCanvasContext(width, totalHeight, maxHeight);
+        const bitmapWidth = isHorizontal ? width : totalHeight;
+        const bitmapHeight = isHorizontal ? totalHeight : width;
+        const bitmapMarginBottom = isHorizontal ? maxHeight : 0;
+        const bitmap = getBitmap(
+          bitmapWidth,
+          bitmapHeight,
+          boundingsRects,
+          nodes,
+          isHorizontal
+        );
+        const ctx = getDebugCanvasContext(
+          bitmapWidth,
+          bitmapHeight,
+          bitmapMarginBottom
+        );
         let lowestOrange;
         let side;
 
         const lowestGreen = boundingsRects.reduce((p, c) => {
-          const pHeight = p ? p.height + p.padding : Number.POSITIVE_INFINITY;
+          const pHeight = p
+            ? p[heightAttr] + p.padding
+            : Number.POSITIVE_INFINITY;
 
-          if (c.width < LABEL_MIN_WIDTH) return p;
-          if (pHeight < c.height + c.padding) return p;
+          if (c[widthAttr] < LABEL_MIN_WIDTH[orientation]) return p;
+          if (pHeight < c[heightAttr] + c.padding) return p;
 
           const leftEl = boundingsRects.find(
-            (d) => d.index === c.index - 1 && d.width < LABEL_MIN_WIDTH
+            (d) =>
+              d.index === c.index - 1 &&
+              d[widthAttr] < LABEL_MIN_WIDTH[orientation]
           );
 
           const rightEl = boundingsRects.find(
             (d) =>
               d.index === c.index + 1 &&
-              (d.width < LABEL_MIN_WIDTH ||
-                (!d.backwards && d.offset + d.width > width))
+              (d[widthAttr] < LABEL_MIN_WIDTH[orientation] ||
+                (!d.backwards && d.offset + d[widthAttr] > width))
           );
 
           return leftEl !== undefined || rightEl !== undefined ? c : p;
@@ -223,7 +244,8 @@ export const optimize = (
           if (lowestGreen.index > 0) {
             lowestOrange = boundingsRects.find(
               (d) =>
-                d.index === lowestGreen.index - 1 && d.width < LABEL_MIN_WIDTH
+                d.index === lowestGreen.index - 1 &&
+                d[widthAttr] < LABEL_MIN_WIDTH[orientation]
             );
             side = 'before';
           }
@@ -236,14 +258,15 @@ export const optimize = (
             const checkOrange = boundingsRects.find(
               (d) =>
                 d.index === lowestGreen.index + 1 &&
-                (d.width < LABEL_MIN_WIDTH ||
-                  (!d.backwards && d.offset + d.width > width))
+                (d[widthAttr] < LABEL_MIN_WIDTH[orientation] ||
+                  (!d.backwards && d.offset + d[widthAttr] > width))
             );
+
             if (
               lowestOrange === undefined ||
               (checkOrange !== undefined &&
-                lowestOrange.height + lowestOrange.padding >
-                  checkOrange.height + checkOrange.padding)
+                lowestOrange[heightAttr] + lowestOrange.padding >
+                  checkOrange[heightAttr] + checkOrange.padding)
             ) {
               lowestOrange = checkOrange;
               side = 'after';
@@ -252,14 +275,15 @@ export const optimize = (
 
           if (lowestOrange !== undefined) {
             let overlap = true;
-            let iterations = 0;
+            let resizeIterations = 0;
             let newTestWidth = labelMaxWidth;
             let newYOffset = 0;
 
-            while (overlap === true && iterations < 10000) {
-              iterations++;
+            while (overlap === true && resizeIterations < 1000) {
+              resizeIterations++;
 
-              const loVolume = lowestOrange.width * lowestOrange.height;
+              const loVolume =
+                lowestOrange[widthAttr] * lowestOrange[heightAttr];
               const newHeight = Math.max(
                 20,
                 Math.round(loVolume / newTestWidth)
@@ -269,12 +293,14 @@ export const optimize = (
                   ? lowestOrange.offset
                   : lowestOrange.offset - newTestWidth - 2
               );
-              const newY = Math.round(bitmap.length - newYOffset - newHeight);
+              const newY = Math.round(totalHeight - newYOffset - newHeight);
               const newWidth = Math.round(newTestWidth);
 
               if (DEBUG_CHART && ctx) {
                 ctx.fillStyle = `rgba(192,0,128,0.1)`;
                 ctx.fillRect(newX, newY, newWidth, newHeight);
+                ctx.fillStyle = `rgba(0,0,0,1)`;
+                ctx.fillText(lowestOrange.text, newX + 5, newY + 5);
               }
 
               overlap = false;
@@ -303,7 +329,10 @@ export const optimize = (
               }
 
               if (overlap) {
-                if (newTestWidth - ADJUST_PIXEL_STEP > LABEL_MIN_WIDTH) {
+                if (
+                  newTestWidth - ADJUST_PIXEL_STEP >
+                  LABEL_MIN_WIDTH[orientation]
+                ) {
                   newTestWidth -= ADJUST_PIXEL_STEP;
                 } else {
                   newTestWidth = labelMaxWidth;
@@ -322,22 +351,23 @@ export const optimize = (
             domElement.style(padding, `${newYOffset}px`);
 
             // apply the new width to parent and text element
-            domElement.style(widthAttribute, `${newTestWidth + 5}px`);
+            const widthOffset = isHorizontal ? 5 : 0;
+            domElement.style(widthAttr, `${newTestWidth + widthOffset}px`);
             dom
               .select(nodes[lowestOrange.index][0])
-              .style(widthAttribute, `${newTestWidth}px`);
+              .style(widthAttr, `${newTestWidth}px`);
 
             // shrink the width to fit the text
             const shrinkedWidth = getTextWidth(nodes[lowestOrange.index][0]);
-            if (shrinkedWidth + 5 < newTestWidth) {
-              domElement.style(widthAttribute, `${shrinkedWidth + 10}px`);
+            if (shrinkedWidth + widthOffset < newTestWidth) {
+              domElement.style(widthAttr, `${shrinkedWidth + 10}px`);
               dom
                 .select(nodes[lowestOrange.index][0])
-                .style(widthAttribute, `${shrinkedWidth + 5}px`);
+                .style(widthAttr, `${shrinkedWidth + widthOffset}px`);
             }
 
             boundingsRects[lowestOrange.index].padding =
-              lowestGreen.height + lowestGreen.padding;
+              lowestGreen[heightAttr] + lowestGreen.padding;
           }
         }
 
@@ -362,20 +392,28 @@ export const optimize = (
 
           if (lowestGreen === undefined) {
             for (const rect of boundingsRects) {
-              const alpha = 0.3 + (rect.height / maxHeight) * 0.9;
-              if (rect.width >= LABEL_MIN_WIDTH) {
+              const alpha = 0.3 + (rect[heightAttr] / maxHeight) * 0.9;
+
+              if (rect[widthAttr] >= LABEL_MIN_WIDTH[orientation]) {
                 ctx.fillStyle = `rgba(0,192,128,${alpha})`;
               } else {
                 ctx.fillStyle = `rgba(255,128,0,${alpha})`;
               }
+
+              const fillRectX =
+                rect.offset - (rect.backwards ? rect[widthAttr] : 0);
+              const fillRectY =
+                totalHeight -
+                rect[heightAttr] -
+                (rect.padding !== undefined ? rect.padding : 0);
               ctx.fillRect(
-                rect.offset - (rect.backwards ? rect.width : 0),
-                bitmap.length -
-                  rect.height -
-                  (rect.padding !== undefined ? rect.padding : 0),
-                rect.width,
-                rect.height
+                fillRectX,
+                fillRectY,
+                rect[widthAttr],
+                rect[heightAttr]
               );
+              ctx.fillStyle = `rgba(0,0,0,1)`;
+              ctx.fillText(rect.text, fillRectX + 5, fillRectY + 5);
             }
           }
         }
@@ -389,18 +427,18 @@ export const optimize = (
             }
 
             let overlap = true;
-            let iterations = 0;
+            let overlapRemovalIterations = 0;
 
             const rX = Math.round(
-              rect.offset - (rect.backwards ? rect.width : 0)
+              rect.offset - (rect.backwards ? rect[widthAttr] : 0)
             );
             const rY = Math.round(
-              bitmap.length -
-                rect.height -
+              totalHeight -
+                rect[heightAttr] -
                 (rect.padding !== undefined ? rect.padding : 0)
             );
-            const rW = Math.round(rect.width);
-            const rH = Math.round(rect.height);
+            const rW = Math.round(rect[widthAttr]);
+            const rH = Math.round(rect[heightAttr]);
 
             if (DEBUG_CHART && ctx) {
               const alpha = 0.3;
@@ -415,10 +453,12 @@ export const optimize = (
 
               ctx.fillStyle = `rgba(255,128,0,${alpha})`;
               ctx.fillRect(rX, rY, rW, rH);
+              ctx.fillStyle = `rgba(0,0,0,1)`;
+              ctx.fillText(rect.text, rX + 5, rY + 5);
             }
 
-            while (overlap === true && iterations < 1000) {
-              iterations++;
+            while (overlap === true && overlapRemovalIterations < 1000) {
+              overlapRemovalIterations++;
 
               overlap = false;
 
@@ -474,13 +514,14 @@ export const optimize = (
                 // domElement.style(padding, `0px`);
 
                 // apply the new width to parent and text element
+                const widthOffset = isHorizontal ? 5 : 0;
                 domElement.style(
-                  widthAttribute,
-                  `${LABEL_MIN_WIDTH - 10 + 5}px`
+                  widthAttr,
+                  `${LABEL_MIN_WIDTH[orientation] - 10 + widthOffset}px`
                 );
                 dom
                   .select(nodes[rect.index][0])
-                  .style(widthAttribute, `${LABEL_MIN_WIDTH - 10}px`);
+                  .style(widthAttr, `${LABEL_MIN_WIDTH[orientation] - 10}px`);
 
                 boundingsRects[rect.index].padding = 0;
               }
