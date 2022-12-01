@@ -7,6 +7,7 @@ const LABEL_MIN_WIDTH = 60;
 const MAX_OPTIMIZER_RUNS = 100;
 const ADJUST_PIXEL_STEP = 10;
 const DEBUG_CHART = false;
+const DEBUG_TIME = true;
 
 const getDebugCanvasContext = (width, height, marginBottom) => {
   if (!DEBUG_CHART) return;
@@ -38,53 +39,55 @@ const getParentElement = (domElement) =>
     return this.parentNode;
   });
 
-const getBitmapWithoutElement = (width, height, rects, withoutRect, nodes) => {
+const getBitmap = (width, height, rects, nodes) => {
   const bitmap = Array.from({ length: height }, () =>
     Array.from({ length: width }, () => false)
   );
 
   for (const rect of rects) {
-    if (rect.index !== withoutRect.index) {
-      const rX = Math.round(rect.offset - (rect.backwards ? rect.width : 0));
-      const rY = Math.round(
-        bitmap.length -
-          rect.height -
-          (rect.padding !== undefined ? rect.padding : 0)
-      );
+    const bitmapIndex = rect.index + 1;
+    const rX = Math.round(rect.offset - (rect.backwards ? rect.width : 0));
+    const rY = Math.round(
+      bitmap.length -
+        rect.height -
+        (rect.padding !== undefined ? rect.padding : 0)
+    );
 
-      // const textWidth = getTextWidth(nodes[rect.index][0]);
-      const rW = Math.round(rect.width);
-      const rH = Math.round(rect.height);
+    // const textWidth = getTextWidth(nodes[rect.index][0]);
+    const rW = Math.round(rect.width);
+    const rH = Math.round(rect.height);
 
-      for (const [rowI] of Array(rH).fill(true).entries()) {
-        for (const [colI] of Array(rW).fill(true).entries()) {
-          if (
-            bitmap[rY + rowI - 1] &&
-            bitmap[rY + rowI - 1][rX + colI - 1] !== undefined
-          ) {
-            bitmap[rY + rowI - 1][rX + colI - 1] = true;
-          }
+    for (const [rowI] of Array(rH).fill(true).entries()) {
+      for (const [colI] of Array(rW).fill(true).entries()) {
+        if (
+          bitmap[rY + rowI - 1] &&
+          bitmap[rY + rowI - 1][rX + colI - 1] !== undefined
+        ) {
+          bitmap[rY + rowI - 1][rX + colI - 1] =
+            bitmap[rY + rowI - 1][rX + colI - 1] === false ? bitmapIndex : true;
         }
       }
+    }
 
-      if (rW >= LABEL_MIN_WIDTH) {
-        const columnHeight = Math.floor(
-          rect.padding !== undefined ? rect.padding : 0
-        );
-        for (const [rowI] of Array(columnHeight).fill(true).entries()) {
-          if (bitmap[rY + rH + rowI - 1]) {
-            if (
-              !rect.backwards &&
-              bitmap[rY + rH + rowI - 1][rX - 1] !== undefined
-            ) {
-              bitmap[rY + rH + rowI - 1][rX - 1] = true;
-            } else if (
-              rect.backwards &&
-              bitmap[rY + rH + rowI - 1][rX + rW - 2] !== undefined
-            ) {
-              bitmap[rY + rH + rowI - 1][rX + rW - 2] = true;
-            }
-          }
+    const columnHeight = Math.floor(
+      rect.padding !== undefined ? rect.padding : 0
+    );
+    for (const [rowI] of Array(columnHeight).fill(true).entries()) {
+      if (bitmap[rY + rH + rowI - 1]) {
+        if (
+          !rect.backwards &&
+          bitmap[rY + rH + rowI - 1][rX - 1] !== undefined
+        ) {
+          bitmap[rY + rH + rowI - 1][rX - 1] =
+            bitmap[rY + rH + rowI - 1][rX - 1] === false ? bitmapIndex : true;
+        } else if (
+          rect.backwards &&
+          bitmap[rY + rH + rowI - 1][rX + rW - 2] !== undefined
+        ) {
+          bitmap[rY + rH + rowI - 1][rX + rW - 2] =
+            bitmap[rY + rH + rowI - 1][rX + rW - 2] === false
+              ? bitmapIndex
+              : true;
         }
       }
     }
@@ -105,6 +108,9 @@ export const optimize = (
   widthAttribute,
   x
 ) => {
+  if (DEBUG_TIME) {
+    console.time('optimize');
+  }
   const paddingAbove =
     orientation === 'horizontal' ? 'padding-bottom' : 'padding-right';
   const paddingBelow =
@@ -132,10 +138,8 @@ export const optimize = (
     );
 
     const optimizeLayout = (nodes, isAbove) => {
-      let maxHeight = 0;
       let orangeCount = 1;
       let iterations = 0;
-      let totalHeight = 0;
 
       const padding = isAbove ? paddingAbove : paddingBelow;
 
@@ -145,16 +149,18 @@ export const optimize = (
         parentElement.classed(cssLastClass, false);
         parentElement.style(padding, '0px');
 
-        const boundingRect = dom.select(node[0]).node().getBoundingClientRect();
+        // const boundingRect = dom.select(node[0]).node().getBoundingClientRect();
 
-        totalHeight += boundingRect.height;
-        maxHeight = Math.max(maxHeight, boundingRect.height);
+        // totalHeight += boundingRect.height;
+        // maxHeight = Math.max(maxHeight, boundingRect.height);
       }
 
       while (orangeCount > 0 && iterations < MAX_OPTIMIZER_RUNS) {
         // debugger;
         orangeCount = 0;
         iterations++;
+        let totalHeight = 0;
+        let maxHeight = 0;
 
         const boundingsRects = Array(nodes.length);
 
@@ -177,13 +183,17 @@ export const optimize = (
           boundingRect.index = i;
           boundingRect.offset = offset;
           boundingsRects[i] = boundingRect;
+
+          totalHeight += boundingRect.height;
+          maxHeight = Math.max(maxHeight, boundingRect.height);
         }
 
         orangeCount = boundingsRects.reduce((p, c) => {
           return p + (c.width < LABEL_MIN_WIDTH) ? 1 : 0;
         }, 0);
 
-        let bitmap;
+        // create bitmap of all elements
+        const bitmap = getBitmap(width, totalHeight, boundingsRects, nodes);
         const ctx = getDebugCanvasContext(width, totalHeight, maxHeight);
         let lowestOrange;
         let side;
@@ -241,15 +251,6 @@ export const optimize = (
           }
 
           if (lowestOrange !== undefined) {
-            // create bitmap of all elements without current lowest orange
-            bitmap = getBitmapWithoutElement(
-              width,
-              totalHeight,
-              boundingsRects,
-              lowestOrange,
-              nodes
-            );
-
             let overlap = true;
             let iterations = 0;
             let newTestWidth = labelMaxWidth;
@@ -285,7 +286,12 @@ export const optimize = (
               } else {
                 for (const [rowI] of Array(newHeight).fill(true).entries()) {
                   for (const [colI] of Array(newWidth).fill(true).entries()) {
-                    if (bitmap[newY + rowI - 1][newX + colI - 1]) {
+                    if (
+                      bitmap[newY + rowI - 1] !== undefined &&
+                      bitmap[newY + rowI - 1][newX + colI] !== false &&
+                      bitmap[newY + rowI - 1][newX + colI] !==
+                        lowestOrange.index + 1
+                    ) {
                       overlap = true;
                       break;
                     }
@@ -341,6 +347,14 @@ export const optimize = (
           bitmap.forEach((row, yIndex) => {
             row.forEach((pixel, xIndex) => {
               if (pixel) {
+                if (
+                  lowestOrange === undefined ||
+                  pixel !== lowestOrange.index + 1
+                ) {
+                  ctx.fillStyle = `rgba(0,${50 + pixel * 10},128,${alpha})`;
+                } else {
+                  ctx.fillStyle = `rgba(255,128,0,${alpha})`;
+                }
                 ctx.fillRect(xIndex, yIndex, 1, 1);
               }
             });
@@ -373,13 +387,6 @@ export const optimize = (
             if (DEBUG_CHART && ctx) {
               ctx.clearRect(0, 0, width, totalHeight);
             }
-            bitmap = getBitmapWithoutElement(
-              width,
-              totalHeight,
-              boundingsRects,
-              rect,
-              nodes
-            );
 
             let overlap = true;
             let iterations = 0;
@@ -419,7 +426,8 @@ export const optimize = (
                 for (const [colI] of Array(rW).fill(true).entries()) {
                   if (
                     bitmap[rY + rowI - 1] &&
-                    bitmap[rY + rowI - 1][rX + colI - 1] === true
+                    bitmap[rY + rowI - 1][rX + colI] !== false &&
+                    bitmap[rY + rowI - 1][rX + colI] !== rect.index + 1
                   ) {
                     overlap = true;
                     break;
@@ -438,13 +446,15 @@ export const optimize = (
                   if (bitmap[rY + rH + rowI - 1]) {
                     if (
                       !rect.backwards &&
-                      bitmap[rY + rH + rowI - 1][rX - 1] === true
+                      bitmap[rY + rH + rowI - 1][rX] !== false &&
+                      bitmap[rY + rH + rowI - 1][rX] !== rect.index + 1
                     ) {
                       overlap = true;
                       break;
                     } else if (
                       rect.backwards &&
-                      bitmap[rY + rH + rowI - 1][rX + rW - 2] === true
+                      bitmap[rY + rH + rowI - 1][rX + rW - 1] !== false &&
+                      bitmap[rY + rH + rowI - 1][rX + rW - 1] !== rect.index + 1
                     ) {
                       overlap = true;
                       break;
@@ -461,7 +471,7 @@ export const optimize = (
                 );
 
                 domElement.classed(cssLastClass, false);
-                domElement.style(padding, `0px`);
+                // domElement.style(padding, `0px`);
 
                 // apply the new width to parent and text element
                 domElement.style(
@@ -482,5 +492,9 @@ export const optimize = (
 
     optimizeLayout(aboveNodes, true);
     optimizeLayout(belowNodes, false);
+  }
+
+  if (DEBUG_TIME) {
+    console.timeEnd('optimize');
   }
 };
