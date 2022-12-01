@@ -590,7 +590,6 @@ export default function milestones(selector) {
           orientation,
           textMerge,
           width,
-          widthAttribute,
           x,
           scaleType // Pass scale type to optimizer
         );
