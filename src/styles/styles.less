@@ -62,42 +62,56 @@
       }
     }
 
+    .milestones__group__label-above-vertical {
+      border-bottom: none;
+      margin-right: 0px;
+      padding-left: 0px;
+      padding-right: 10px;
+      right: 100%;
+      text-align: right;
+        .wrapper {
+          border-left: 0 !important;
+          border-right: 1px solid black !important;
+          border-bottom: 1px solid white;
+          padding-left: 0px;
+          padding-right: 5px;
+        }
+    }
+
     .milestones__group__label-vertical {
-      padding-left: 10px;
+      top: 100%;
+
+      padding-left: 0px;
       padding-bottom: 0px;
-      border-bottom: 1px solid #000;
-      margin-bottom: -5.5px;
+      border-bottom: none;
+      border-top: 1px solid #000;
+      margin-bottom: 0;
+      margin-top: -5.5px;
       margin-left: 10px;
-      bottom: 100%;
       overflow: visible;
-      .wrapper {
-        min-width: 100px;
-        max-width: 300px;
-        border-left: 1px solid black;
-        border-bottom: 1px solid white;
-        margin-bottom: -1px;
-        padding-left: 5px;
-      }
-  }
+        .wrapper {
+          min-width: 100px;
+          max-width: 300px;
+          border-left: 1px solid black;
+          border-top: 1px solid white;
+          border-bottom: none;
+          margin-bottom: 0;
+          margin-top: -1px;
+          padding-left: 5px;
+        }
+
+        .milestones__group__label__text-vertical {
+          display: table-cell;
+          vertical-align: top;
+        }
+    }
+
 
       .milestones__group__label-above-horizontal {
         bottom: 100%;
       }
 
-      .milestones__group__label-above-vertical {
-        padding-left: 0px;
-        padding-right: 10px;
-        right: 100%;
-        text-align: right;
-        .wrapper {
-          border-left: 0;
-          border-right: 1px solid black;
-          padding-left: 0px;
-          padding-right: 5px;
-        }
-      }
-
-      .milestones__group__label-last {
+      .milestones__group__label-last-horizontal {
         right: 100%;
         border-left: 0;
         border-right: 1px solid #000;
@@ -111,9 +125,30 @@
         }
       }
 
-      .milestones__group__label__text-vertical {
-        display: table-cell;
-        vertical-align: bottom;
+      .milestones__group__label-last-vertical {
+        padding-left: 0px;
+        padding-bottom: 0px;
+        border-top: none;
+        border-bottom: 1px solid #000;
+        margin-bottom: -5.5px;
+        margin-left: 10px;
+        top: auto;
+        bottom: 100%;
+        overflow: visible;
+        .wrapper {
+          min-width: 100px;
+          max-width: 300px;
+          border-right: none;
+          border-left: 1px solid black;
+          border-bottom: 1px solid white;
+          margin-bottom: -1px;
+          padding-left: 5px;
+        }
+
+        .milestones__group__label__text-vertical {
+          display: table-cell;
+          vertical-align: bottom;
+        }
       }
 
       .milestones__group__label__text__title {
