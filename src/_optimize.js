@@ -3,9 +3,9 @@ import { nest } from 'd3-collection';
 
 import { cssAboveClass, cssBelowClass, cssLastClass } from './_css';
 
-const LABEL_MIN_WIDTH = { horizontal: 60, vertical: 60 };
+const LABEL_MIN_WIDTH = { horizontal: 60, vertical: 30 };
 const ADJUST_PIXEL_STEP = 10;
-const DEBUG_CHART = true;
+const DEBUG_CHART = false;
 const DEBUG_TIME = true;
 
 const getDebugCanvasContext = (width, height, marginBottom) => {
@@ -154,6 +154,7 @@ export const optimize = (
       // reset padding and "last" class before starting the optimization
       for (const node of nodes) {
         const parentElement = getParentElement(dom.selectAll(node));
+        parentElement.attr('data-adjusted', false);
         parentElement.classed(`${cssLastClass}-${orientation}`, false);
         parentElement.style(padding, isHorizontal ? '0px' : '10px');
       }
@@ -176,6 +177,7 @@ export const optimize = (
             `${cssLastClass}-${orientation}`
           );
           const paddingPx = parentElement.style(padding);
+          const adjusted = parentElement.attr('data-adjusted');
 
           const offset = x(aggregateFormatParse(item.key));
           const boundingRect = dom
@@ -188,6 +190,7 @@ export const optimize = (
           boundingRect.text = item.key;
           boundingRect.index = i;
           boundingRect.offset = offset;
+          boundingRect.adjusted = adjusted === 'true';
           boundingsRects[i] = boundingRect;
 
           totalHeight = Math.max(
@@ -199,7 +202,11 @@ export const optimize = (
         totalHeight = totalHeight * 2;
 
         orangeCount = boundingsRects.reduce((p, c) => {
-          return p + (c[widthAttr] < LABEL_MIN_WIDTH[orientation]) ? 1 : 0;
+          return p +
+            (isHorizontal && c[widthAttr] < LABEL_MIN_WIDTH[orientation]) ||
+            (!isHorizontal && !c.adjusted)
+            ? 1
+            : 0;
         }, 0);
 
         // create bitmap of all elements
@@ -232,26 +239,32 @@ export const optimize = (
           const leftEl = boundingsRects.find(
             (d) =>
               d.index === c.index - 1 &&
-              d[widthAttr] < LABEL_MIN_WIDTH[orientation]
+              ((isHorizontal && d[widthAttr] < LABEL_MIN_WIDTH[orientation]) ||
+                (!isHorizontal && d.adjusted === false))
           );
 
           const rightEl = boundingsRects.find(
             (d) =>
               d.index === c.index + 1 &&
-              (d[widthAttr] < LABEL_MIN_WIDTH[orientation] ||
-                (!d.backwards && d.offset + d[widthAttr] > width))
+              ((isHorizontal &&
+                (d[widthAttr] < LABEL_MIN_WIDTH[orientation] ||
+                  (!d.backwards && d.offset + d[widthAttr] > width))) ||
+                (!isHorizontal && d.adjusted === false))
           );
 
           return leftEl !== undefined || rightEl !== undefined ? c : p;
         }, undefined);
 
         if (lowestGreen !== undefined) {
+          lowestOrange = undefined;
           // get an eventual orange element left of the green one
           if (lowestGreen.index > 0) {
             lowestOrange = boundingsRects.find(
               (d) =>
                 d.index === lowestGreen.index - 1 &&
-                d[widthAttr] < LABEL_MIN_WIDTH[orientation]
+                ((isHorizontal &&
+                  d[widthAttr] < LABEL_MIN_WIDTH[orientation]) ||
+                  (!isHorizontal && d.adjusted === false))
             );
             side = 'before';
           }
@@ -264,8 +277,10 @@ export const optimize = (
             const checkOrange = boundingsRects.find(
               (d) =>
                 d.index === lowestGreen.index + 1 &&
-                (d[widthAttr] < LABEL_MIN_WIDTH[orientation] ||
-                  (!d.backwards && d.offset + d[widthAttr] > width))
+                ((isHorizontal &&
+                  (d[widthAttr] < LABEL_MIN_WIDTH[orientation] ||
+                    (!d.backwards && d.offset + d[widthAttr] > width))) ||
+                  (!isHorizontal && d.adjusted === false))
             );
 
             if (
@@ -353,6 +368,7 @@ export const optimize = (
               dom.select(nodes[lowestOrange.index][0])
             );
 
+            domElement.attr('data-adjusted', true);
             domElement.classed(`${cssLastClass}-${orientation}`, backwards);
             newYOffset = isHorizontal ? newYOffset : newYOffset + 10;
             domElement.style(padding, `${newYOffset}px`);
@@ -365,9 +381,16 @@ export const optimize = (
               .style(widthAttr, `${newTestWidth}px`);
 
             // shrink the width to fit the text
-            const shrinkedWidth = getTextWidth(nodes[lowestOrange.index][0]);
+            const shrinkedWidth = isHorizontal
+              ? getTextWidth(nodes[lowestOrange.index][0])
+              : parseFloat(
+                  domElement.select('.wrapper').style('height').split('px')[0]
+                );
             if (shrinkedWidth + widthOffset < newTestWidth) {
-              domElement.style(widthAttr, `${shrinkedWidth + 10}px`);
+              domElement.style(
+                widthAttr,
+                `${shrinkedWidth + (isHorizontal ? 10 : 0)}px`
+              );
               dom
                 .select(nodes[lowestOrange.index][0])
                 .style(widthAttr, `${shrinkedWidth + widthOffset}px`);
@@ -517,6 +540,7 @@ export const optimize = (
                 const domElement = getParentElement(
                   dom.select(nodes[rect.index][0])
                 );
+                domElement.attr('data-adjusted', false);
 
                 domElement.classed(`${cssLastClass}-${orientation}`, false);
                 // domElement.style(padding, `0px`);

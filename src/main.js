@@ -161,7 +161,7 @@ export default function milestones(selector) {
       orientation === 'horizontal'
         ? cssHorizontalLineClass
         : cssVerticalLineClass;
-    const labelMaxWidth = orientation === 'horizontal' ? 180 : 100;
+    const labelMaxWidth = orientation === 'horizontal' ? 180 : 180;
 
     const timelineSelection = dom.select(selector).selectAll('.' + cssPrefix);
     const nestedData =
@@ -269,14 +269,6 @@ export default function milestones(selector) {
         .append('div')
         .attr('class', cssLabelClass + '-' + orientation)
         .merge(label)
-        // .classed(cssLastClass, (d) => {
-        //   const mostRightPosition = Math.round(x.range()[1]);
-        //   const currentPosition = x(aggregateFormatParse(d.key));
-        //   return (
-        //     mostRightPosition === currentPosition &&
-        //     orientation === 'horizontal'
-        //   );
-        // })
         .classed(cssAboveClass + '-' + orientation, (d) =>
           isAbove(d.index, distribution)
         )
@@ -515,7 +507,6 @@ export default function milestones(selector) {
             : '50';
         dom
           .select(node[i])
-          .style('margin-top', '50px')
           .style('margin-left', percent + '%')
           .style('position', 'absolute');
       }
