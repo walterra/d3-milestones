@@ -108,6 +108,7 @@
     "decode-uri-component": "0.2.2",
     "elliptic": "6.5.4",
     "engine.io": "6.2.1",
+    "express": "4.17.3",
     "follow-redirects": "1.14.8",
     "glob-parent": "5.1.2",
     "loader-utils": "1.4.2",
