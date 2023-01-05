@@ -1,6 +1,10 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
-No public interface changes since `v1.4.4`.
+No public interface changes since `v1.4.5`.
+
+## [`v1.4.5`](https://github.com/walterra/d3-milestones/tree/v1.4.5)
+
+- Update .nvmrc to 16.16 (da77577).
 
 ## [`v1.4.4`](https://github.com/walterra/d3-milestones/tree/v1.4.4)
 
