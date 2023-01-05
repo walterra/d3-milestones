@@ -1,6 +1,10 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
-No public interface changes since `v1.4.3`.
+No public interface changes since `v1.4.4`.
+
+## [`v1.4.4`](https://github.com/walterra/d3-milestones/tree/v1.4.4)
+
+- Dependency updates.
 
 ## [`v1.4.3`](https://github.com/walterra/d3-milestones/tree/v1.4.3)
 
