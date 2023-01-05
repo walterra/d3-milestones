@@ -6,8 +6,8 @@ No public interface changes since `v1.4.3`.
 
 - Update `.nvmrc` to `16.14`.
 - Fixes Karma setup.
-- Switches functional tests to use Firefox instead of Chrome.
-- Swtiched to Babel from Buble.
+- Switched functional tests to use Firefox instead of Chrome.
+- Switched to Babel from Buble.
 - Updates `d3` modules.
 
 ## [`v1.4.2`](https://github.com/walterra/d3-milestones/tree/v1.4.2)
