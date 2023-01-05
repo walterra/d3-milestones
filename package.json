@@ -105,6 +105,7 @@
   "resolutions": {
     "async": "2.6.4",
     "cached-path-relative": "1.1.0",
+    "decode-uri-component": "0.2.2",
     "elliptic": "6.5.4",
     "engine.io": "6.2.1",
     "follow-redirects": "1.14.8",
