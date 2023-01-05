@@ -120,6 +120,7 @@
     "normalize-url": "4.5.1",
     "path-parse": "1.0.7",
     "plist": "3.0.5",
+    "qs": "6.10.3",
     "socket.io-parser": "4.0.5",
     "tap-out": "3.0.0",
     "terser": "4.8.1",
