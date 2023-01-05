@@ -1,6 +1,14 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
-No public interface changes since `v1.4.2`.
+No public interface changes since `v1.4.3`.
+
+## [`v1.4.3`](https://github.com/walterra/d3-milestones/tree/v1.4.3)
+
+- Update `.nvmrc` to `16.14`.
+- Fixes Karma setup.
+- Switches functional tests to use Firefox instead of Chrome.
+- Swtiched to Babel from Buble.
+- Updates `d3` modules.
 
 ## [`v1.4.2`](https://github.com/walterra/d3-milestones/tree/v1.4.2)
 
