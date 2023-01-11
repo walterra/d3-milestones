@@ -10,12 +10,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Observability setup
-        uses: codeboten/github-action-to-otlp@v1
-        with:
-          endpoint: "${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}"
-          headers: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
-
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
@@ -27,3 +21,9 @@ jobs:
           chromedriver --url-base=/wd/hub &
           sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
           yarn
+
+      - name: Observability setup
+        uses: codeboten/github-action-to-otlp@v1
+        with:
+          endpoint: "${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}"
+          headers: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
