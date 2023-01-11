@@ -9,6 +9,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Observability setup
+        uses: codeboten/github-action-to-otlp@v1
+        with:
+          endpoint: "${{ secrets.OTEL_EXPORTER_OTLP_ENDPOINT }}"
+          headers: ${{ secrets.OTEL_EXPORTER_OTLP_HEADERS }}
+
       - name: Use Node.js
         uses: actions/setup-node@v3
         with:
