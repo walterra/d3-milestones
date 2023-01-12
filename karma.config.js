@@ -6,6 +6,10 @@ const { nodeResolve } = require('@rollup/plugin-node-resolve');
 const { getBranch } = require('./test/get_git_branch');
 
 const APM_GIT_BRANCH = getBranch();
+const APM_SERVER =
+  process.env.APM_SERVER !== undefined
+    ? `"${process.env.APM_SERVER}"`
+    : undefined;
 
 module.exports = (config) => {
   const configuration = {
@@ -38,7 +42,7 @@ module.exports = (config) => {
     rollupPreprocessor: {
       external: ['tape'],
       output: {
-        intro: `const APM_GIT_BRANCH = "${APM_GIT_BRANCH}";\n`,
+        intro: `const APM_GIT_BRANCH = "${APM_GIT_BRANCH}";\nconst APM_SERVER = ${APM_SERVER};\n`,
         format: 'iife',
         globals: {
           tape: 'tape',

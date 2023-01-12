@@ -9,6 +9,7 @@ jobs:
     environment: test-ui
     runs-on: ubuntu-latest
     env:
+      APM_SERVER: "${{ secrets.APM_SERVER }}"
       PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
       CI: 'true'
     steps:

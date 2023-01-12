@@ -1,11 +1,8 @@
 import tape from 'tape';
 import milestones from '../src/main';
 import * as d3 from 'd3-selection';
-import { apm } from './apm';
-
-function delay(time) {
-  return new Promise((resolve) => setTimeout(resolve, time));
-}
+import { startTransaction } from './apm';
+import { delay } from './delay';
 
 const TEST_NAME =
   'should render a minimal milestones chart with attached events';
@@ -22,10 +19,7 @@ tape(TEST_NAME, (t) => {
     { timestamp: '2012-09-12T00:00', detail: 'v1.1.0' },
   ];
 
-  const transaction = apm.startTransaction('d3-milestones/karma', 'custom');
-  transaction.addLabels({ 'd3-milestones-layout': APM_GIT_BRANCH });
-  const span = transaction.startSpan(TEST_NAME, 'render-chart');
-  span.addLabels({ 'd3-milestones-layout': APM_GIT_BRANCH });
+  const { endTransaction } = startTransaction(TEST_NAME);
 
   const timeline = milestones('#wrapper_event')
     .onEventClick((d) => {
@@ -48,10 +42,7 @@ tape(TEST_NAME, (t) => {
     .optimize(true)
     .render(data);
 
-  if (transaction && span) {
-    span.end();
-    transaction.end();
-  }
+  endTransaction();
 
   t.plan(3);
 
@@ -72,6 +63,5 @@ tape(TEST_NAME, (t) => {
     });
 
     t.end();
-    console.log('ran after 1 second1 passed');
   });
 });
