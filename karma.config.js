@@ -10,7 +10,6 @@ const APM_GIT_BRANCH = getBranch();
 module.exports = (config) => {
   const configuration = {
     autoWatch: false,
-    // client: { captureConsole: false },
     browsers: ['Firefox'],
     browserConsoleLogOptions: {
       level: 'error',
@@ -25,7 +24,6 @@ module.exports = (config) => {
       { pattern: 'test/*-test.js', watched: false },
     ],
     frameworks: ['tap'],
-    // logLevel: config.LOG_DEBUG,
     logLevel: config.LOG_ERROR,
     plugins: [
       'karma-rollup-preprocessor',
@@ -38,7 +36,6 @@ module.exports = (config) => {
     },
     reporters: ['tap-pretty'],
     rollupPreprocessor: {
-      // context: 'this',
       external: ['tape'],
       output: {
         intro: `const APM_GIT_BRANCH = "${APM_GIT_BRANCH}";\n`,
