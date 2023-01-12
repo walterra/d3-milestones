@@ -1,5 +1,9 @@
 name: build
-on: [push]
+on:
+  push:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '50 * * * *'
 jobs:
   ui-test:
     environment: test-ui
