@@ -3,6 +3,10 @@ import milestones from '../src/main';
 import * as d3 from 'd3-selection';
 import { apm } from './apm';
 
+function delay(time) {
+  return new Promise((resolve) => setTimeout(resolve, time));
+}
+
 tape('should render a minimal milestones chart with attached events', (t) => {
   document.body.insertAdjacentHTML(
     'afterbegin',
@@ -15,16 +19,13 @@ tape('should render a minimal milestones chart with attached events', (t) => {
     { timestamp: '2012-09-12T00:00', detail: 'v1.1.0' },
   ];
 
-  const transaction = apm.getCurrentTransaction();
-  let span;
-  if (transaction) {
-    transaction.name = 'd3-milestones/karma';
-    transaction.addLabels({ 'd3-milestones-layout': 'v1' });
-    span = transaction.startSpan(
-      'render minimal chart with attached events',
-      'render-chart'
-    );
-  }
+  const transaction = apm.startTransaction('d3-milestones/karma', 'custom');
+  transaction.addLabels({ 'd3-milestones-layout': 'v1' });
+  const span = transaction.startSpan(
+    'render minimal chart with attached events',
+    'render-chart'
+  );
+  span.addLabels({ 'd3-milestones-layout': 'v1' });
 
   const timeline = milestones('#wrapper_event')
     .onEventClick((d) => {
@@ -47,24 +48,30 @@ tape('should render a minimal milestones chart with attached events', (t) => {
     .optimize(true)
     .render(data);
 
-  if (transaction && span) span.end();
+  if (transaction && span) {
+    span.end();
+    transaction.end();
+  }
 
   t.plan(3);
 
-  d3.select('#wrapper_event .milestones-text-label').each(function (d, i) {
-    var onClickFunc = d3.select(this).on('click');
-    onClickFunc.apply(this, [d, i]);
-  });
+  return delay(1000).then(function () {
+    d3.select('#wrapper_event .milestones-text-label').each(function (d, i) {
+      var onClickFunc = d3.select(this).on('click');
+      onClickFunc.apply(this, [d, i]);
+    });
 
-  d3.select('#wrapper_event .milestones-text-label').each(function (d, i) {
-    var onClickFunc = d3.select(this).on('mouseover');
-    onClickFunc.apply(this, [d, i]);
-  });
+    d3.select('#wrapper_event .milestones-text-label').each(function (d, i) {
+      var onClickFunc = d3.select(this).on('mouseover');
+      onClickFunc.apply(this, [d, i]);
+    });
 
-  d3.select('#wrapper_event .milestones-text-label').each(function (d, i) {
-    var onClickFunc = d3.select(this).on('mouseleave');
-    onClickFunc.apply(this, [d, i]);
-  });
+    d3.select('#wrapper_event .milestones-text-label').each(function (d, i) {
+      var onClickFunc = d3.select(this).on('mouseleave');
+      onClickFunc.apply(this, [d, i]);
+    });
 
-  t.end();
+    t.end();
+    console.log('ran after 1 second1 passed');
+  });
 });
