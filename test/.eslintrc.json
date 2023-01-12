@@ -5,6 +5,7 @@
   },
   "globals": {
     "elasticApm": "readonly",
-    "require": "readonly"
+    "require": "readonly",
+    "APM_GIT_BRANCH": "readonly"
   }
 }

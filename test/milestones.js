@@ -7,7 +7,9 @@ function delay(time) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-tape('should render a minimal milestones chart', (t) => {
+const TEST_NAME = 'should render a minimal milestones chart';
+
+tape(TEST_NAME, (t) => {
   document.body.insertAdjacentHTML(
     'afterbegin',
     '<div id="wrapper_milestones"></div>'
@@ -24,9 +26,9 @@ tape('should render a minimal milestones chart', (t) => {
   ];
 
   const transaction = apm.startTransaction('d3-milestones/karma', 'custom');
-  transaction.addLabels({ 'd3-milestones-layout': 'v1' });
-  const span = transaction.startSpan('render minimal chart', 'render-chart');
-  span.addLabels({ 'd3-milestones-layout': 'v1' });
+  transaction.addLabels({ 'd3-milestones-layout': APM_GIT_BRANCH });
+  const span = transaction.startSpan(TEST_NAME, 'render-chart');
+  span.addLabels({ 'd3-milestones-layout': APM_GIT_BRANCH });
 
   const timeline = milestones('#wrapper_milestones').mapping({
     timestamp: 'timestamp',

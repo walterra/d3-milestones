@@ -3,6 +3,10 @@ const tapSpec = require('tap-spec');
 const eslint = require('@rollup/plugin-eslint');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 
+const { getBranch } = require('./test/get_git_branch');
+
+const APM_GIT_BRANCH = getBranch();
+
 module.exports = (config) => {
   const configuration = {
     autoWatch: false,
@@ -37,6 +41,7 @@ module.exports = (config) => {
       // context: 'this',
       external: ['tape'],
       output: {
+        intro: `const APM_GIT_BRANCH = "${APM_GIT_BRANCH}";\n`,
         format: 'iife',
         globals: {
           tape: 'tape',
