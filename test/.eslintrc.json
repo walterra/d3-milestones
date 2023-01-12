@@ -4,6 +4,7 @@
     "node": true
   },
   "globals": {
-    "require": true
+    "elasticApm": "readonly",
+    "require": "readonly"
   }
 }

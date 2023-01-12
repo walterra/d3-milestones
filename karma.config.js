@@ -15,6 +15,7 @@ module.exports = (config) => {
     },
     colors: true,
     files: [
+      'node_modules/@elastic/apm-rum/dist/bundles/elastic-apm-rum.umd.min.js',
       'build/d3-milestones.css',
       'build/tape.js',
       { pattern: 'test/*-test.js', watched: false },

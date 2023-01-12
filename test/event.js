@@ -1,6 +1,7 @@
 import tape from 'tape';
 import milestones from '../src/main';
 import * as d3 from 'd3-selection';
+import { apm } from './apm';
 
 tape('should render a minimal milestones chart with attached events', (t) => {
   document.body.insertAdjacentHTML(
@@ -13,6 +14,17 @@ tape('should render a minimal milestones chart with attached events', (t) => {
     { timestamp: '2012-09-10T00:00', detail: 'v1.0.1' },
     { timestamp: '2012-09-12T00:00', detail: 'v1.1.0' },
   ];
+
+  const transaction = apm.getCurrentTransaction();
+  let span;
+  if (transaction) {
+    transaction.name = 'd3-milestones/karma';
+    transaction.addLabels({ 'd3-milestones-layout': 'v1' });
+    span = transaction.startSpan(
+      'render minimal chart with attached events',
+      'render-chart'
+    );
+  }
 
   const timeline = milestones('#wrapper_event')
     .onEventClick((d) => {
@@ -34,6 +46,8 @@ tape('should render a minimal milestones chart with attached events', (t) => {
     .aggregateBy('second')
     .optimize(true)
     .render(data);
+
+  if (transaction && span) span.end();
 
   t.plan(3);
 
