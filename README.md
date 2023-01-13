@@ -165,6 +165,10 @@ Set a callback which is executed when the mouse cursor is leaving text or image.
   })
 ```
 
+## Disclaimer on DevOps/CI Observability
+
+This repository uses [Elastic APM](https://www.elastic.co/observability/application-performance-monitoring) to track performance of functional tests. It uses `@elastic/apm-rum` as a `devDependency` to be run only as part of the tests. No telemetry library is part of the published package.
+
 
 ## More
 
