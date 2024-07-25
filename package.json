@@ -137,6 +137,7 @@
     "ws": ">=7.4.6",
     "x-default-browser": "0.5.2",
     "wrap-ansi": "7.0.0",
-    "string-width": "4.1.0"
+    "string-width": "4.1.0",
+    "semver": ">=7.5.2"
   }
 }
