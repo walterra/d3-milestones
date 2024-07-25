@@ -59,7 +59,7 @@
     "eslint-plugin-storybook": "^0.6.8",
     "gh-pages": "^6.1.1",
     "jest": "^29.3.1",
-    "karma": "^6.4.1",
+    "karma": "^6.4.3",
     "karma-firefox-launcher": "^2.1.2",
     "karma-rollup-preprocessor": "^7.0.8",
     "karma-tap": "^4.2.0",
