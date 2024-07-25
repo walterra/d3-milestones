@@ -1,11 +1,13 @@
 module.exports = {
-  stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
+  stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
 
   addons: [
     '@storybook/addon-links',
     '@storybook/addon-docs',
     '@storybook/addon-essentials',
     '@storybook/addon-mdx-gfm',
+    '@storybook/addon-webpack5-compiler-babel',
+    '@chromatic-com/storybook'
   ],
 
   framework: {
@@ -29,7 +31,5 @@ module.exports = {
     return config;
   },
 
-  docs: {
-    autodocs: true,
-  },
+  docs: {},
 };
