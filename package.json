@@ -116,7 +116,7 @@
     "decode-uri-component": "0.2.2",
     "elliptic": "6.5.4",
     "engine.io": "6.2.1",
-    "follow-redirects": "1.14.8",
+    "follow-redirects": "1.15.6",
     "glob-parent": "5.1.2",
     "loader-utils": "1.4.2",
     "lodash": "4.17.21",
