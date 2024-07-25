@@ -1,20 +1,18 @@
 module.exports = {
-  "stories": [
-    "../src/**/*.stories.mdx",
-    "../src/**/*.stories.@(js|jsx|ts|tsx)"
+  stories: ['../src/**/*.stories.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
+
+  addons: [
+    '@storybook/addon-links',
+    '@storybook/addon-docs',
+    '@storybook/addon-essentials',
+    '@storybook/addon-mdx-gfm',
   ],
-  "addons": [
-    "@storybook/addon-links",
-    {
-      name: "@storybook/addon-docs",
-      options: { transcludeMarkdown: true },
-    },
-    "@storybook/addon-essentials",
-  ],
-  "framework": "@storybook/html",
-  "core": {
-    "builder": "webpack5"
+
+  framework: {
+    name: '@storybook/html-webpack5',
+    options: {},
   },
+
   webpackFinal: async (config) => {
     config.module.rules.push({
       test: /\.less$/,
@@ -27,6 +25,11 @@ module.exports = {
         },
       ],
     });
+    config.optimization.minimize = false;
     return config;
   },
-}
+
+  docs: {
+    autodocs: true,
+  },
+};

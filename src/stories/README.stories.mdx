@@ -1,6 +1,7 @@
+import { Markdown } from '@storybook/addon-docs';
 import { Meta } from '@storybook/addon-docs';
-import ReadMe from '../../README.md';
+import ReadMe from '../../README.md?raw';
 
 <Meta title="d3-milestones/README.md" />
 
-<ReadMe/>
+<Markdown>{ReadMe}</Markdown>

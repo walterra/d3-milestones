@@ -30,7 +30,10 @@
     "d3-collection": "^1.0.7",
     "d3-scale": "^4.0.2",
     "d3-selection": "^3.0.0",
-    "d3-time-format": "^4.1.0"
+    "d3-time-format": "^4.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "webpack": "^5.93.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.8",
@@ -40,12 +43,12 @@
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-eslint": "^8.0.1",
     "@rollup/plugin-node-resolve": "^11.1.0",
-    "@storybook/addon-actions": "^6.5.16",
-    "@storybook/addon-essentials": "^6.5.16",
-    "@storybook/addon-links": "^6.5.16",
-    "@storybook/builder-webpack5": "^6.5.16",
-    "@storybook/html": "^6.5.16",
-    "@storybook/manager-webpack5": "^6.5.16",
+    "@storybook/addon-actions": "^7.6.19",
+    "@storybook/addon-essentials": "^7.6.19",
+    "@storybook/addon-links": "^7.6.19",
+    "@storybook/addon-mdx-gfm": "^7.6.19",
+    "@storybook/html": "^7.6.19",
+    "@storybook/html-webpack5": "^7.6.19",
     "acorn": "^7.1.1",
     "babel-jest": "^29.3.1",
     "babel-loader": "^9.1.0",
@@ -71,6 +74,7 @@
     "regenerator-runtime": "^0.13.11",
     "rollup": "^1.12.4",
     "serve": "^13.0.2",
+    "storybook": "^7.6.19",
     "style-loader": "^3.3.1",
     "tap-spec": "^5.0.0",
     "tape": "^5.6.1",
@@ -91,10 +95,10 @@
     "watch-css": "npm-watch build-css",
     "prepare": "yarn build && yarn test && uglifyjs build/d3-milestones.js -c -m -o build/d3-milestones.min.js && yarn build-css",
     "postpublish": "git push && git push --tags && zip -j build/d3-milestones.zip -- LICENSE.md README.md build/d3-milestones.css build/d3-milestones.js build/d3-milestones.min.js",
-    "storybook": "start-storybook -p 6006",
+    "storybook": "storybook dev -p 6006",
     "predeploy": "yarn build-storybook",
     "deploy-storybook": "gh-pages -d storybook-static",
-    "build-storybook": "build-storybook"
+    "build-storybook": "storybook build"
   },
   "watch": {
     "build-css": {
@@ -130,6 +134,8 @@
     "trim": "0.0.3",
     "ua-parser-js": ">=0.7.24",
     "ws": ">=7.4.6",
-    "x-default-browser": "0.5.2"
+    "x-default-browser": "0.5.2",
+    "wrap-ansi": "7.0.0",
+    "string-width": "4.1.0"
   }
 }
