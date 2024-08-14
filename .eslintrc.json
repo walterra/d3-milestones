@@ -9,7 +9,8 @@
   },
   "extends": [ "eslint:recommended", "plugin:prettier/recommended" ],
   "parserOptions": {
-    "sourceType": "module"
+    "sourceType": "module",
+    "ecmaVersion": 8
   },
   "plugins": ["jest", "prettier"],
   "rules": {

@@ -14,6 +14,7 @@ import {
   cssBulletClass,
   cssLabelClass,
   cssAboveClass,
+  cssBelowClass,
   cssTextClass,
   cssTitleClass,
   cssEventClass,
@@ -160,7 +161,7 @@ export default function milestones(selector) {
       orientation === 'horizontal'
         ? cssHorizontalLineClass
         : cssVerticalLineClass;
-    const labelMaxWidth = orientation === 'horizontal' ? 180 : 100;
+    const labelMaxWidth = orientation === 'horizontal' ? 180 : 180;
 
     const timelineSelection = dom.select(selector).selectAll('.' + cssPrefix);
     const nestedData =
@@ -268,16 +269,12 @@ export default function milestones(selector) {
         .append('div')
         .attr('class', cssLabelClass + '-' + orientation)
         .merge(label)
-        // .classed(cssLastClass, (d) => {
-        //   const mostRightPosition = Math.round(x.range()[1]);
-        //   const currentPosition = x(aggregateFormatParse(d.key));
-        //   return (
-        //     mostRightPosition === currentPosition &&
-        //     orientation === 'horizontal'
-        //   );
-        // })
         .classed(cssAboveClass + '-' + orientation, (d) =>
           isAbove(d.index, distribution)
+        )
+        .classed(
+          cssBelowClass + '-' + orientation,
+          (d) => !isAbove(d.index, distribution)
         );
 
       const text = labelMerge
@@ -321,10 +318,6 @@ export default function milestones(selector) {
               orientation === 'horizontal'
                 ? offsetNextItem - offset
                 : offset - offsetNextItem;
-
-            if (itemNumTotal - itemNum === 2) {
-              availableWidth /= 2;
-            }
           } else {
             if (itemNumTotal - itemNum === 1) {
               availableWidth =
@@ -479,7 +472,6 @@ export default function milestones(selector) {
           orientation,
           textMerge,
           width,
-          widthAttribute,
           x
         );
       }
@@ -515,7 +507,6 @@ export default function milestones(selector) {
             : '50';
         dom
           .select(node[i])
-          .style('margin-top', '50px')
           .style('margin-left', percent + '%')
           .style('position', 'absolute');
       }
