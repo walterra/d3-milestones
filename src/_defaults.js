@@ -8,6 +8,7 @@ export const DEFAULTS = {
     timestamp: 'timestamp',
     text: 'text',
     url: 'url',
+    id: 'id',
     textStyle: 'textStyle',
     titleStyle: 'titleStyle',
   },

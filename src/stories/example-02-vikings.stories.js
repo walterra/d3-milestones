@@ -17,6 +17,7 @@ Vikings.args = {
   mapping: {
     timestamp: 'year',
     text: 'title',
+    id: 'id',
   },
   data,
 };

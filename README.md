@@ -84,7 +84,8 @@ Sets overrides for the default attributes for the expected data structure of an 
     entries: undefined,
     timestamp: 'timestamp',
     text: 'text',
-    url: 'url'
+    url: 'url',
+    id: 'id'
   };
 ```
 
