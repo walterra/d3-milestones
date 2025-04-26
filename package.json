@@ -113,6 +113,7 @@
   },
   "resolutions": {
     "async": "2.6.4",
+    "body-parser": "1.20.3",
     "cached-path-relative": "1.1.0",
     "decode-uri-component": "0.2.2",
     "elliptic": "6.6.1",
