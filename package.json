@@ -115,7 +115,7 @@
     "async": "2.6.4",
     "cached-path-relative": "1.1.0",
     "decode-uri-component": "0.2.2",
-    "elliptic": "6.5.4",
+    "elliptic": "6.6.1",
     "engine.io": "6.4.2",
     "follow-redirects": "1.15.6",
     "glob-parent": "5.1.2",
