@@ -131,6 +131,17 @@ When called without `data` this triggers re-rendering the existing visualization
 
 `data` is expected to be an array of event objects with fields matching either the expected defaults (`timestamp` and `text` attribute) or the provided mapping via `.mapping()`.
 
+<a name="renderCallback" href="#renderCallback">#</a> vis.<b>renderCallback</b>(<i>function</i>)
+
+Sets a callback function that is executed after the visualization is fully rendered, allowing you to apply custom styling or modifications to the rendered elements. The callback is called after both initial renders and automatic re-renders due to window resizing.
+
+```js
+vis.renderCallback(function() {
+  // Apply additional customizations after rendering is complete
+  d3.select(".milestones").style("margin-left", "10%");
+}).render(data);
+```
+
 <a name="onEventClick" href="#onEventClick">#</a> vis.<b>onEventClick</b>(<i>function</i>)
 
 Set a callback which is executed when the text or image is clicked.
