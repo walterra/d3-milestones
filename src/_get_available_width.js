@@ -18,7 +18,8 @@ export const getAvailableWidth = (
   textMerge,
   width,
   x,
-  useNext = true
+  useNext = true,
+  scaleType = 'time' // Default to time scale if not provided
 ) => {
   // get the available width until the uber-next group
   let nextTestIndex =
@@ -51,7 +52,11 @@ export const getAvailableWidth = (
   let availableWidth = getAttribute(currentNode, offsetCheckAttribute);
 
   if (typeof uberNextItem !== 'undefined') {
-    const offsetUberNextItem = x(aggregateFormatParse(uberNextItem.key));
+    const value =
+      scaleType === 'ordinal'
+        ? uberNextItem.key
+        : aggregateFormatParse(uberNextItem.key);
+    const offsetUberNextItem = x(value);
 
     if ((orientation === 'horizontal') & useNext) {
       availableWidth = offsetUberNextItem - offset - labelRightMargin;

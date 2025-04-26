@@ -2,10 +2,12 @@ export const DEFAULTS = {
   DISTRIBUTION: 'top-bottom',
   OPTIMIZE: false,
   ORIENTATION: 'horizontal',
+  SCALE_TYPE: 'time',
   MAPPING: {
     category: undefined,
     entries: undefined,
-    timestamp: 'timestamp',
+    timestamp: 'timestamp', // Used only for time based scales
+    value: 'value', // Used only for ordinal scale values
     text: 'text',
     url: 'url',
     id: 'id',

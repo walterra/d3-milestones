@@ -35,7 +35,8 @@ export const optimize = (
   textMerge,
   width,
   widthAttribute,
-  x
+  x,
+  scaleType = 'time' // Default to time scale if not provided
 ) => {
   const nestedNodes = nest()
     .key((d) => {
@@ -59,7 +60,9 @@ export const optimize = (
           orientation === 'horizontal' ? nodes.length - d.index - 1 : d.index;
 
         const item = dom.selectAll(nodes[index]).data()[0];
-        const offset = x(aggregateFormatParse(item.key));
+        const value =
+          scaleType === 'ordinal' ? item.key : aggregateFormatParse(item.key);
+        const offset = x(value);
         const currentNode = nodes[index][0];
 
         let isLast = index === nodes.length - 1;
@@ -178,7 +181,8 @@ export const optimize = (
                 textMerge,
                 width,
                 x,
-                useNext
+                useNext,
+                scaleType // Pass scale type to getAvailableWidth
               );
             }
           } while (
@@ -221,8 +225,11 @@ export const optimize = (
                 return;
               }
 
-              let overlapCheckOffset =
-                x(aggregateFormatParse(overlapCheckItem.key)) - 5;
+              const overlapValue =
+                scaleType === 'ordinal'
+                  ? overlapCheckItem.key
+                  : aggregateFormatParse(overlapCheckItem.key);
+              let overlapCheckOffset = x(overlapValue) - 5;
               const overlapItemOffsetAnchor = overlapCheckOffset;
               const overlapCheckDomElement = dom.selectAll(
                 nodes[overlapCheckIndex]

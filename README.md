@@ -53,6 +53,8 @@ Examples are included using storybook:
 
 - [Vikings Timeline](https://walterra.github.io/d3-milestones/?path=/story/d3-milestones--vikings)
 - [Windows/macOS Timeline](https://walterra.github.io/d3-milestones/?path=/story/d3-milestones--os-category-labels)
+- [Ordinal Scale Example](https://walterra.github.io/d3-milestones/?path=/story/d3-milestones--ordinal-scale-example) - Demonstrates using an ordinal scale instead of time scale
+- [Ordinal Scale with Categories](https://walterra.github.io/d3-milestones/?path=/story/d3-milestones--ordinal-scale-categories-example) - Shows how to use ordinal scales with multiple categories
 
 ## API Reference
 
@@ -82,7 +84,8 @@ Sets overrides for the default attributes for the expected data structure of an 
   {
     category: undefined,
     entries: undefined,
-    timestamp: 'timestamp',
+    timestamp: 'timestamp',  // Used only for time based scales
+    value: 'value',          // Used only for ordinal scale values
     text: 'text',
     url: 'url',
     id: 'id'
@@ -109,6 +112,13 @@ Enables/Disables auto resizing. Enabled by default, this adds listeners to resiz
 <a name="orientation" href="#orientation">#</a> vis.<b>orientation</b>(<i>string</i>)
 
 Sets the orientation of the timeline, can be either `horizontal` or `vertical`. Defaults to `horizontal`.
+
+<a name="scaleType" href="#scaleType">#</a> vis.<b>scaleType</b>(<i>string</i>)
+
+Sets the scale type of the timeline, can be either `time` or `ordinal`. Defaults to `time`.
+
+- `time`: Uses a time scale for chronological data with timestamps
+- `ordinal`: Uses an ordinal scale for categorical data without timestamps
 
 <a name="parseTime" href="#parseTime">#</a> vis.<b>parseTime</b>(<i>specifier</i>)
 

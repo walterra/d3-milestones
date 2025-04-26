@@ -44,6 +44,15 @@ export default function milestones(selector) {
     dom.select(selector).html('');
   }
 
+  let scaleType = DEFAULTS.SCALE_TYPE;
+  function setScaleType(d) {
+    if (d === 'time' || d === 'ordinal') {
+      scaleType = d;
+      // purge the DOM to avoid layout issues when switching scale type
+      dom.select(selector).html('');
+    }
+  }
+
   let parseTime = isoParse;
   function setParseTime(d) {
     parseTime = timeParse(d);
@@ -173,7 +182,7 @@ export default function milestones(selector) {
     const timelineSelection = dom.select(selector).selectAll('.' + cssPrefix);
     const nestedData =
       typeof data !== 'undefined'
-        ? transform(aggregateFormat, data, mapping, parseTime)
+        ? transform(aggregateFormat, data, mapping, parseTime, scaleType)
         : timelineSelection.data();
     const timeline = timelineSelection.data(nestedData);
 
@@ -250,11 +259,15 @@ export default function milestones(selector) {
         ? range.map(aggregateFormatParse)
         : extent(allKeys, (d) => aggregateFormatParse(d));
 
-    const x = scale
-      .scaleTime()
-      .rangeRound([0, width])
-      // sets oldest and newest date as the scales domain
-      .domain(domain);
+    // Create the appropriate scale based on scaleType
+    const x =
+      scaleType === 'ordinal'
+        ? scale.scalePoint().range([0, width]).domain(allKeys) // Keep original order for ordinal scales
+        : scale
+            .scaleTime()
+            .rangeRound([0, width])
+            // sets oldest and newest date as the scales domain
+            .domain(domain);
 
     const groupEnter = group.enter().append('div').attr('class', cssGroupClass);
 
@@ -264,7 +277,13 @@ export default function milestones(selector) {
 
     const groupMerge = groupEnter
       .merge(group)
-      .style(marginTimeAttribute, (d) => x(aggregateFormatParse(d.key)) + 'px');
+      .style(marginTimeAttribute, (d) => {
+        // For ordinal scale, use the key directly; for time scale, parse it
+        d.scaleType = scaleType; // Ensure scale type is passed to data
+        const value =
+          scaleType === 'ordinal' ? d.key : aggregateFormatParse(d.key);
+        return x(value) + 'px';
+      });
 
     if (useLabels) {
       const label = groupMerge
@@ -299,7 +318,10 @@ export default function milestones(selector) {
         .merge(text)
         .style(widthAttribute, (d) => {
           // calculate the available width
-          const offset = x(aggregateFormatParse(d.key));
+          d.scaleType = scaleType; // Ensure scale type is passed to data
+          const value =
+            scaleType === 'ordinal' ? d.key : aggregateFormatParse(d.key);
+          const offset = x(value);
           // get the next and previous item on the same lane
           let nextItem;
           let previousItem;
@@ -324,7 +346,13 @@ export default function milestones(selector) {
             orientation === 'horizontal' ? previousItem : nextItem;
 
           if (typeof compareItem1 !== 'undefined') {
-            const offsetNextItem = x(aggregateFormatParse(compareItem1.key));
+            // Pass scale type to next item
+            compareItem1.scaleType = scaleType;
+            const nextValue =
+              scaleType === 'ordinal'
+                ? compareItem1.key
+                : aggregateFormatParse(compareItem1.key);
+            const offsetNextItem = x(nextValue);
             availableWidth =
               orientation === 'horizontal'
                 ? offsetNextItem - offset
@@ -339,9 +367,13 @@ export default function milestones(selector) {
                 orientation === 'horizontal' ? width - offset : offset;
             } else if (itemNumTotal - itemNum === 0) {
               if (typeof compareItem2 !== 'undefined') {
-                const offsetPreviousItem = x(
-                  aggregateFormatParse(compareItem2.key)
-                );
+                // Pass scale type to previous item
+                compareItem2.scaleType = scaleType;
+                const prevValue =
+                  scaleType === 'ordinal'
+                    ? compareItem2.key
+                    : aggregateFormatParse(compareItem2.key);
+                const offsetPreviousItem = x(prevValue);
                 availableWidth =
                   orientation === 'horizontal'
                     ? (width - offsetPreviousItem) / 2
@@ -383,8 +415,14 @@ export default function milestones(selector) {
           if (!above || orientation === 'vertical') {
             const titleSpan = element
               .append('span')
-              .classed(cssTitleClass, true)
-              .text(labelFormat(aggregateFormatParse(d.key)));
+              .classed(cssTitleClass, true);
+
+            // Format label based on scale type
+            if (scaleType === 'ordinal') {
+              titleSpan.text(d.key);
+            } else {
+              titleSpan.text(labelFormat(aggregateFormatParse(d.key)));
+            }
 
             Object.entries(titleStyle).forEach(([prop, val]) =>
               titleSpan.style(prop, val)
@@ -471,8 +509,14 @@ export default function milestones(selector) {
             element.append('br');
             const titleSpan = element
               .append('span')
-              .classed(cssTitleClass, true)
-              .text(labelFormat(aggregateFormatParse(d.key)));
+              .classed(cssTitleClass, true);
+
+            // Format label based on scale type
+            if (scaleType === 'ordinal') {
+              titleSpan.text(d.key);
+            } else {
+              titleSpan.text(labelFormat(aggregateFormatParse(d.key)));
+            }
 
             Object.entries(titleStyle).forEach(([prop, val]) =>
               titleSpan.style(prop, val)
@@ -495,7 +539,8 @@ export default function milestones(selector) {
           textMerge,
           width,
           widthAttribute,
-          x
+          x,
+          scaleType // Pass scale type to optimizer
         );
       }
     } else {
@@ -549,6 +594,7 @@ export default function milestones(selector) {
     autoResize: setAutoResize,
     orientation: setOrientation,
     distribution: setDistribution,
+    scaleType: setScaleType,
     parseTime: setParseTime,
     labelFormat: setLabelFormat,
     urlTarget: setUrlTarget,
