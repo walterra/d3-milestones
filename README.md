@@ -54,6 +54,7 @@ Examples are included using storybook:
 - [Vikings Timeline](https://walterra.github.io/d3-milestones/?path=/story/d3-milestones--vikings)
 - [Windows/macOS Timeline](https://walterra.github.io/d3-milestones/?path=/story/d3-milestones--os-category-labels)
 - [Ordinal Scale Example](https://walterra.github.io/d3-milestones/?path=/story/d3-milestones--ordinal-scale-example) - Demonstrates using an ordinal scale instead of time scale
+- [Ordinal Scale with Categories](https://walterra.github.io/d3-milestones/?path=/story/d3-milestones--ordinal-scale-categories-example) - Shows how to use ordinal scales with multiple categories
 
 ## API Reference
 
