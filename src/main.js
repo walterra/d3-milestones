@@ -262,10 +262,7 @@ export default function milestones(selector) {
     // Create the appropriate scale based on scaleType
     const x =
       scaleType === 'ordinal'
-        ? scale
-            .scalePoint()
-            .range([0, width])
-            .domain(Array.from(new Set(allKeys))) // Use Set to ensure unique values
+        ? scale.scalePoint().range([0, width]).domain(allKeys) // Keep original order for ordinal scales
         : scale
             .scaleTime()
             .rangeRound([0, width])
