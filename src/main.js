@@ -405,7 +405,9 @@ export default function milestones(selector) {
             // test if text is an image filename,
             // if so return an image tag with the filename as the source
             if (
-              ['jpg', 'jpeg', 'gif', 'png'].indexOf(t.split('.').pop()) > -1
+              ['jpg', 'jpeg', 'gif', 'png', 'webp'].indexOf(
+                t.split('.').pop()
+              ) > -1
             ) {
               item = element
                 .append('img')
