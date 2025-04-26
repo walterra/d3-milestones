@@ -1,6 +1,6 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
-No public interface changes since `v1.4.7`.
+- Add `renderCallback()` method to apply customizations after rendering is complete. ([#79](https://github.com/walterra/d3-milestones/issues/79))
 
 ## [`v1.4.7`](https://github.com/walterra/d3-milestones/tree/v1.4.7)
 

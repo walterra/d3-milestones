@@ -122,6 +122,12 @@ export default function milestones(selector) {
     return d;
   }
 
+  // set callback for post-render operations
+  let callbackRender;
+  function renderCallback(callback) {
+    callbackRender = callback;
+  }
+
   let aggregateFormat = timeFormat(aggregateFormats[DEFAULTS.AGGREGATE_BY]);
   let aggregateFormatParse = timeParse(aggregateFormats[DEFAULTS.AGGREGATE_BY]);
 
@@ -137,7 +143,7 @@ export default function milestones(selector) {
     if (dom.select(selector).node() !== null) {
       window.requestAnimationFrame(() => {
         if (autoResize.current) {
-          render();
+          render(); // Render without data parameter to re-render existing data
         }
       });
     }
@@ -153,6 +159,8 @@ export default function milestones(selector) {
   }
 
   function render(data) {
+    // Simple render method with a single data parameter
+
     const widthAttribute = orientation === 'horizontal' ? 'width' : 'height';
     const marginTimeAttribute =
       orientation === 'horizontal' ? 'margin-left' : 'margin-top';
@@ -520,6 +528,11 @@ export default function milestones(selector) {
           .style('position', 'absolute');
       }
     });
+
+    // Execute render callback if provided
+    if (typeof callbackRender === 'function') {
+      callbackRender();
+    }
   }
 
   return api({
@@ -535,6 +548,7 @@ export default function milestones(selector) {
     useLabels: setUseLabels,
     range: setRange,
     render: render,
+    renderCallback: renderCallback,
     onEventClick: setEventClickCallback,
     onEventMouseLeave: setEventMouseLeaveCallback,
     onEventMouseOver: setEventMouseOverCallback,
