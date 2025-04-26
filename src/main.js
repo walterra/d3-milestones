@@ -429,6 +429,11 @@ export default function milestones(selector) {
                 .text(t);
             }
 
+            // Apply custom ID if provided
+            if (v[mapping.id]) {
+              item.attr('id', v[mapping.id]);
+            }
+
             item.datum({
               text: v[mapping.text],
               timestamp: v[mapping.timestamp],

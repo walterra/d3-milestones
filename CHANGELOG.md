@@ -1,6 +1,7 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
 - Add `renderCallback()` method to apply customizations after rendering is complete. ([#79](https://github.com/walterra/d3-milestones/issues/79))
+- Added support for custom HTML ID attributes for milestone elements. ([#78](https://github.com/walterra/d3-milestones/issues/78))
 
 ## [`v1.4.7`](https://github.com/walterra/d3-milestones/tree/v1.4.7)
 
