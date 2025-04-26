@@ -282,6 +282,7 @@ export default function milestones(selector) {
       .merge(group)
       .style(marginTimeAttribute, (d) => {
         // For ordinal scale, use the key directly; for time scale, parse it
+        d.scaleType = scaleType; // Ensure scale type is passed to data
         const value =
           scaleType === 'ordinal' ? d.key : aggregateFormatParse(d.key);
         return x(value) + 'px';
@@ -320,6 +321,7 @@ export default function milestones(selector) {
         .merge(text)
         .style(widthAttribute, (d) => {
           // calculate the available width
+          d.scaleType = scaleType; // Ensure scale type is passed to data
           const value =
             scaleType === 'ordinal' ? d.key : aggregateFormatParse(d.key);
           const offset = x(value);
@@ -347,6 +349,8 @@ export default function milestones(selector) {
             orientation === 'horizontal' ? previousItem : nextItem;
 
           if (typeof compareItem1 !== 'undefined') {
+            // Pass scale type to next item
+            compareItem1.scaleType = scaleType;
             const nextValue =
               scaleType === 'ordinal'
                 ? compareItem1.key
@@ -366,6 +370,8 @@ export default function milestones(selector) {
                 orientation === 'horizontal' ? width - offset : offset;
             } else if (itemNumTotal - itemNum === 0) {
               if (typeof compareItem2 !== 'undefined') {
+                // Pass scale type to previous item
+                compareItem2.scaleType = scaleType;
                 const prevValue =
                   scaleType === 'ordinal'
                     ? compareItem2.key
@@ -536,7 +542,8 @@ export default function milestones(selector) {
           textMerge,
           width,
           widthAttribute,
-          x
+          x,
+          scaleType // Pass scale type to optimizer
         );
       }
     } else {

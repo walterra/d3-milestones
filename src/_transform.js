@@ -40,6 +40,7 @@ export function transform(
     return nested.map((d, dI) => {
       d.index = dI;
       d.timelineIndex = tI;
+      d.scaleType = scaleType; // Pass the scale type to the data object
       return d;
     });
   }

@@ -36,8 +36,8 @@ const Template = (args) =>
     args
   );
 
-export const OrdinalScaleExample = Template.bind({});
-OrdinalScaleExample.args = {
+export const OrdinalScale = Template.bind({});
+OrdinalScale.args = {
   scaleType: 'ordinal',
   optimize: true,
   mapping: {
