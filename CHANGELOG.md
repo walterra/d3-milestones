@@ -1,9 +1,13 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
-- Added support for ordinal scales as an alternative to time scales. ([#15](https://github.com/walterra/d3-milestones/issues/15))
-- Add `renderCallback()` method to apply customizations after rendering is complete. ([#79](https://github.com/walterra/d3-milestones/issues/79))
-- Added support for custom HTML ID attributes for milestone elements. ([#78](https://github.com/walterra/d3-milestones/issues/78))
-- Added WebP format to the list of supported image formats.
+No public interface changes since `v1.5.0`.
+
+## [`v1.5.0`](https://github.com/walterra/d3-milestones/tree/v1.5.0)
+
+- Added support for ordinal scales as an alternative to time scales. (57c01be) ([#15](https://github.com/walterra/d3-milestones/issues/15))
+- Add `renderCallback()` method to apply customizations after rendering is complete. (c7d5c0f) ([#79](https://github.com/walterra/d3-milestones/issues/79))
+- Added support for custom HTML ID attributes for milestone elements. (a82b00a) ([#78](https://github.com/walterra/d3-milestones/issues/78))
+- Added WebP format to the list of supported image formats. (1ac8f55) ([#78](https://github.com/walterra/d3-milestones/issues/78))
 
 ## [`v1.4.7`](https://github.com/walterra/d3-milestones/tree/v1.4.7)
 
