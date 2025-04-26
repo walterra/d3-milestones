@@ -1,9 +1,22 @@
 import { ascending } from 'd3-array';
 import { nest } from 'd3-collection';
 
-export function transform(aggregateFormat, data, mapping, parseTime) {
+export function transform(
+  aggregateFormat,
+  data,
+  mapping,
+  parseTime,
+  scaleType = 'time'
+) {
+  // Choose grouping function based on scale type
   const groupBy = function (d) {
-    return aggregateFormat(parseTime(d[mapping.timestamp]));
+    if (scaleType === 'ordinal') {
+      // For ordinal scales, use the value field directly
+      return d[mapping.value];
+    } else {
+      // For time scales, use the timestamp with formatting
+      return aggregateFormat(parseTime(d[mapping.timestamp]));
+    }
   };
 
   // test for different data structures

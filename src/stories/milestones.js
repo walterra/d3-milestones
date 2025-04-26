@@ -47,6 +47,10 @@ export const argTypes = {
     options: ['_blank', '_self', '_parent', '_top'],
     control: { type: 'radio' },
   },
+  scaleType: {
+    options: ['time', 'ordinal'],
+    control: { type: 'radio' },
+  },
 };
 
 export const createMilestones = (
@@ -65,6 +69,7 @@ export const createMilestones = (
     parseTime,
     autoResize,
     urlTarget,
+    scaleType,
   },
   DIV_ID = 'timeline',
   style = ''
@@ -87,6 +92,7 @@ export const createMilestones = (
     parseTime && m.parseTime(parseTime);
     autoResize && m.autoResize(autoResize);
     urlTarget && m.urlTarget(urlTarget);
+    scaleType && m.scaleType(scaleType);
 
     m.render(data);
   }
