@@ -82,7 +82,7 @@
     "tape": "^5.6.1",
     "tape-promise": "^4.0.0",
     "uglify-js": "^3.9.3",
-    "webpack": "^5.93.0"
+    "webpack": "^5.99.7"
   },
   "scripts": {
     "start": "serve .",
