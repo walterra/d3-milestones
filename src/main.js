@@ -298,8 +298,8 @@ export default function milestones(selector) {
         return x(value) + 'px';
       });
 
-    // Apply bulletStyle to bullets and calculate bullet sizes
-    const bulletSizes = new Map();
+    // Apply bulletStyle to bullets and calculate bullet radius (including border)
+    const bulletRadii = new Map();
     groupMerge.selectAll('.' + cssBulletClass).each(function (d, i, nodes) {
       const bulletStyle = d.values.reduce((p, c) => {
         if (c[mapping.bulletStyle] !== undefined) {
@@ -312,9 +312,11 @@ export default function milestones(selector) {
         dom.select(this).style(prop, val);
       });
 
-      // Calculate bullet height after styles are applied
-      const bulletHeight = nodes[i].offsetHeight;
-      bulletSizes.set(d.key, bulletHeight);
+      // Calculate bullet radius after styles are applied (height includes padding + border)
+      const bulletElement = nodes[i];
+      const bulletHeight = bulletElement.offsetHeight;
+      const bulletRadius = bulletHeight / 2;
+      bulletRadii.set(d.key, bulletRadius);
     });
 
     if (useLabels) {
@@ -339,12 +341,21 @@ export default function milestones(selector) {
           isAbove(d.index, distribution)
         )
         .each(function (d) {
-          // Adjust label vertical position based on bullet height
+          // Adjust label vertical position to align with bullet edge
           if (orientation === 'horizontal') {
-            const bulletHeight = bulletSizes.get(d.key) || 11; // Default bullet height
+            const bulletRadius = bulletRadii.get(d.key) || 5.5; // Default bullet radius (11px diameter / 2)
+            const timelineCenter = 5.5; // margin-top (4px) + half line height (1.5px)
             const above = isAbove(d.index, distribution);
-            const offset = above ? -bulletHeight / 2 : bulletHeight / 2;
-            dom.select(this).style('top', offset + 'px');
+
+            if (above) {
+              // For above labels, position at top edge of bullet
+              const topEdge = timelineCenter - bulletRadius;
+              dom.select(this).style('bottom', `calc(100% - ${topEdge}px)`);
+            } else {
+              // For below labels, position at bottom edge of bullet
+              const bottomEdge = timelineCenter + bulletRadius;
+              dom.select(this).style('top', bottomEdge + 'px');
+            }
           }
         });
 
