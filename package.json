@@ -22,6 +22,11 @@
   "contributors": [
     "Walter Rafelsberger <walter.rafelsberger@elastic.co>"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org",
+    "provenance": true
+  },
   "engines": {
     "node": ">=16.18"
   },
@@ -36,6 +41,7 @@
     "@babel/core": "^7.26.10",
     "@babel/plugin-transform-modules-commonjs": "^7.26.3",
     "@babel/preset-env": "^7.26.9",
+    "@changesets/cli": "^2.29.8",
     "@chromatic-com/storybook": "^1",
     "@elastic/apm-rum": "^5.12.0",
     "@rollup/plugin-babel": "^6.0.3",
@@ -97,7 +103,10 @@
     "build-css": "lessc src/styles/styles.less > build/d3-milestones.css",
     "watch-css": "npm-watch build-css",
     "prepare": "yarn build && yarn test && uglifyjs build/d3-milestones.js -c -m -o build/d3-milestones.min.js && yarn build-css",
-    "postpublish": "git push && git push --tags && zip -j build/d3-milestones.zip -- LICENSE.md README.md build/d3-milestones.css build/d3-milestones.js build/d3-milestones.min.js",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "yarn build && yarn test && uglifyjs build/d3-milestones.js -c -m -o build/d3-milestones.min.js && yarn build-css && changeset publish",
+    "postpublish": "zip -j build/d3-milestones.zip -- LICENSE.md README.md build/d3-milestones.css build/d3-milestones.js build/d3-milestones.min.js",
     "storybook": "storybook dev -p 6006",
     "predeploy": "yarn build-storybook",
     "deploy-storybook": "gh-pages -d storybook-static",

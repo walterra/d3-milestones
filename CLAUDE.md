@@ -21,6 +21,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Lint code: `yarn lint`
 - Try `yarn lint --fix` before fixing linting errors manually
 
+## Release Commands
+
+- Add changeset: `yarn changeset`
+- Version packages: `yarn version-packages`
+- Publish release: `yarn release`
+
 ## Code Style Guidelines
 
 - Use ES6 modules with named exports
@@ -28,7 +34,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Write Jest tests for new functionality
 - Use kebab-case for filenames (with leading underscore for internal modules)
 - Follow D3.js conventions and API patterns
-- Update CHANGELOG.md for all changes
+- Add changeset for all user-facing changes (`yarn changeset`)
 - Keep code backward compatible when possible
 
 ## Architecture Overview
@@ -82,6 +88,34 @@ Uses `ResizeObserver` to automatically re-render timeline when container size ch
 - Jest tests: Unit tests for individual modules (files ending in `.test.js`)
 - Karma tests: Browser-based integration tests in `test/*-test.js`
 - Both test runners use Babel to transpile ES6 modules
+
+## Release Process
+
+Uses Changesets with automated GitHub Actions workflow. See [docs/RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md) for complete details.
+
+## Changesets
+
+**Do NOT use `yarn changeset`** - it's interactive. Create files directly:
+
+```markdown
+# .changeset/<descriptive-name>.md
+
+---
+
+"shc2es": patch|minor|major
+
+---
+
+Concise single-line description for CHANGELOG.md (not implementation details)
+```
+
+**Guidelines for changeset messages:**
+
+- ✅ **Good**: "Add Jest testing infrastructure with 70% coverage thresholds and automated CI testing"
+- ❌ **Bad**: Listing every file changed, configuration option, or implementation detail
+- Focus on **user-facing value** or **high-level feature addition**
+- Keep it **one line** when possible (two max)
+- Think: "What would a user want to see in release notes?"
 
 ## Technical Writing Style
 
