@@ -8,11 +8,13 @@
       },
       {
         "year": 1991,
-        "title": "Item 1 - Demo"
+        "title": "Item 1 - Demo",
+        "titleStyle": { "color": "#0078D4", "font-weight": "bold" }
       },
       {
         "year": 1991,
-        "title": "Item 2 - Demo"
+        "title": "Item 2 - Demo",
+        "titleStyle": { "color": "#E12800" }
       },
       {
         "year": 1991,
@@ -20,7 +22,8 @@
       },
       {
         "year": 1991,
-        "title": "Item 4 - Demo"
+        "title": "Item 4 - Demo",
+        "titleStyle": { "font-style": "italic" }
       },
       {
         "year": 1991,
@@ -32,7 +35,8 @@
       },
       {
         "year": 1991,
-        "title": "Item 7 - Demo"
+        "title": "Item 7 - Demo",
+        "titleStyle": { "color": "#2BFD00" }
       },
       {
         "year": 1991,
@@ -44,7 +48,8 @@
       },
       {
         "year": 1991,
-        "title": "Item 10 - Demo"
+        "title": "Item 10 - Demo",
+        "titleStyle": { "color": "#5BC6FF", "font-size": "1.2em" }
       },
       {
         "year": 1995,
@@ -69,7 +74,8 @@
     "versions": [
       {
         "year": 1991,
-        "title": "System 7.0"
+        "title": "System 7.0",
+        "titleStyle": { "color": "#A2AAAD", "font-style": "italic" }
       },
       {
         "year": 2001,
