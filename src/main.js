@@ -214,11 +214,9 @@ export default function milestones(selector) {
     }
     const timelineMerge = timeline.merge(timelineEnter);
 
-    const categoryLabelWidths = [];
     const categoryLabels = timelineMerge.selectAll('.' + cssCategoryClass);
+    // Apply categoryStyle first before calculating widths
     categoryLabels.each((d, i, node) => {
-      categoryLabelWidths.push(node[i].offsetWidth);
-      // Apply categoryStyle if provided (from originalData for nested category structure)
       const categoryData = d.originalData || d;
       if (categoryData[mapping.categoryStyle]) {
         Object.entries(categoryData[mapping.categoryStyle]).forEach(
@@ -227,6 +225,12 @@ export default function milestones(selector) {
           }
         );
       }
+    });
+
+    // Now calculate widths after styles are applied
+    const categoryLabelWidths = [];
+    categoryLabels.each((d, i, node) => {
+      categoryLabelWidths.push(node[i].offsetWidth);
     });
     const maxCategoryLabelWidth = Math.round(max(categoryLabelWidths) || 0);
     const timelineLeftMargin = 10;
