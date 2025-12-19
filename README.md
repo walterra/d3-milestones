@@ -88,7 +88,10 @@ Sets overrides for the default attributes for the expected data structure of an 
     value: 'value',          // Used only for ordinal scale values
     text: 'text',
     url: 'url',
-    id: 'id'
+    id: 'id',
+    textStyle: undefined,    // Field name for custom text styling
+    categoryStyle: undefined, // Field name for custom category label styling
+    bulletStyle: undefined   // Field name for custom bullet styling
   };
 ```
 
@@ -99,6 +102,34 @@ The method allows you to override single or multiple attributes to map them to f
       'timestamp': 'year',
       'text': 'title'
     })
+```
+
+**Custom Styling Fields:**
+
+- `textStyle`: Maps to a field in your data containing an object with CSS property-value pairs for event text labels.
+- `categoryStyle`: Maps to a field in your data containing an object with CSS property-value pairs for category labels.
+- `bulletStyle`: Maps to a field in your data containing an object with CSS property-value pairs for bullets (e.g., `background-color`, `border-color`, `padding`, `border-width`).
+
+Example with custom styling:
+
+```js
+vis.mapping({
+  'timestamp': 'year',
+  'text': 'title',
+  'bulletStyle': 'bulletStyle',
+  'categoryStyle': 'categoryStyle'
+})
+.render([
+  {
+    year: 1990,
+    title: "Custom Red Bullet",
+    bulletStyle: { 
+      "background-color": "#E12800", 
+      "border-color": "#E12800", 
+      "padding": "10px" 
+    }
+  }
+]);
 ```
 
 <a name="optimize" href="#optimize">#</a> vis.<b>optimize</b>(<i>boolean</i>)
