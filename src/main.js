@@ -298,6 +298,27 @@ export default function milestones(selector) {
         return x(value) + 'px';
       });
 
+    // Apply bulletStyle to bullets and calculate bullet radius (including border)
+    const bulletRadii = new Map();
+    groupMerge.selectAll('.' + cssBulletClass).each(function (d, i, nodes) {
+      const bulletStyle = d.values.reduce((p, c) => {
+        if (c[mapping.bulletStyle] !== undefined) {
+          return Object.assign(p, c[mapping.bulletStyle]);
+        }
+        return p;
+      }, {});
+
+      Object.entries(bulletStyle).forEach(([prop, val]) => {
+        dom.select(this).style(prop, val);
+      });
+
+      // Calculate bullet radius after styles are applied (height includes padding + border)
+      const bulletElement = nodes[i];
+      const bulletHeight = bulletElement.offsetHeight;
+      const bulletRadius = bulletHeight / 2;
+      bulletRadii.set(d.key, bulletRadius);
+    });
+
     if (useLabels) {
       const label = groupMerge
         .selectAll('.' + cssLabelClass + '-' + orientation)
@@ -318,7 +339,25 @@ export default function milestones(selector) {
         // })
         .classed(cssAboveClass + '-' + orientation, (d) =>
           isAbove(d.index, distribution)
-        );
+        )
+        .each(function (d) {
+          // Adjust label vertical position to align with bullet edge
+          if (orientation === 'horizontal') {
+            const bulletRadius = bulletRadii.get(d.key) || 5.5; // Default bullet radius (11px diameter / 2)
+            const timelineCenter = 5.5; // margin-top (4px) + half line height (1.5px)
+            const above = isAbove(d.index, distribution);
+
+            if (above) {
+              // For above labels, position at top edge of bullet
+              const topEdge = timelineCenter - bulletRadius;
+              dom.select(this).style('bottom', `calc(100% - ${topEdge}px)`);
+            } else {
+              // For below labels, position at bottom edge of bullet
+              const bottomEdge = timelineCenter + bulletRadius;
+              dom.select(this).style('top', bottomEdge + 'px');
+            }
+          }
+        });
 
       const text = labelMerge
         .selectAll('.' + cssTextClass + '-' + orientation)

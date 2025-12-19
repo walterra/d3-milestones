@@ -33,6 +33,16 @@
     "text": "Italic text",
     "year": 2010,
     "textStyle": { "font-style": "italic"}
+  },
+  {
+    "text": "Large font-size",
+    "year": 2020,
+    "textStyle": { "font-size": "16px"}
+  },
+  {
+    "text": "Small font-size",
+    "year": 2020,
+    "textStyle": { "font-size": "8px"}
   }
 ]
 
