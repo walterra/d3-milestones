@@ -106,7 +106,7 @@
     "prepublishOnly": "yarn test",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "yarn build && yarn test && uglifyjs build/d3-milestones.js -c -m -o build/d3-milestones.min.js && yarn build-css && changeset publish",
+    "release": "yarn build && uglifyjs build/d3-milestones.js -c -m -o build/d3-milestones.min.js && yarn build-css && changeset publish",
     "postpublish": "zip -j build/d3-milestones.zip -- LICENSE.md README.md build/d3-milestones.css build/d3-milestones.js build/d3-milestones.min.js",
     "storybook": "storybook dev -p 6006",
     "predeploy": "yarn build-storybook",

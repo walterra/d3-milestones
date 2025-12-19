@@ -79,6 +79,7 @@ jobs:
           version: yarn version-packages
         env:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          DISPLAY: :99
 
       - name: Upload Release Assets
         if: steps.changesets.outputs.published == 'true'
