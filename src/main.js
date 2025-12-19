@@ -218,11 +218,14 @@ export default function milestones(selector) {
     const categoryLabels = timelineMerge.selectAll('.' + cssCategoryClass);
     categoryLabels.each((d, i, node) => {
       categoryLabelWidths.push(node[i].offsetWidth);
-      // Apply categoryStyle if provided
-      if (d[mapping.categoryStyle]) {
-        Object.entries(d[mapping.categoryStyle]).forEach(([prop, val]) => {
-          dom.select(node[i]).style(prop, val);
-        });
+      // Apply categoryStyle if provided (from originalData for nested category structure)
+      const categoryData = d.originalData || d;
+      if (categoryData[mapping.categoryStyle]) {
+        Object.entries(categoryData[mapping.categoryStyle]).forEach(
+          ([prop, val]) => {
+            dom.select(node[i]).style(prop, val);
+          }
+        );
       }
     });
     const maxCategoryLabelWidth = Math.round(max(categoryLabelWidths) || 0);

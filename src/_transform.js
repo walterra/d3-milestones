@@ -28,6 +28,7 @@ export function transform(
       return {
         category: timeline[mapping.category],
         entries: getNestedEntries(timeline[mapping.entries], timelineIndex),
+        originalData: timeline, // Preserve original data for accessing categoryStyle etc.
       };
     });
     return data;
