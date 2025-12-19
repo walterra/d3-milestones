@@ -48,7 +48,7 @@
     "@storybook/addon-webpack5-compiler-babel": "^3.0.3",
     "@storybook/html": "^8.6.12",
     "@storybook/html-webpack5": "^8.6.12",
-    "acorn": "^7.1.1",
+    "acorn": "^8.15.0",
     "babel-jest": "^29.3.1",
     "babel-loader": "^9.1.0",
     "browserify": "^17.0.1",
