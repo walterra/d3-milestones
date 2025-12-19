@@ -135,4 +135,45 @@ describe('milestones', () => {
     // Clean up spy
     spy.mockRestore();
   });
+
+  it('should apply textStyle including font-size to text elements', () => {
+    const chart = milestones('#container');
+
+    // Create data with textStyle including font-size
+    const data = [
+      {
+        text: 'Normal Text',
+        timestamp: '2023-01-01',
+      },
+      {
+        text: 'Large Text',
+        timestamp: '2023-06-01',
+        textStyle: { 'font-size': '20px', color: 'red' },
+      },
+      {
+        text: 'Small Text',
+        timestamp: '2023-12-01',
+        textStyle: { 'font-size': '8px', 'font-weight': 'bold' },
+      },
+    ];
+
+    // Render the chart
+    chart.render(data);
+
+    // Find text elements
+    const textElements = document.querySelectorAll('.milestones-text-label');
+    expect(textElements.length).toBe(3);
+
+    // Check that the second element has the correct styles applied
+    const largeTextElement = textElements[1];
+    expect(largeTextElement.textContent).toBe('Large Text');
+    expect(largeTextElement.style.fontSize).toBe('20px');
+    expect(largeTextElement.style.color).toBe('red');
+
+    // Check that the third element has the correct styles applied
+    const smallTextElement = textElements[2];
+    expect(smallTextElement.textContent).toBe('Small Text');
+    expect(smallTextElement.style.fontSize).toBe('8px');
+    expect(smallTextElement.style.fontWeight).toBe('bold');
+  });
 });
