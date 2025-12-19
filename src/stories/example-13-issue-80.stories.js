@@ -6,11 +6,12 @@ export default {
   argTypes,
 };
 
-const Template = (args) => createMilestones(
-  'Issue #80 - Spacing Fix and Individual titleStyle Support',
-  'Year 1991 has 10 items in Windows timeline. The spacing between timelines is now correct (not affected by item count). Items can have individual titleStyle (see colored/styled 1991 labels).',
-  args
-);
+const Template = (args) =>
+  createMilestones(
+    'Issue #80 - Spacing Fix and Category Styling',
+    'Year 1991 has 10 items in Windows timeline. The spacing between timelines is now correct (not affected by item count). Categories (Windows/Mac) have individual styling with categoryStyle.',
+    args
+  );
 
 export const Issue80 = Template.bind({});
 Issue80.args = {
@@ -23,6 +24,7 @@ Issue80.args = {
     timestamp: 'year',
     text: 'title',
     titleStyle: 'titleStyle',
+    categoryStyle: 'categoryStyle',
   },
   data,
 };

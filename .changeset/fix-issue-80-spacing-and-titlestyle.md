@@ -1,5 +1,5 @@
 ---
-"d3-milestones": patch
+"d3-milestones": minor
 ---
 
-Fix spacing calculation when multiple items share same timestamp
+Add categoryStyle mapping to style category labels and fix spacing calculation when multiple items share same timestamp

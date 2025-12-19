@@ -13,6 +13,7 @@ export const DEFAULTS = {
     id: 'id',
     textStyle: 'textStyle',
     titleStyle: 'titleStyle',
+    categoryStyle: 'categoryStyle',
   },
   LABEL_FORMAT: '%Y-%m-%d %H:%M',
   USE_LABELS: true,

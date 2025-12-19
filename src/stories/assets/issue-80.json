@@ -1,6 +1,7 @@
 [
   {
     "system": "Windows",
+    "categoryStyle": { "color": "#0078D4", "font-weight": "bold", "font-size": "1.2em" },
     "versions": [
       {
         "year": 1985,
@@ -71,6 +72,7 @@
   },
   {
     "system": "Mac",
+    "categoryStyle": { "color": "#A2AAAD", "font-style": "italic", "font-size": "1.2em" },
     "versions": [
       {
         "year": 1991,

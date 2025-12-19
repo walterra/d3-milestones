@@ -218,6 +218,12 @@ export default function milestones(selector) {
     const categoryLabels = timelineMerge.selectAll('.' + cssCategoryClass);
     categoryLabels.each((d, i, node) => {
       categoryLabelWidths.push(node[i].offsetWidth);
+      // Apply categoryStyle if provided
+      if (d[mapping.categoryStyle]) {
+        Object.entries(d[mapping.categoryStyle]).forEach(([prop, val]) => {
+          dom.select(node[i]).style(prop, val);
+        });
+      }
     });
     const maxCategoryLabelWidth = Math.round(max(categoryLabelWidths) || 0);
     const timelineLeftMargin = 10;
