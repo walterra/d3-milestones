@@ -1,0 +1,37 @@
+[
+  {
+    "system": "Windows",
+    "versions": [
+      {
+        "year": 1991,
+        "title": "Windows 3.1",
+        "titleStyle": { "color": "#0078D4", "font-weight": "bold" }
+      },
+      {
+        "year": 2001,
+        "title": "Windows XP",
+        "titleStyle": { "color": "#0078D4", "font-size": "1.1em" }
+      }
+    ]
+  },
+  {
+    "system": "Mac",
+    "versions": [
+      {
+        "year": 1991,
+        "title": "System 7",
+        "titleStyle": { "color": "#A2AAAD", "font-style": "italic" }
+      },
+      {
+        "year": 2001,
+        "title": "Mac OS X",
+        "titleStyle": { "color": "#000000", "font-weight": "bold" }
+      },
+      {
+        "year": 2001,
+        "title": "iPod Launch",
+        "titleStyle": { "color": "#555555", "font-size": "0.9em" }
+      }
+    ]
+  }
+]
