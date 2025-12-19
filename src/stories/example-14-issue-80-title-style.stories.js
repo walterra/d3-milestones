@@ -6,11 +6,12 @@ export default {
   argTypes,
 };
 
-const Template = (args) => createMilestones(
-  'Issue #80 - Individual Item titleStyle Support',
-  'Each item can have its own titleStyle (color, font-weight, font-size, etc.) applied to the timestamp labels',
-  args
-);
+const Template = (args) =>
+  createMilestones(
+    'Issue #80 - Individual Item titleStyle Support',
+    'Each item can have its own titleStyle (color, font-weight, font-size, etc.) applied to the timestamp labels',
+    args
+  );
 
 export const Issue80TitleStyle = Template.bind({});
 Issue80TitleStyle.args = {

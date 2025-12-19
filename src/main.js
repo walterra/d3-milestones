@@ -551,15 +551,34 @@ export default function milestones(selector) {
     timelineMerge.each((d, i, node) => {
       const margin = 10;
       const maxAboveHeight = max(
-        dom.select(node[i]).selectAll('* .' + cssAboveClass + '-' + orientation)
-          ._groups[0],
+        dom
+          .select(node[i])
+          .selectAll(
+            '.' +
+              cssLabelClass +
+              '-' +
+              orientation +
+              '.' +
+              cssAboveClass +
+              '-' +
+              orientation
+          )._groups[0],
         (d) => d.offsetHeight
       );
       const maxBelowHeight = max(
         dom
           .select(node[i])
-          .selectAll('* :not(.' + cssAboveClass + '-' + orientation + ')')
-          ._groups[0],
+          .selectAll(
+            '.' +
+              cssLabelClass +
+              '-' +
+              orientation +
+              ':not(.' +
+              cssAboveClass +
+              '-' +
+              orientation +
+              ')'
+          )._groups[0],
         (d) => d.offsetHeight
       );
 

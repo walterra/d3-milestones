@@ -6,11 +6,12 @@ export default {
   argTypes,
 };
 
-const Template = (args) => createMilestones(
-  'Issue #80 - Spacing with Multiple Items',
-  'Year 1991 has 10 items in Windows timeline but only 1 in Mac timeline. The spacing between timelines should not be affected by the number of items.',
-  args
-);
+const Template = (args) =>
+  createMilestones(
+    'Issue #80 - Spacing with Multiple Items',
+    'Year 1991 has 10 items in Windows timeline but only 1 in Mac timeline. The spacing between timelines should not be affected by the number of items.',
+    args
+  );
 
 export const Issue80Spacing = Template.bind({});
 Issue80Spacing.args = {
