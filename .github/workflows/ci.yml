@@ -20,9 +20,16 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Install / Build / End to End Test
+      - name: Setup Xvfb for browser tests
         run: |
           export DISPLAY=:99
           chromedriver --url-base=/wd/hub &
-          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
-          yarn
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
+
+      - name: Install Dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run Tests
+        run: |
+          export DISPLAY=:99
+          yarn test
