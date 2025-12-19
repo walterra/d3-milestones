@@ -1,0 +1,26 @@
+[
+  {
+    "text": "Default Bullet",
+    "year": 1980
+  },
+  {
+    "text": "Extra Large Red Bullet",
+    "year": 1990,
+    "bulletStyle": { "background-color": "#E12800", "border-color": "#E12800", "padding": "10px", "border-width": "5px" }
+  },
+  {
+    "text": "Large Green Border",
+    "year": 2000,
+    "bulletStyle": { "border-color": "#2BFD00", "border-width": "8px", "padding": "6px" }
+  },
+  {
+    "text": "Medium Blue",
+    "year": 2010,
+    "bulletStyle": { "background-color": "#5BC6FF", "border-color": "#0078D4", "padding": "4px" }
+  },
+  {
+    "text": "Tiny Yellow Bullet",
+    "year": 2020,
+    "bulletStyle": { "background-color": "#FFD700", "border-color": "#FFA500", "padding": "0.5px", "border-width": "1px" }
+  }
+]

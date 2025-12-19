@@ -109,7 +109,7 @@
 /******/ 		// This function allow to reference async chunks
 /******/ 		__webpack_require__.u = (chunkId) => {
 /******/ 			// return url for filenames based on template
-/******/ 			return "" + ({"67":"stories-example-06-ultima-series-stories","96":"stories-example-10-image-formats-stories","215":"stories-example-11-ordinal-scale-stories","399":"stories-README-mdx","415":"stories-example-05-lotr-stories","542":"stories-example-09-custom-ids-stories","634":"stories-example-04-covid19-stories","645":"stories-example-12-ordinal-scale-categories-stories","667":"stories-example-01-milestones-events-stories","683":"stories-example-07-ultima-series-covers-stories","747":"stories-example-08-styles-stories","760":"stories-example-00-milestones-stories","837":"stories-example-03-os-category-labels-stories","948":"stories-example-02-vikings-stories"}[chunkId] || chunkId) + "." + {"15":"3b947bcf","67":"1c8385de","96":"d917c28f","109":"2446dc43","215":"90861068","303":"623b27c1","364":"64694439","381":"90fc699f","399":"575c6fd4","415":"ed386341","542":"892b1f13","634":"8e49e8c8","645":"437f3b81","667":"2f6c17ef","683":"b26ba8c6","738":"ee1d4c0a","747":"df857991","760":"7315a84a","780":"7355f826","837":"904057c5","948":"cbed0485"}[chunkId] + ".iframe.bundle.js";
+/******/ 			return "" + ({"67":"stories-example-06-ultima-series-stories","96":"stories-example-10-image-formats-stories","215":"stories-example-11-ordinal-scale-stories","399":"stories-README-mdx","415":"stories-example-05-lotr-stories","542":"stories-example-09-custom-ids-stories","634":"stories-example-04-covid19-stories","645":"stories-example-12-ordinal-scale-categories-stories","667":"stories-example-01-milestones-events-stories","683":"stories-example-07-ultima-series-covers-stories","747":"stories-example-08-styles-stories","760":"stories-example-00-milestones-stories","837":"stories-example-03-os-category-labels-stories","867":"stories-example-13-issue-80-stories","948":"stories-example-02-vikings-stories","950":"stories-example-15-bullet-styles-stories"}[chunkId] || chunkId) + "." + {"15":"3b947bcf","67":"1c8385de","96":"d917c28f","109":"2446dc43","215":"90861068","303":"623b27c1","364":"64694439","381":"90fc699f","399":"ddb2a9a2","415":"ed386341","542":"892b1f13","634":"8e49e8c8","645":"437f3b81","667":"2f6c17ef","683":"b26ba8c6","738":"ee1d4c0a","747":"e878ff09","760":"7315a84a","780":"2fd274c7","837":"904057c5","867":"858008f3","948":"cbed0485","950":"35dc3f17"}[chunkId] + ".iframe.bundle.js";
 /******/ 		};
 /******/ 	})();
 /******/ 	
@@ -292,4 +292,4 @@
 /******/ 	
 /******/ })()
 ;
-//# sourceMappingURL=runtime~main.ccca638b.iframe.bundle.js.map
+//# sourceMappingURL=runtime~main.2c4a5985.iframe.bundle.js.map

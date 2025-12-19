@@ -210,6 +210,30 @@ var map = {
 		15,
 		780,
 		645
+	],
+	"./stories/example-13-issue-80.stories": [
+		"./src/stories/example-13-issue-80.stories.js",
+		15,
+		780,
+		867
+	],
+	"./stories/example-13-issue-80.stories.js": [
+		"./src/stories/example-13-issue-80.stories.js",
+		15,
+		780,
+		867
+	],
+	"./stories/example-15-bullet-styles.stories": [
+		"./src/stories/example-15-bullet-styles.stories.js",
+		15,
+		780,
+		950
+	],
+	"./stories/example-15-bullet-styles.stories.js": [
+		"./src/stories/example-15-bullet-styles.stories.js",
+		15,
+		780,
+		950
 	]
 };
 function webpackAsyncContext(req) {
@@ -371,4 +395,4 @@ module.exports = __STORYBOOK_MODULE_CORE_EVENTS_PREVIEW_ERRORS__;
 /******/ var __webpack_exports__ = __webpack_require__.O();
 /******/ }
 ]);
-//# sourceMappingURL=main.a48ead58.iframe.bundle.js.map
+//# sourceMappingURL=main.0b1c1b75.iframe.bundle.js.map

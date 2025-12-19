@@ -17,7 +17,7 @@ __webpack_require__.d(__webpack_exports__, {
 // EXTERNAL MODULE: ./src/stories/milestones.js + 15 modules
 var milestones = __webpack_require__("./src/stories/milestones.js");
 ;// ./src/stories/assets/styles.json
-const styles_namespaceObject = /*#__PURE__*/JSON.parse('[{"text":"Default Title","year":1980},{"text":"Green Title","year":1990,"titleStyle":{"color":"#2BFD00"}},{"text":"Bold text","year":1990,"textStyle":{"font-weight":"bold"}},{"text":"Red Title (Not applied)","year":2000,"titleStyle":{"color":"#E12800"}},{"text":"Blue Title","year":2000,"titleStyle":{"color":"#5BC6FF"}},{"text":"Red Text, Blue Title","year":2010,"textStyle":{"color":"#E12800"},"titleStyle":{"color":"#5BC6FF"}},{"text":"Italic text","year":2010,"textStyle":{"font-style":"italic"}}]');
+const styles_namespaceObject = /*#__PURE__*/JSON.parse('[{"text":"Default Title","year":1980},{"text":"Green Title","year":1990,"titleStyle":{"color":"#2BFD00"}},{"text":"Bold text","year":1990,"textStyle":{"font-weight":"bold"}},{"text":"Red Title","year":2000,"titleStyle":{"color":"#E12800"}},{"text":"Blue Title","year":2000,"titleStyle":{"color":"#5BC6FF"}},{"text":"Red Text, Blue Title","year":2010,"textStyle":{"color":"#E12800"},"titleStyle":{"color":"#5BC6FF"}},{"text":"Italic text","year":2010,"textStyle":{"font-style":"italic"}},{"text":"Large font-size","year":2020,"textStyle":{"font-size":"16px"}},{"text":"Small font-size","year":2020,"textStyle":{"font-size":"8px"}}]');
 ;// ./src/stories/example-08-styles.stories.js
 
 
@@ -53,4 +53,4 @@ Styles.parameters = {
 /***/ })
 
 }]);
-//# sourceMappingURL=stories-example-08-styles-stories.df857991.iframe.bundle.js.map
+//# sourceMappingURL=stories-example-08-styles-stories.e878ff09.iframe.bundle.js.map

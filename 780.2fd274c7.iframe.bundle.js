@@ -50,7 +50,12 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.milestones__category_label {
   display: inline-block;
   text-align: right;
   font-size: 14px;
-  margin-top: -4px;
+  line-height: 1;
+  position: relative;
+  top: calc(4px + 1.5px);
+  /* Line margin-top + half line height */
+  transform: translateY(50%);
+  /* Shift down by half the label's height */
 }
 .milestones__horizontal_line {
   position: absolute;
@@ -80,6 +85,13 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.milestones__category_label {
   width: 0px;
   height: 0px;
   padding: 2.5px;
+  position: relative;
+  left: 5.5px;
+  /* Center on timeline (margin-left of line) */
+  top: 5.5px;
+  /* Center on timeline (margin-top + half line height) */
+  transform: translate(-50%, -50%);
+  /* Center the bullet itself */
 }
 .milestones__group__label-horizontal,
 .milestones__group__label-vertical {
@@ -89,7 +101,8 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.milestones__category_label {
 }
 .milestones__group__label-horizontal {
   border-left: 1px solid #000;
-  margin-left: 5px;
+  margin-left: 5.5px;
+  /* Align with bullet center */
 }
 .milestones__group__label-horizontal div {
   position: relative;
@@ -157,7 +170,7 @@ ___CSS_LOADER_EXPORT___.push([module.id, `.milestones__category_label {
   background: #efefef;
   color: #313131;
 }
-`, "",{"version":3,"sources":["webpack://./src/styles/styles.less"],"names":[],"mappings":"AAGE;EACE,qBAAA;EACA,iBAAA;EACA,eAAA;EACA,gBAAA;AAFJ;AAKE;EACE,kBAAA;EACA,sBAAA;EACA,WAAA;EACA,eAAA;EACA,kBAAA;EACA,oBAAA;AAHJ;AAME;EACE,kBAAA;EACA,sBAAA;EACA,UAAA;EACA,gBAAA;EACA,oBAAA;EACA,oBAAA;AAJJ;AAOE;EACE,kBAAA;EACA,uBAAA;EACA,eAAA;AALJ;AAQI;EACE,sBAAA;EACA,sBAAA;EACA,kBAAA;EACA,UAAA;EACA,WAAA;EACA,cAAA;AANN;AASI;;EACE,kBAAA;EACA,UAAA;EACA,WAAA;AANN;AAUI;EACE,2BAAA;EACA,gBAAA;AARN;AAMI;EAKI,kBAAA;EACA,gBAAA;EACA,qBAAA;AARR;AAYI;EACE,kBAAA;EACA,mBAAA;EACA,6BAAA;EACA,qBAAA;EACA,iBAAA;EACA,YAAA;EACA,iBAAA;AAVN;AAGI;EASI,gBAAA;EACA,gBAAA;EACA,4BAAA;EACA,8BAAA;EACA,mBAAA;EACA,iBAAA;AATR;AAaM;EACE,YAAA;AAXR;AAcM;EACE,iBAAA;EACA,mBAAA;EACA,WAAA;EACA,iBAAA;AAZR;AAQM;EAMI,cAAA;EACA,6BAAA;EACA,iBAAA;EACA,kBAAA;AAXV;AAeM;EACE,WAAA;EACA,cAAA;EACA,4BAAA;EACA,cAAA;EACA,kBAAA;EACA,iBAAA;AAbR;AAOM;EASI,gBAAA;EACA,iBAAA;AAbV;AAiBM;EACE,mBAAA;EACA,sBAAA;AAfR;AAkBM;EACE,WAAA;EACA,iBAAA;EACA,eAAA;EACA,mBAAA;AAhBR;AAkBM;EACE,eAAA;AAhBR;AAkBM;EACE,mBAAA;EACA,cAAA;AAhBR","sourcesContent":[".milestones {\n}\n\n  .milestones__category_label {\n    display: inline-block;\n    text-align: right;\n    font-size: 14px;\n    margin-top: -4px;\n  }\n\n  .milestones__horizontal_line {\n    position: absolute;\n    background-color: #000;\n    height: 3px;\n    margin-top: 4px;\n    margin-left: 5.5px;\n    border-radius: 1.5px;\n  }\n\n  .milestones__vertical_line {\n    position: absolute;\n    background-color: #000;\n    width: 3px;\n    margin-left: 4px;\n    margin-bottom: 5.5px;\n    border-radius: 1.5px;\n  }\n\n  .milestones__group {\n    position: absolute;\n    font-family: sans-serif;\n    font-size: 10px;\n  }\n\n    .milestones__group__bullet {\n      background-color: #fff;\n      border: 3px solid #333;\n      border-radius: 50%;\n      width: 0px;\n      height: 0px;\n      padding: 2.5px;\n    }\n\n    .milestones__group__label-horizontal,.milestones__group__label-vertical {\n      position: absolute;\n      padding: 0;\n      color: #666;\n\n    }\n\n    .milestones__group__label-horizontal {\n      border-left: 1px solid #000;\n      margin-left: 5px;\n\n      div {\n        position: relative;\n        margin-left: 3px;\n        display: inline-block;\n      }\n    }\n\n    .milestones__group__label-vertical {\n      padding-left: 10px;\n      padding-bottom: 0px;\n      border-bottom: 1px solid #000;\n      margin-bottom: -5.5px;\n      margin-left: 10px;\n      bottom: 100%;\n      overflow: visible;\n      .wrapper {\n        min-width: 100px;\n        max-width: 300px;\n        border-left: 1px solid black;\n        border-bottom: 1px solid white;\n        margin-bottom: -1px;\n        padding-left: 5px;\n      }\n  }\n\n      .milestones__group__label-above-horizontal {\n        bottom: 100%;\n      }\n\n      .milestones__group__label-above-vertical {\n        padding-left: 0px;\n        padding-right: 10px;\n        right: 100%;\n        text-align: right;\n        .wrapper {\n          border-left: 0;\n          border-right: 1px solid black;\n          padding-left: 0px;\n          padding-right: 5px;\n        }\n      }\n\n      .milestones__group__label-last {\n        right: 100%;\n        border-left: 0;\n        border-right: 1px solid #000;\n        margin-left: 0;\n        margin-right: -6px;\n        text-align: right;\n\n        div {\n          margin-left: 0px;\n          margin-right: 3px;\n        }\n      }\n\n      .milestones__group__label__text-vertical {\n        display: table-cell;\n        vertical-align: bottom;\n      }\n\n      .milestones__group__label__text__title {\n        color: #000;\n        font-weight: bold;\n        font-size: 11px;\n        white-space: nowrap;\n      }\n      .milestones__group__label__text__event {\n        cursor: pointer;\n      }\n      .milestones__group__label__text__event--hover {\n        background: #efefef;\n        color: #313131;\n      }\n"],"sourceRoot":""}]);
+`, "",{"version":3,"sources":["webpack://./src/styles/styles.less"],"names":[],"mappings":"AAGE;EACE,qBAAA;EACA,iBAAA;EACA,eAAA;EACA,cAAA;EACA,kBAAA;EACA,sBAAA;EAFF,uCAAuC;EAGrC,0BAAA;EADF,0CAA0C;AAC5C;AAGE;EACE,kBAAA;EACA,sBAAA;EACA,WAAA;EACA,eAAA;EACA,kBAAA;EACA,oBAAA;AADJ;AAIE;EACE,kBAAA;EACA,sBAAA;EACA,UAAA;EACA,gBAAA;EACA,oBAAA;EACA,oBAAA;AAFJ;AAKE;EACE,kBAAA;EACA,uBAAA;EACA,eAAA;AAHJ;AAMI;EACE,sBAAA;EACA,sBAAA;EACA,kBAAA;EACA,UAAA;EACA,WAAA;EACA,cAAA;EACA,kBAAA;EACA,WAAA;EAJJ,6CAA6C;EAKzC,UAAA;EAHJ,uDAAuD;EAInD,gCAAA;EAFJ,6BAA6B;AAC/B;AAII;;EACE,kBAAA;EACA,UAAA;EACA,WAAA;AADN;AAKI;EACE,2BAAA;EACA,kBAAA;EAHJ,6BAA6B;AAC/B;AAAI;EAKI,kBAAA;EACA,gBAAA;EACA,qBAAA;AAFR;AAMI;EACE,kBAAA;EACA,mBAAA;EACA,6BAAA;EACA,qBAAA;EACA,iBAAA;EACA,YAAA;EACA,iBAAA;AAJN;AAHI;EASI,gBAAA;EACA,gBAAA;EACA,4BAAA;EACA,8BAAA;EACA,mBAAA;EACA,iBAAA;AAHR;AAOM;EACE,YAAA;AALR;AAQM;EACE,iBAAA;EACA,mBAAA;EACA,WAAA;EACA,iBAAA;AANR;AAEM;EAMI,cAAA;EACA,6BAAA;EACA,iBAAA;EACA,kBAAA;AALV;AASM;EACE,WAAA;EACA,cAAA;EACA,4BAAA;EACA,cAAA;EACA,kBAAA;EACA,iBAAA;AAPR;AACM;EASI,gBAAA;EACA,iBAAA;AAPV;AAWM;EACE,mBAAA;EACA,sBAAA;AATR;AAYM;EACE,WAAA;EACA,iBAAA;EACA,eAAA;EACA,mBAAA;AAVR;AAYM;EACE,eAAA;AAVR;AAYM;EACE,mBAAA;EACA,cAAA;AAVR","sourcesContent":[".milestones {\n}\n\n  .milestones__category_label {\n    display: inline-block;\n    text-align: right;\n    font-size: 14px;\n    line-height: 1;\n    position: relative;\n    top: calc(4px + 1.5px); /* Line margin-top + half line height */\n    transform: translateY(50%); /* Shift down by half the label's height */\n  }\n\n  .milestones__horizontal_line {\n    position: absolute;\n    background-color: #000;\n    height: 3px;\n    margin-top: 4px;\n    margin-left: 5.5px;\n    border-radius: 1.5px;\n  }\n\n  .milestones__vertical_line {\n    position: absolute;\n    background-color: #000;\n    width: 3px;\n    margin-left: 4px;\n    margin-bottom: 5.5px;\n    border-radius: 1.5px;\n  }\n\n  .milestones__group {\n    position: absolute;\n    font-family: sans-serif;\n    font-size: 10px;\n  }\n\n    .milestones__group__bullet {\n      background-color: #fff;\n      border: 3px solid #333;\n      border-radius: 50%;\n      width: 0px;\n      height: 0px;\n      padding: 2.5px;\n      position: relative;\n      left: 5.5px; /* Center on timeline (margin-left of line) */\n      top: 5.5px; /* Center on timeline (margin-top + half line height) */\n      transform: translate(-50%, -50%); /* Center the bullet itself */\n    }\n\n    .milestones__group__label-horizontal,.milestones__group__label-vertical {\n      position: absolute;\n      padding: 0;\n      color: #666;\n\n    }\n\n    .milestones__group__label-horizontal {\n      border-left: 1px solid #000;\n      margin-left: 5.5px; /* Align with bullet center */\n\n      div {\n        position: relative;\n        margin-left: 3px;\n        display: inline-block;\n      }\n    }\n\n    .milestones__group__label-vertical {\n      padding-left: 10px;\n      padding-bottom: 0px;\n      border-bottom: 1px solid #000;\n      margin-bottom: -5.5px;\n      margin-left: 10px;\n      bottom: 100%;\n      overflow: visible;\n      .wrapper {\n        min-width: 100px;\n        max-width: 300px;\n        border-left: 1px solid black;\n        border-bottom: 1px solid white;\n        margin-bottom: -1px;\n        padding-left: 5px;\n      }\n  }\n\n      .milestones__group__label-above-horizontal {\n        bottom: 100%;\n      }\n\n      .milestones__group__label-above-vertical {\n        padding-left: 0px;\n        padding-right: 10px;\n        right: 100%;\n        text-align: right;\n        .wrapper {\n          border-left: 0;\n          border-right: 1px solid black;\n          padding-left: 0px;\n          padding-right: 5px;\n        }\n      }\n\n      .milestones__group__label-last {\n        right: 100%;\n        border-left: 0;\n        border-right: 1px solid #000;\n        margin-left: 0;\n        margin-right: -6px;\n        text-align: right;\n\n        div {\n          margin-left: 0px;\n          margin-right: 3px;\n        }\n      }\n\n      .milestones__group__label__text-vertical {\n        display: table-cell;\n        vertical-align: bottom;\n      }\n\n      .milestones__group__label__text__title {\n        color: #000;\n        font-weight: bold;\n        font-size: 11px;\n        white-space: nowrap;\n      }\n      .milestones__group__label__text__event {\n        cursor: pointer;\n      }\n      .milestones__group__label__text__event--hover {\n        background: #efefef;\n        color: #313131;\n      }\n"],"sourceRoot":""}]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -322,7 +335,9 @@ var DEFAULTS = {
     url: 'url',
     id: 'id',
     textStyle: 'textStyle',
-    titleStyle: 'titleStyle'
+    titleStyle: 'titleStyle',
+    categoryStyle: 'categoryStyle',
+    bulletStyle: 'bulletStyle'
   },
   LABEL_FORMAT: '%Y-%m-%d %H:%M',
   USE_LABELS: true,
@@ -669,7 +684,8 @@ function transform(aggregateFormat, data, mapping, parseTime) {
     data = data.map(function (timeline, timelineIndex) {
       return {
         category: timeline[mapping.category],
-        entries: getNestedEntries(timeline[mapping.entries], timelineIndex)
+        entries: getNestedEntries(timeline[mapping.entries], timelineIndex),
+        originalData: timeline // Preserve original data for accessing categoryStyle etc.
       };
     });
     return data;
@@ -876,8 +892,22 @@ function milestones(selector) {
       timelineEnter.append('div').attr('class', cssLineClass);
     }
     var timelineMerge = timeline.merge(timelineEnter);
-    var categoryLabelWidths = [];
     var categoryLabels = timelineMerge.selectAll('.' + cssCategoryClass);
+    // Apply categoryStyle first before calculating widths
+    categoryLabels.each(function (d, i, node) {
+      var categoryData = d.originalData || d;
+      if (categoryData[mapping.categoryStyle]) {
+        Object.entries(categoryData[mapping.categoryStyle]).forEach(function (_ref) {
+          var _ref2 = _slicedToArray(_ref, 2),
+            prop = _ref2[0],
+            val = _ref2[1];
+          src_select/* default */.A(node[i]).style(prop, val);
+        });
+      }
+    });
+
+    // Now calculate widths after styles are applied
+    var categoryLabelWidths = [];
     categoryLabels.each(function (d, i, node) {
       categoryLabelWidths.push(node[i].offsetWidth);
     });
@@ -921,6 +951,30 @@ function milestones(selector) {
       var value = scaleType === 'ordinal' ? d.key : aggregateFormatParse(d.key);
       return x(value) + 'px';
     });
+
+    // Apply bulletStyle to bullets and calculate bullet radius (including border)
+    var bulletRadii = new Map();
+    groupMerge.selectAll('.' + cssBulletClass).each(function (d, i, nodes) {
+      var _this = this;
+      var bulletStyle = d.values.reduce(function (p, c) {
+        if (c[mapping.bulletStyle] !== undefined) {
+          return Object.assign(p, c[mapping.bulletStyle]);
+        }
+        return p;
+      }, {});
+      Object.entries(bulletStyle).forEach(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+          prop = _ref4[0],
+          val = _ref4[1];
+        src_select/* default */.A(_this).style(prop, val);
+      });
+
+      // Calculate bullet radius after styles are applied (height includes padding + border)
+      var bulletElement = nodes[i];
+      var bulletHeight = bulletElement.offsetHeight;
+      var bulletRadius = bulletHeight / 2;
+      bulletRadii.set(d.key, bulletRadius);
+    });
     if (useLabels) {
       var label = groupMerge.selectAll('.' + cssLabelClass + '-' + orientation).data(function (d) {
         return [d];
@@ -936,6 +990,22 @@ function milestones(selector) {
       // })
       .classed(cssAboveClass + '-' + orientation, function (d) {
         return isAbove(d.index, distribution);
+      }).each(function (d) {
+        // Adjust label vertical position to align with bullet edge
+        if (orientation === 'horizontal') {
+          var bulletRadius = bulletRadii.get(d.key) || 5.5; // Default bullet radius (11px diameter / 2)
+          var timelineCenter = 5.5; // margin-top (4px) + half line height (1.5px)
+          var above = isAbove(d.index, distribution);
+          if (above) {
+            // For above labels, position at top edge of bullet
+            var topEdge = timelineCenter - bulletRadius;
+            src_select/* default */.A(this).style('bottom', "calc(100% - ".concat(topEdge, "px)"));
+          } else {
+            // For below labels, position at bottom edge of bullet
+            var bottomEdge = timelineCenter + bulletRadius;
+            src_select/* default */.A(this).style('top', bottomEdge + 'px');
+          }
+        }
       });
       var text = labelMerge.selectAll('.' + cssTextClass + '-' + orientation).data(function (d) {
         return [d];
@@ -995,6 +1065,8 @@ function milestones(selector) {
         var above = isAbove(d.index, distribution);
         var wrapper = src_select/* default */.A(this);
         wrapper.html(null);
+
+        // Aggregate titleStyle from all items in group
         var titleStyle = d.values.reduce(function (p, c) {
           if (c[mapping.titleStyle] !== undefined) {
             return Object.assign(p, c[mapping.titleStyle]);
@@ -1002,6 +1074,8 @@ function milestones(selector) {
           return p;
         }, {});
         var element = wrapper.append('div').classed('wrapper', true);
+
+        // Render title once per group (before items if not above or vertical)
         if (!above || orientation === 'vertical') {
           var titleSpan = element.append('span').classed(cssTitleClass, true);
 
@@ -1011,10 +1085,10 @@ function milestones(selector) {
           } else {
             titleSpan.text(labelFormat(aggregateFormatParse(d.key)));
           }
-          Object.entries(titleStyle).forEach(function (_ref) {
-            var _ref2 = _slicedToArray(_ref, 2),
-              prop = _ref2[0],
-              val = _ref2[1];
+          Object.entries(titleStyle).forEach(function (_ref5) {
+            var _ref6 = _slicedToArray(_ref5, 2),
+              prop = _ref6[0],
+              val = _ref6[1];
             return titleSpan.style(prop, val);
           });
           element.append('br');
@@ -1057,13 +1131,15 @@ function milestones(selector) {
           if (typeof callBackMouseOver === 'function') {
             item.on('mouseover', eventMouseOver);
           }
-          Object.entries(textStyle).forEach(function (_ref3) {
-            var _ref4 = _slicedToArray(_ref3, 2),
-              prop = _ref4[0],
-              val = _ref4[1];
+          Object.entries(textStyle).forEach(function (_ref7) {
+            var _ref8 = _slicedToArray(_ref7, 2),
+              prop = _ref8[0],
+              val = _ref8[1];
             return item.style(prop, val);
           });
         });
+
+        // Render title once per group (after items if above in horizontal mode)
         if (above && orientation === 'horizontal') {
           element.append('br');
           var _titleSpan = element.append('span').classed(cssTitleClass, true);
@@ -1074,10 +1150,10 @@ function milestones(selector) {
           } else {
             _titleSpan.text(labelFormat(aggregateFormatParse(d.key)));
           }
-          Object.entries(titleStyle).forEach(function (_ref5) {
-            var _ref6 = _slicedToArray(_ref5, 2),
-              prop = _ref6[0],
-              val = _ref6[1];
+          Object.entries(titleStyle).forEach(function (_ref9) {
+            var _ref10 = _slicedToArray(_ref9, 2),
+              prop = _ref10[0],
+              val = _ref10[1];
             return _titleSpan.style(prop, val);
           });
         }
@@ -1095,10 +1171,10 @@ function milestones(selector) {
     // finally, adjust offset, height and width of the whole timeline
     timelineMerge.each(function (d, i, node) {
       var margin = 10;
-      var maxAboveHeight = (0,max/* default */.A)(src_select/* default */.A(node[i]).selectAll('* .' + cssAboveClass + '-' + orientation)._groups[0], function (d) {
+      var maxAboveHeight = (0,max/* default */.A)(src_select/* default */.A(node[i]).selectAll('.' + cssLabelClass + '-' + orientation + '.' + cssAboveClass + '-' + orientation)._groups[0], function (d) {
         return d.offsetHeight;
       });
-      var maxBelowHeight = (0,max/* default */.A)(src_select/* default */.A(node[i]).selectAll('* :not(.' + cssAboveClass + '-' + orientation + ')')._groups[0], function (d) {
+      var maxBelowHeight = (0,max/* default */.A)(src_select/* default */.A(node[i]).selectAll('.' + cssLabelClass + '-' + orientation + ':not(.' + cssAboveClass + '-' + orientation + ')')._groups[0], function (d) {
         return d.offsetHeight;
       });
       if (orientation === 'horizontal') {
@@ -1253,4 +1329,4 @@ var createMilestones = function createMilestones(title, description, _ref) {
 /***/ })
 
 }]);
-//# sourceMappingURL=780.7355f826.iframe.bundle.js.map
+//# sourceMappingURL=780.2fd274c7.iframe.bundle.js.map
