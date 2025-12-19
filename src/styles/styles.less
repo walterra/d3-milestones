@@ -5,7 +5,10 @@
     display: inline-block;
     text-align: right;
     font-size: 14px;
-    margin-top: -4px;
+    line-height: 1;
+    position: relative;
+    top: calc(4px + 1.5px); /* Line margin-top + half line height */
+    transform: translateY(50%); /* Shift down by half the label's height */
   }
 
   .milestones__horizontal_line {

@@ -214,8 +214,21 @@ export default function milestones(selector) {
     }
     const timelineMerge = timeline.merge(timelineEnter);
 
-    const categoryLabelWidths = [];
     const categoryLabels = timelineMerge.selectAll('.' + cssCategoryClass);
+    // Apply categoryStyle first before calculating widths
+    categoryLabels.each((d, i, node) => {
+      const categoryData = d.originalData || d;
+      if (categoryData[mapping.categoryStyle]) {
+        Object.entries(categoryData[mapping.categoryStyle]).forEach(
+          ([prop, val]) => {
+            dom.select(node[i]).style(prop, val);
+          }
+        );
+      }
+    });
+
+    // Now calculate widths after styles are applied
+    const categoryLabelWidths = [];
     categoryLabels.each((d, i, node) => {
       categoryLabelWidths.push(node[i].offsetWidth);
     });
@@ -403,6 +416,7 @@ export default function milestones(selector) {
           const wrapper = dom.select(this);
           wrapper.html(null);
 
+          // Aggregate titleStyle from all items in group
           const titleStyle = d.values.reduce((p, c) => {
             if (c[mapping.titleStyle] !== undefined) {
               return Object.assign(p, c[mapping.titleStyle]);
@@ -412,6 +426,7 @@ export default function milestones(selector) {
 
           const element = wrapper.append('div').classed('wrapper', true);
 
+          // Render title once per group (before items if not above or vertical)
           if (!above || orientation === 'vertical') {
             const titleSpan = element
               .append('span')
@@ -505,6 +520,7 @@ export default function milestones(selector) {
             );
           });
 
+          // Render title once per group (after items if above in horizontal mode)
           if (above && orientation === 'horizontal') {
             element.append('br');
             const titleSpan = element
@@ -551,15 +567,34 @@ export default function milestones(selector) {
     timelineMerge.each((d, i, node) => {
       const margin = 10;
       const maxAboveHeight = max(
-        dom.select(node[i]).selectAll('* .' + cssAboveClass + '-' + orientation)
-          ._groups[0],
+        dom
+          .select(node[i])
+          .selectAll(
+            '.' +
+              cssLabelClass +
+              '-' +
+              orientation +
+              '.' +
+              cssAboveClass +
+              '-' +
+              orientation
+          )._groups[0],
         (d) => d.offsetHeight
       );
       const maxBelowHeight = max(
         dom
           .select(node[i])
-          .selectAll('* :not(.' + cssAboveClass + '-' + orientation + ')')
-          ._groups[0],
+          .selectAll(
+            '.' +
+              cssLabelClass +
+              '-' +
+              orientation +
+              ':not(.' +
+              cssAboveClass +
+              '-' +
+              orientation +
+              ')'
+          )._groups[0],
         (d) => d.offsetHeight
       );
 
