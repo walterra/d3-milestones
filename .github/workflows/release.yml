@@ -91,3 +91,10 @@ jobs:
             VERSION=$(echo '${{ steps.changesets.outputs.publishedPackages }}' | jq -r '.[0].version')
             gh release upload "v${VERSION}" build/d3-milestones.zip --clobber
           fi
+
+      - name: Deploy Storybook to GitHub Pages
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          yarn deploy-storybook
