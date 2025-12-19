@@ -298,6 +298,20 @@ export default function milestones(selector) {
         return x(value) + 'px';
       });
 
+    // Apply bulletStyle to bullets
+    groupMerge.selectAll('.' + cssBulletClass).each(function (d) {
+      const bulletStyle = d.values.reduce((p, c) => {
+        if (c[mapping.bulletStyle] !== undefined) {
+          return Object.assign(p, c[mapping.bulletStyle]);
+        }
+        return p;
+      }, {});
+
+      Object.entries(bulletStyle).forEach(([prop, val]) => {
+        dom.select(this).style(prop, val);
+      });
+    });
+
     if (useLabels) {
       const label = groupMerge
         .selectAll('.' + cssLabelClass + '-' + orientation)

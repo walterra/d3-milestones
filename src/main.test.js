@@ -176,4 +176,45 @@ describe('milestones', () => {
     expect(smallTextElement.style.fontSize).toBe('8px');
     expect(smallTextElement.style.fontWeight).toBe('bold');
   });
+
+  it('should apply bulletStyle to bullet elements', () => {
+    const chart = milestones('#container');
+
+    // Create data with bulletStyle
+    const data = [
+      {
+        text: 'Default Bullet',
+        timestamp: '2023-01-01',
+      },
+      {
+        text: 'Red Bullet',
+        timestamp: '2023-06-01',
+        bulletStyle: { 'background-color': 'red', 'border-color': 'darkred' },
+      },
+      {
+        text: 'Large Blue Bullet',
+        timestamp: '2023-12-01',
+        bulletStyle: { 'background-color': 'blue', padding: '5px' },
+      },
+    ];
+
+    // Render the chart
+    chart.render(data);
+
+    // Find bullet elements
+    const bulletElements = document.querySelectorAll(
+      '.milestones__group__bullet'
+    );
+    expect(bulletElements.length).toBe(3);
+
+    // Check that the second bullet has the correct styles applied
+    const redBullet = bulletElements[1];
+    expect(redBullet.style.backgroundColor).toBe('red');
+    expect(redBullet.style.borderColor).toBe('darkred');
+
+    // Check that the third bullet has the correct styles applied
+    const blueBullet = bulletElements[2];
+    expect(blueBullet.style.backgroundColor).toBe('blue');
+    expect(blueBullet.style.padding).toBe('5px');
+  });
 });

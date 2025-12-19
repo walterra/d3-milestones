@@ -14,6 +14,7 @@ export const DEFAULTS = {
     textStyle: 'textStyle',
     titleStyle: 'titleStyle',
     categoryStyle: 'categoryStyle',
+    bulletStyle: 'bulletStyle',
   },
   LABEL_FORMAT: '%Y-%m-%d %H:%M',
   USE_LABELS: true,
