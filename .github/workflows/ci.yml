@@ -1,28 +1,43 @@
-name: build
+name: CI
+
 on:
   push:
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '20,50 * * * *'
+    branches: [main]
+  pull_request:
+    branches: [main]
+
 jobs:
-  ui-test:
-    environment: test-ui
+  test:
+    name: Test on Node.js ${{ matrix.node-version }}
     runs-on: ubuntu-latest
-    env:
-      APM_SERVER: "${{ secrets.APM_SERVER }}"
-      PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: 'true'
-      CI: 'true'
+
+    permissions:
+      contents: read
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Use Node.js
-        uses: actions/setup-node@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
         with:
-          node-version: '16.18'
+          node-version: ${{ matrix.node-version }}
+          cache: 'yarn'
 
-      - name: Install / Build / End to End Test
-        run: |
-          export DISPLAY=:99
-          chromedriver --url-base=/wd/hub &
-          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
-          yarn
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run linter
+        run: yarn lint
+
+      - name: Build
+        run: yarn build
+
+      - name: Run Jest tests
+        run: yarn test-jest
+
+      - name: Run Karma tests
+        run: yarn test-karma
