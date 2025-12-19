@@ -1,5 +1,11 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
+## 1.6.1
+
+### Patch Changes
+
+- 5e54b64: Deploy Storybook to GitHub Pages automatically on release
+
 ## 1.6.0
 
 ### Minor Changes
