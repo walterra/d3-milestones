@@ -4,23 +4,23 @@
     "year": 1980
   },
   {
-    "text": "Large Red Bullet",
+    "text": "Extra Large Red Bullet",
     "year": 1990,
-    "bulletStyle": { "background-color": "#E12800", "border-color": "#E12800", "padding": "5px" }
+    "bulletStyle": { "background-color": "#E12800", "border-color": "#E12800", "padding": "10px", "border-width": "5px" }
   },
   {
-    "text": "Green Border Bullet",
+    "text": "Large Green Border",
     "year": 2000,
-    "bulletStyle": { "border-color": "#2BFD00", "border-width": "5px" }
+    "bulletStyle": { "border-color": "#2BFD00", "border-width": "8px", "padding": "6px" }
   },
   {
-    "text": "Blue Background",
+    "text": "Medium Blue",
     "year": 2010,
-    "bulletStyle": { "background-color": "#5BC6FF", "border-color": "#0078D4" }
+    "bulletStyle": { "background-color": "#5BC6FF", "border-color": "#0078D4", "padding": "4px" }
   },
   {
-    "text": "Small Yellow Bullet",
+    "text": "Tiny Yellow Bullet",
     "year": 2020,
-    "bulletStyle": { "background-color": "#FFD700", "border-color": "#FFA500", "padding": "1px", "border-width": "2px" }
+    "bulletStyle": { "background-color": "#FFD700", "border-color": "#FFA500", "padding": "0.5px", "border-width": "1px" }
   }
 ]

@@ -1,5 +1,5 @@
 ---
-"d3-milestones": patch
+"d3-milestones": minor
 ---
 
-Add font-size examples to textStyle Storybook demonstration and test coverage
+Add bulletStyle mapping for custom bullet colors and sizes, and add font-size examples to textStyle Storybook demonstration
