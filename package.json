@@ -28,7 +28,7 @@
     "provenance": true
   },
   "engines": {
-    "node": ">=16.18"
+    "node": ">=20.0.0"
   },
   "dependencies": {
     "d3-array": "^3.2.0",
