@@ -1,0 +1,77 @@
+version: 2
+updates:
+  # Enable version updates for npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    open-pull-requests-limit: 10
+    reviewers:
+      - "walterra"
+    assignees:
+      - "walterra"
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps"
+      include: "scope"
+    labels:
+      - "dependencies"
+    cooldown:
+      default-days: 14             # 14 days for supply chain attack mitigation
+      semver-major-days: 21        # Longer for major versions (higher risk)
+      semver-patch-days: 7         # Shorter for security patches
+    groups:
+      d3:
+        patterns:
+          - "d3-*"
+      babel:
+        patterns:
+          - "@babel/*"
+          - "babel-*"
+      rollup:
+        patterns:
+          - "rollup"
+          - "@rollup/*"
+      storybook:
+        patterns:
+          - "storybook"
+          - "@storybook/*"
+          - "@chromatic-com/*"
+      testing:
+        patterns:
+          - "jest"
+          - "jest-*"
+          - "karma"
+          - "karma-*"
+          - "tape"
+          - "tape-*"
+          - "tap-*"
+      linting:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "prettier"
+      webpack:
+        patterns:
+          - "webpack"
+          - "*-loader"
+
+  # Enable version updates for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "UTC"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+    labels:
+      - "github-actions"
+      - "ci"
+    cooldown:
+      default-days: 14             # 14 days for GitHub Actions supply chain protection
