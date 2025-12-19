@@ -1,5 +1,16 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
+## 1.6.0
+
+### Minor Changes
+
+- 78c1b6c: Add categoryStyle mapping to style category labels and fix spacing calculation when multiple items share same timestamp
+- 4fbafeb: Add bulletStyle mapping for custom bullet colors and sizes, and add font-size examples to textStyle Storybook demonstration
+
+### Patch Changes
+
+- 5528658: Fix release workflow to support headless browser testing
+
 No public interface changes since `v1.5.0`.
 
 ## [`v1.5.0`](https://github.com/walterra/d3-milestones/tree/v1.5.0)
