@@ -8,7 +8,7 @@ export default {
 
 const Template = (args) => createMilestones(
   'Issue #80 - Spacing with Multiple Items',
-  'Years with multiple items (1991: Windows 3.1 + System 7, 2001: Windows XP + Mac OS X + iPod, 2007: Vista + iPhone) should not create extra spacing between the two timelines',
+  'Year 1991 has 10 items in Windows timeline but only 1 in Mac timeline. The spacing between timelines should not be affected by the number of items.',
   args
 );
 
