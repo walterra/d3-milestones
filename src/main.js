@@ -298,8 +298,9 @@ export default function milestones(selector) {
         return x(value) + 'px';
       });
 
-    // Apply bulletStyle to bullets
-    groupMerge.selectAll('.' + cssBulletClass).each(function (d) {
+    // Apply bulletStyle to bullets and calculate bullet sizes
+    const bulletSizes = new Map();
+    groupMerge.selectAll('.' + cssBulletClass).each(function (d, i, nodes) {
       const bulletStyle = d.values.reduce((p, c) => {
         if (c[mapping.bulletStyle] !== undefined) {
           return Object.assign(p, c[mapping.bulletStyle]);
@@ -310,6 +311,10 @@ export default function milestones(selector) {
       Object.entries(bulletStyle).forEach(([prop, val]) => {
         dom.select(this).style(prop, val);
       });
+
+      // Calculate bullet height after styles are applied
+      const bulletHeight = nodes[i].offsetHeight;
+      bulletSizes.set(d.key, bulletHeight);
     });
 
     if (useLabels) {
@@ -332,7 +337,16 @@ export default function milestones(selector) {
         // })
         .classed(cssAboveClass + '-' + orientation, (d) =>
           isAbove(d.index, distribution)
-        );
+        )
+        .each(function (d) {
+          // Adjust label vertical position based on bullet height
+          if (orientation === 'horizontal') {
+            const bulletHeight = bulletSizes.get(d.key) || 11; // Default bullet height
+            const above = isAbove(d.index, distribution);
+            const offset = above ? -bulletHeight / 2 : bulletHeight / 2;
+            dom.select(this).style('top', offset + 'px');
+          }
+        });
 
       const text = labelMerge
         .selectAll('.' + cssTextClass + '-' + orientation)
