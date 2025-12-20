@@ -200,7 +200,7 @@ vis.mapping({
 
 <a name="optimize" href="#optimize">#</a> vis.<b>optimize</b>(<i>boolean</i>)
 
-Enables/Disables the label optimizer. When enabled, the optimizer attempts to avoid label overlap by vertically displacing labels.
+Enables/Disables the label optimizer. When enabled, the optimizer attempts to avoid label overlap by vertically displacing labels. Supports custom object and function distributions.
 
 <a name="autoResize" href="#autoResize">#</a> vis.<b>autoResize</b>(<i>boolean</i>)
 
