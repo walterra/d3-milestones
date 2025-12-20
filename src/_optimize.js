@@ -18,7 +18,30 @@ const getParentElement = (domElement) =>
     return this.parentNode;
   });
 
-const isSameDistribution = (index, nextCheck, overlapCheckIndex) => {
+const isSameDistribution = (
+  index,
+  nextCheck,
+  overlapCheckIndex,
+  distribution,
+  item,
+  overlapCheckItem
+) => {
+  // For custom distribution (object or function), check actual side
+  if (
+    (typeof distribution === 'object' && distribution !== null) ||
+    typeof distribution === 'function'
+  ) {
+    const itemAbove = isAbove(index, distribution, item);
+    const overlapAbove = isAbove(
+      overlapCheckIndex,
+      distribution,
+      overlapCheckItem
+    );
+    // Return true if they are on DIFFERENT sides (skip overlap check for different sides)
+    return itemAbove !== overlapAbove;
+  }
+
+  // For string-based distribution, use modulo logic
   const itemRowCheck = index % nextCheck;
   const distributionCheck = (overlapCheckIndex + itemRowCheck) % nextCheck;
 
@@ -44,6 +67,11 @@ export const optimize = (
     })
     .entries(textMerge._groups);
 
+  // Detect custom distribution
+  const isCustomDistribution =
+    (typeof distribution === 'object' && distribution !== null) ||
+    typeof distribution === 'function';
+
   const nextCheck = distribution === 'top-bottom' ? 2 : 1;
 
   const runOptimizer = (optimizerRuns) => {
@@ -51,19 +79,40 @@ export const optimize = (
 
     nestedNodes.forEach((d) => {
       const nodes = d.values;
-      nodes.forEach((node) => {
+
+      // For custom distributions, process nodes in order (handles split groups)
+      // For standard distributions, use reverse index calculation
+      const processOrder = [];
+      if (isCustomDistribution) {
+        // Process in array order, but reverse for horizontal orientation
+        for (let i = 0; i < nodes.length; i++) {
+          processOrder.push(i);
+        }
+        if (orientation === 'horizontal') {
+          processOrder.reverse();
+        }
+      } else {
+        // Original logic: calculate reverse index
+        for (let i = 0; i < nodes.length; i++) {
+          const d = dom.selectAll(nodes[i]).data()[0];
+          const index =
+            orientation === 'horizontal' ? nodes.length - d.index - 1 : d.index;
+          processOrder.push(index);
+        }
+      }
+
+      processOrder.forEach((nodeIndex) => {
+        const node = nodes[nodeIndex];
         const d = dom.selectAll(node).data()[0];
 
         const offsetComparator = orientation === 'horizontal' ? 60 : 20;
 
-        const index =
-          orientation === 'horizontal' ? nodes.length - d.index - 1 : d.index;
-
-        const item = dom.selectAll(nodes[index]).data()[0];
+        const index = nodeIndex; // Use actual array index
+        const item = d;
         const value =
           scaleType === 'ordinal' ? item.key : aggregateFormatParse(item.key);
         const offset = x(value);
-        const currentNode = nodes[index][0];
+        const currentNode = node[0];
 
         let isLast = index === nodes.length - 1;
         if (!isLast && distribution === 'top-bottom') {
@@ -93,9 +142,9 @@ export const optimize = (
         const paddingBelow =
           orientation === 'horizontal' ? 'padding-top' : 'padding-left';
 
-        const padding = isAbove(index, distribution)
-          ? paddingAbove
-          : paddingBelow;
+        // Determine which side this item is on
+        const itemIsAbove = isAbove(d.index, distribution, item);
+        const padding = itemIsAbove ? paddingAbove : paddingBelow;
 
         const overflow = backwards
           ? offset - offsetCheck < 0
@@ -130,40 +179,98 @@ export const optimize = (
             runs++;
 
             if (nextCheckIterator > 0) {
-              const nextGroupHeight = getNextGroupHeight(
-                index,
-                nextCheck,
-                nodes,
-                offsetAttribute,
-                orientation
-              );
+              let nextGroupHeight, previousGroupHeight, useNext, groupHeight;
+              let check = 0; // Default check value
 
-              const previousGroupHeight =
-                orientation === 'horizontal'
-                  ? getNextGroupHeight(
-                      index,
-                      nextCheck * -1,
-                      nodes,
-                      offsetAttribute,
-                      orientation
-                    )
-                  : nextGroupHeight;
+              if (isCustomDistribution) {
+                // For custom distributions, find next/prev on SAME side
+                let nextOnSameSide = null;
+                let prevOnSameSide = null;
+                let nextDistance = 0;
+                let prevDistance = 0;
 
-              let useNext = nextGroupHeight <= previousGroupHeight && !isLast;
+                for (let i = index + 1; i < nodes.length; i++) {
+                  const checkItem = dom.selectAll(nodes[i]).data()[0];
+                  if (
+                    isAbove(checkItem.index, distribution, checkItem) ===
+                    itemIsAbove
+                  ) {
+                    nextOnSameSide = nodes[i];
+                    nextDistance = i - index;
+                    break;
+                  }
+                }
 
-              if (!useNext && !isLast) {
-                useNext = offset < offsetComparator;
+                for (let i = index - 1; i >= 0; i--) {
+                  const checkItem = dom.selectAll(nodes[i]).data()[0];
+                  if (
+                    isAbove(checkItem.index, distribution, checkItem) ===
+                    itemIsAbove
+                  ) {
+                    prevOnSameSide = nodes[i];
+                    prevDistance = index - i;
+                    break;
+                  }
+                }
+
+                const defaultPadding = 3;
+                nextGroupHeight = nextOnSameSide
+                  ? nextOnSameSide[0][offsetAttribute] + defaultPadding
+                  : 0;
+                previousGroupHeight = prevOnSameSide
+                  ? prevOnSameSide[0][offsetAttribute] + defaultPadding
+                  : 0;
+
+                useNext = nextGroupHeight <= previousGroupHeight && !isLast;
+                if (!useNext && !isLast) {
+                  useNext = offset < offsetComparator;
+                }
+
+                groupHeight = useNext ? nextGroupHeight : previousGroupHeight;
+                if (isLast) {
+                  groupHeight = 0;
+                }
+                check = useNext ? nextDistance : -prevDistance;
+
+                domElement.style(padding, groupHeight + 'px');
+                getParentElement(domElement).classed(cssLastClass, !useNext);
+              } else {
+                // Original logic for standard distributions
+                nextGroupHeight = getNextGroupHeight(
+                  index,
+                  nextCheck,
+                  nodes,
+                  offsetAttribute,
+                  orientation
+                );
+
+                previousGroupHeight =
+                  orientation === 'horizontal'
+                    ? getNextGroupHeight(
+                        index,
+                        nextCheck * -1,
+                        nodes,
+                        offsetAttribute,
+                        orientation
+                      )
+                    : nextGroupHeight;
+
+                useNext = nextGroupHeight <= previousGroupHeight && !isLast;
+
+                if (!useNext && !isLast) {
+                  useNext = offset < offsetComparator;
+                }
+
+                groupHeight = useNext ? nextGroupHeight : previousGroupHeight;
+                if (isLast) {
+                  groupHeight = 0;
+                }
+                check = useNext ? nextCheck : nextCheck * -1;
+
+                domElement.style(padding, groupHeight + 'px');
+
+                getParentElement(domElement).classed(cssLastClass, !useNext);
               }
-
-              let groupHeight = useNext ? nextGroupHeight : previousGroupHeight;
-              if (isLast) {
-                groupHeight = 0;
-              }
-              const check = useNext ? nextCheck : nextCheck * -1;
-
-              domElement.style(padding, groupHeight + 'px');
-
-              getParentElement(domElement).classed(cssLastClass, !useNext);
 
               availableWidth = getAvailableWidth(
                 aggregateFormatParse,
@@ -218,11 +325,38 @@ export const optimize = (
                 .selectAll(overlapCheckNode)
                 .data()[0];
 
+              // Skip if same item
               if (
-                overlapCheckItem.key === item.key ||
-                isSameDistribution(index, nextCheck, overlapCheckIndex)
+                overlapCheckItem.key === item.key &&
+                overlapCheckIndex === index
               ) {
                 return;
+              }
+
+              // For custom distributions, only check overlap with items on SAME side
+              if (isCustomDistribution) {
+                const overlapIsAbove = isAbove(
+                  overlapCheckItem.index,
+                  distribution,
+                  overlapCheckItem
+                );
+                if (overlapIsAbove !== itemIsAbove) {
+                  return; // Different sides, no overlap possible
+                }
+              } else {
+                // For standard distributions, use original logic
+                if (
+                  isSameDistribution(
+                    index,
+                    nextCheck,
+                    overlapCheckIndex,
+                    distribution,
+                    item,
+                    overlapCheckItem
+                  )
+                ) {
+                  return;
+                }
               }
 
               const overlapValue =
@@ -302,47 +436,64 @@ export const optimize = (
 
             let minPadding = Number.POSITIVE_INFINITY;
             nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
-              const checkSameOrientation = isAbove(
-                overlapCheckIndex,
-                distribution
-              )
-                ? paddingAbove
-                : paddingBelow;
+              const overlapCheckItem = dom
+                .selectAll(overlapCheckNode)
+                .data()[0];
 
-              if (checkSameOrientation !== padding) {
-                return;
+              // Check if this item is on the same side as current item
+              const overlapCheckAbove = isAbove(
+                overlapCheckItem.index,
+                distribution,
+                overlapCheckItem
+              );
+
+              if (overlapCheckAbove !== itemIsAbove) {
+                return; // Different side, skip
               }
 
               const overlapCheckDomElement = dom.selectAll(
                 nodes[overlapCheckIndex]
               );
 
+              const checkPadding = overlapCheckAbove
+                ? paddingAbove
+                : paddingBelow;
               const itemPadding = getIntValueFromPxAttribute(
                 overlapCheckDomElement,
-                padding
+                checkPadding
               );
               minPadding = Math.min(minPadding, itemPadding);
             });
 
             if (minPadding > 0) {
               nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
-                const itemRowCheck = index % nextCheck;
-                const distributionCheck =
-                  (overlapCheckIndex + itemRowCheck) % nextCheck;
+                // Check if this node is on the same side (above/below) as the current item
+                const overlapCheckItem = dom
+                  .selectAll(overlapCheckNode)
+                  .data()[0];
+                const overlapCheckAbove = isAbove(
+                  overlapCheckItem.index,
+                  distribution,
+                  overlapCheckItem
+                );
 
-                if (distributionCheck !== 0) {
+                // Only adjust padding for items on the same side
+                if (overlapCheckAbove !== itemIsAbove) {
                   return;
                 }
 
                 const overlapCheckDomElement = dom.selectAll(
                   nodes[overlapCheckIndex]
                 );
+                const checkPadding = overlapCheckAbove
+                  ? paddingAbove
+                  : paddingBelow;
                 const itemPadding = getIntValueFromPxAttribute(
                   overlapCheckDomElement,
-                  padding
+                  checkPadding
                 );
                 overlapCheckDomElement.style(
-                  padding,
+                  checkPadding,
                   `${itemPadding - minPadding}px`
                 );
               });

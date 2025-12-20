@@ -217,4 +217,169 @@ describe('milestones', () => {
     expect(blueBullet.style.backgroundColor).toBe('blue');
     expect(blueBullet.style.padding).toBe('5px');
   });
+
+  it('should support object-based distribution with field matching', () => {
+    const chart = milestones('#container');
+
+    // Object-based distribution: Gandalf above, Frodo below
+    chart.distribution({
+      field: 'character',
+      top: 'Gandalf',
+      bottom: 'Frodo',
+    });
+
+    // Create character-based data
+    const data = [
+      { text: 'Event 1', timestamp: '2023-01-01', character: 'Gandalf' },
+      { text: 'Event 2', timestamp: '2023-02-01', character: 'Frodo' },
+      { text: 'Event 3', timestamp: '2023-03-01', character: 'Gandalf' },
+      { text: 'Event 4', timestamp: '2023-04-01', character: 'Frodo' },
+    ];
+
+    // Map the character field
+    chart.mapping({ character: 'character' });
+
+    // Render the chart
+    chart.render(data);
+
+    // Verify that timeline was created
+    const timelineElement = document.querySelector('.milestones');
+    expect(timelineElement).not.toBeNull();
+  });
+
+  it('should support object-based distribution with array of values', () => {
+    const chart = milestones('#container');
+
+    // Object-based distribution: multiple positive/negative types
+    chart.distribution({
+      field: 'type',
+      top: ['income', 'bonus', 'refund'],
+      bottom: ['expense', 'bill', 'tax'],
+    });
+
+    // Create cash flow data
+    const data = [
+      { text: 'Salary', timestamp: '2023-01-01', type: 'income' },
+      { text: 'Rent', timestamp: '2023-02-01', type: 'expense' },
+      { text: 'Bonus', timestamp: '2023-03-01', type: 'bonus' },
+      { text: 'Electricity', timestamp: '2023-04-01', type: 'bill' },
+    ];
+
+    // Map the type field
+    chart.mapping({ type: 'type' });
+
+    // Render the chart
+    chart.render(data);
+
+    // Verify that timeline was created
+    const timelineElement = document.querySelector('.milestones');
+    expect(timelineElement).not.toBeNull();
+  });
+
+  it('should support custom distribution function for advanced cases', () => {
+    const chart = milestones('#container');
+
+    // Function-based distribution for complex logic
+    const cashFlowDistribution = (data) => {
+      // data.values contains the grouped events
+      if (data.values && data.values.length > 0) {
+        // Get the first item's amount (they're grouped by timestamp)
+        return data.values[0].amount > 0;
+      }
+      return false;
+    };
+
+    // Spy on the distribution function to verify it's called
+    const distributionSpy = jest.fn(cashFlowDistribution);
+    chart.distribution(distributionSpy);
+
+    // Create cash flow data
+    const data = [
+      { text: 'Income', timestamp: '2023-01-01', amount: 1000 },
+      { text: 'Expense', timestamp: '2023-02-01', amount: -500 },
+      { text: 'Bonus', timestamp: '2023-03-01', amount: 2000 },
+      { text: 'Bill', timestamp: '2023-04-01', amount: -300 },
+    ];
+
+    // Map the amount field
+    chart.mapping({ amount: 'amount' });
+
+    // Render the chart
+    chart.render(data);
+
+    // Verify distribution function was called
+    expect(distributionSpy).toHaveBeenCalled();
+
+    // Verify that timeline was created
+    const timelineElement = document.querySelector('.milestones');
+    expect(timelineElement).not.toBeNull();
+  });
+
+  it('should use custom distribution function with ordinal scale', () => {
+    const chart = milestones('#container');
+
+    // Custom distribution based on type field
+    const typeDistribution = (data) => {
+      if (data.values && data.values.length > 0) {
+        return data.values[0].type === 'positive';
+      }
+      return false;
+    };
+
+    const distributionSpy = jest.fn(typeDistribution);
+
+    chart.scaleType('ordinal');
+    chart.distribution(distributionSpy);
+    chart.mapping({ value: 'id', type: 'type' });
+
+    // Create ordinal data
+    const data = [
+      { text: 'Item A', id: 'a', type: 'positive' },
+      { text: 'Item B', id: 'b', type: 'negative' },
+      { text: 'Item C', id: 'c', type: 'positive' },
+      { text: 'Item D', id: 'd', type: 'negative' },
+    ];
+
+    // Render the chart
+    chart.render(data);
+
+    // Verify distribution function was called
+    expect(distributionSpy).toHaveBeenCalled();
+
+    // Verify that timeline was created
+    const timelineElement = document.querySelector('.milestones');
+    expect(timelineElement).not.toBeNull();
+  });
+
+  it('should allow switching between string and function distribution', () => {
+    const chart = milestones('#container');
+
+    const data = [
+      { text: 'Event 1', timestamp: '2023-01-01' },
+      { text: 'Event 2', timestamp: '2023-02-01' },
+      { text: 'Event 3', timestamp: '2023-03-01' },
+    ];
+
+    // First, use string distribution
+    chart.distribution('top');
+    chart.render(data);
+
+    let timelineElement = document.querySelector('.milestones');
+    expect(timelineElement).not.toBeNull();
+
+    // Switch to function distribution
+    const customDistribution = jest.fn((data, index) => index === 1);
+    chart.distribution(customDistribution);
+    chart.render(data);
+
+    // Verify function distribution was called
+    expect(customDistribution).toHaveBeenCalled();
+
+    // Switch back to string distribution
+    chart.distribution('bottom');
+    chart.render(data);
+
+    timelineElement = document.querySelector('.milestones');
+    expect(timelineElement).not.toBeNull();
+  });
 });
