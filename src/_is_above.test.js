@@ -16,7 +16,7 @@ describe('isAbove', () => {
   });
 
   it('should support function-based distribution', () => {
-    const distributionFn = (data, index) => {
+    const distributionFn = (data) => {
       // Place items with positive values above, negative below
       return data.value > 0;
     };
