@@ -26,6 +26,101 @@ import { timeFormat } from './_time_format';
 import { timeParse } from './_time_parse';
 import { transform } from './_transform';
 
+function splitGroupsByDistribution(nestedData, distribution) {
+  // Guard against invalid input
+  if (!nestedData || !Array.isArray(nestedData)) {
+    return nestedData;
+  }
+
+  // Only split for custom distributions (object or function)
+  if (
+    (typeof distribution !== 'object' || distribution === null) &&
+    typeof distribution !== 'function'
+  ) {
+    return nestedData;
+  }
+
+  // Helper to split a single timeline's entries
+  function splitEntries(entries) {
+    // Guard against non-array inputs
+    if (!Array.isArray(entries)) {
+      return [];
+    }
+
+    const result = [];
+
+    entries.forEach((group) => {
+      if (!group.values || group.values.length <= 1) {
+        // Single item or no items - no need to split
+        result.push({
+          ...group,
+          index: result.length,
+        });
+        return;
+      }
+
+      // Group values by their distribution result
+      const aboveValues = [];
+      const belowValues = [];
+
+      group.values.forEach((item) => {
+        // Create temporary data object to test distribution
+        const tempData = {
+          key: group.key,
+          values: [item],
+          timelineIndex: group.timelineIndex,
+          scaleType: group.scaleType,
+        };
+        if (isAbove(group.index, distribution, tempData)) {
+          aboveValues.push(item);
+        } else {
+          belowValues.push(item);
+        }
+      });
+
+      // Create separate groups for above/below
+      if (aboveValues.length > 0) {
+        result.push({
+          key: group.key,
+          values: aboveValues,
+          index: result.length,
+          timelineIndex: group.timelineIndex,
+          scaleType: group.scaleType,
+        });
+      }
+
+      if (belowValues.length > 0) {
+        result.push({
+          key: group.key,
+          values: belowValues,
+          index: result.length,
+          timelineIndex: group.timelineIndex,
+          scaleType: group.scaleType,
+        });
+      }
+    });
+
+    return result;
+  }
+
+  // Handle both category-based and simple array structures
+  return nestedData.map((timeline) => {
+    if (Array.isArray(timeline)) {
+      // Simple array structure - timeline is an array of entries
+      return splitEntries(timeline);
+    } else if (timeline && typeof timeline === 'object' && timeline.entries) {
+      // Category-based structure (check this AFTER array check since arrays have .entries() method)
+      return {
+        ...timeline,
+        entries: splitEntries(timeline.entries),
+      };
+    } else {
+      // Fallback - return as-is
+      return timeline;
+    }
+  });
+}
+
 export default function milestones(selector) {
   let distribution = DEFAULTS.DISTRIBUTION;
   function setDistribution(d) {
@@ -180,10 +275,14 @@ export default function milestones(selector) {
     const labelMaxWidth = orientation === 'horizontal' ? 180 : 100;
 
     const timelineSelection = dom.select(selector).selectAll('.' + cssPrefix);
-    const nestedData =
+    let nestedData =
       typeof data !== 'undefined'
         ? transform(aggregateFormat, data, mapping, parseTime, scaleType)
         : timelineSelection.data();
+
+    // Split groups by distribution if using custom distribution
+    nestedData = splitGroupsByDistribution(nestedData, distribution);
+
     const timeline = timelineSelection.data(nestedData);
 
     const timelineEnter = timeline
