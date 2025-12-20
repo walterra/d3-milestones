@@ -20,7 +20,7 @@ const ObjectTemplate = (args) => {
 
 export const CustomDistributionObject = ObjectTemplate.bind({});
 CustomDistributionObject.args = {
-  optimize: true,
+  optimize: false,
   aggregateBy: 'day',
   parseTime: '%d.%m.%Y',
   data,
@@ -50,7 +50,7 @@ const FunctionTemplate = (args) => {
 
 export const CustomDistributionFunction = FunctionTemplate.bind({});
 CustomDistributionFunction.args = {
-  optimize: true,
+  optimize: false,
   aggregateBy: 'day',
   parseTime: '%d.%m.%Y',
   data,

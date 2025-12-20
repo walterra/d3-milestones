@@ -27,7 +27,10 @@ const isSameDistribution = (
   overlapCheckItem
 ) => {
   // For custom distribution (object or function), check actual side
-  if (typeof distribution === 'object' || typeof distribution === 'function') {
+  if (
+    (typeof distribution === 'object' && distribution !== null) ||
+    typeof distribution === 'function'
+  ) {
     const itemAbove = isAbove(index, distribution, item);
     const overlapAbove = isAbove(
       overlapCheckIndex,
