@@ -52,10 +52,7 @@ function splitGroupsByDistribution(nestedData, distribution) {
     entries.forEach((group) => {
       if (!group.values || group.values.length <= 1) {
         // Single item or no items - no need to split
-        result.push({
-          ...group,
-          index: result.length,
-        });
+        result.push(group);
         return;
       }
 
@@ -79,11 +76,12 @@ function splitGroupsByDistribution(nestedData, distribution) {
       });
 
       // Create separate groups for above/below
+      // IMPORTANT: Keep the same index for split groups - they're at the same x-position!
       if (aboveValues.length > 0) {
         result.push({
           key: group.key,
           values: aboveValues,
-          index: result.length,
+          index: group.index, // Keep original index!
           timelineIndex: group.timelineIndex,
           scaleType: group.scaleType,
         });
@@ -93,7 +91,7 @@ function splitGroupsByDistribution(nestedData, distribution) {
         result.push({
           key: group.key,
           values: belowValues,
-          index: result.length,
+          index: group.index, // Keep original index!
           timelineIndex: group.timelineIndex,
           scaleType: group.scaleType,
         });
