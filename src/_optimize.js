@@ -72,17 +72,42 @@ export const optimize = (
   const runOptimizer = (optimizerRuns) => {
     let updated = 0;
 
+    // For custom distributions (object/function), we need to handle split groups
+    const isCustomDistribution =
+      (typeof distribution === 'object' && distribution !== null) ||
+      typeof distribution === 'function';
+
     nestedNodes.forEach((d) => {
       const nodes = d.values;
-      nodes.forEach((node) => {
+
+      // Create iteration order based on orientation and distribution type
+      const iterationOrder = [];
+      if (isCustomDistribution) {
+        // For custom distributions, iterate in array order (handles split groups)
+        for (let i = 0; i < nodes.length; i++) {
+          iterationOrder.push(i);
+        }
+        if (orientation === 'horizontal') {
+          // Reverse for right-to-left processing
+          iterationOrder.reverse();
+        }
+      } else {
+        // For standard distributions, use the original reverse index logic
+        for (let i = 0; i < nodes.length; i++) {
+          const d = dom.selectAll(nodes[i]).data()[0];
+          const index =
+            orientation === 'horizontal' ? nodes.length - d.index - 1 : d.index;
+          iterationOrder.push(index);
+        }
+      }
+
+      iterationOrder.forEach((index) => {
+        const node = nodes[index];
         const d = dom.selectAll(node).data()[0];
 
         const offsetComparator = orientation === 'horizontal' ? 60 : 20;
 
-        const index =
-          orientation === 'horizontal' ? nodes.length - d.index - 1 : d.index;
-
-        const item = dom.selectAll(nodes[index]).data()[0];
+        const item = d;
         const value =
           scaleType === 'ordinal' ? item.key : aggregateFormatParse(item.key);
         const offset = x(value);
