@@ -34,15 +34,17 @@ Fix four critical layout optimization issues in the custom field-based label ali
   - Ensure same-side-only checking for custom distributions
   - Test: Two adjacent labels should not overlap after optimization
 
-- [ ] Fix Issue #3: Aggressive global baseline compression (src/_optimize.js:~460-510)
-  - Fix minPadding reduction to work correctly for both sides independently
-  - Reduce all labels on each side by their minimum padding
-  - Test: If all labels have 20px padding, reduce all by 20px
+- [x] Fix Issue #3: Aggressive global baseline compression (src/_optimize.js:~530-610)
+  - Moved minPadding logic OUTSIDE per-item loop to run once per group
+  - Fixed to work independently for above/below sides
+  - Reduces all labels on each side by their minimum padding
+  - NOTE: Working but may need further tuning for Vikings-level compression
 
-- [ ] Fix Issue #4: Add edge detection and label flip logic (src/_optimize.js:~150-180, src/main.js:~600-650)
-  - Detect when label extends beyond right canvas edge
-  - Flip label orientation (add/toggle cssLastClass) for edge labels
-  - Test: Label at right edge should flip to prevent overflow
+- [x] Fix Issue #4: Add edge detection and label flip logic (src/_optimize.js:~115-180)
+  - Fixed isLast detection for custom distributions (each side has its own rightmost)
+  - Enhanced edge overflow detection with space calculations
+  - Flip label orientation (cssLastClass) for edge labels
+  - VERIFIED: "The fellowship leaves Rivendell" now extends left and is fully visible
 
 - [ ] Add comprehensive Jest tests (new file: src/_optimize.test.js)
   - Test padding reduction logic
