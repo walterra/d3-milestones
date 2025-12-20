@@ -72,28 +72,64 @@ The returned object exposes the following API:
 
 Sets the aggregation interval for the event data, where *interval* can be one of `second`, `minute`, `hour`, `day`, `week`, `month`, `quarter` or `year`.
 
-<a name="distribution" href="#distribution">#</a> vis.<b>distribution</b>(<i>string | function</i>)
+<a name="distribution" href="#distribution">#</a> vis.<b>distribution</b>(<i>string | object | function</i>)
 
-Sets the label distribution. Can be a string (`top-bottom`, `top`, or `bottom`) or a custom function for data-driven positioning. Defaults to `top-bottom`. The options don't change for vertical layouts. `top` refers to labels on the left and `bottom` to labels on the right for that layout.
+Sets the label distribution. Can be a string (`top-bottom`, `top`, or `bottom`), an object for declarative field-based positioning, or a custom function for advanced logic. Defaults to `top-bottom`. The options don't change for vertical layouts. `top` refers to labels on the left and `bottom` to labels on the right for that layout.
 
 **String-based distribution:**
 - `top-bottom`: Alternates labels between top and bottom
 - `top`: Places all labels above the timeline
 - `bottom`: Places all labels below the timeline
 
-**Function-based distribution:**
+**Object-based distribution (recommended for data-driven layouts):**
 
-Pass a custom function to dynamically position labels based on event data. The function receives two parameters:
+Pass an object to declaratively position labels based on field values. The object should contain:
+- `field`: The field name to check in your event data
+- `top`: A single value or array of values that should appear above (or left)
+- `bottom`: A single value or array of values that should appear below (or right)
+
+Example - character-based positioning:
+
+```js
+vis.distribution({
+  field: 'character',
+  top: 'Gandalf',
+  bottom: 'Frodo'
+})
+.render([
+  { timestamp: '2023-01-01', text: 'Event 1', character: 'Gandalf' },
+  { timestamp: '2023-02-01', text: 'Event 2', character: 'Frodo' }
+]);
+```
+
+Example - cash flow diagram with multiple categories:
+
+```js
+vis.distribution({
+  field: 'type',
+  top: ['income', 'bonus', 'refund'],
+  bottom: ['expense', 'bill', 'tax']
+})
+.render([
+  { timestamp: '2023-01-01', text: 'Salary', type: 'income' },
+  { timestamp: '2023-02-01', text: 'Rent', type: 'expense' },
+  { timestamp: '2023-03-01', text: 'Year-end bonus', type: 'bonus' }
+]);
+```
+
+**Function-based distribution (for advanced use cases):**
+
+Pass a custom function for complex logic that can't be expressed declaratively. The function receives:
 - `data`: The grouped event data object containing a `values` array with all events in that time group
 - `index`: The index of the group in the timeline
 
 The function should return `true` to place the label above (or left in vertical mode), or `false` for below (or right).
 
-Example - cash flow diagram with positive values above, negative below:
+Example - numeric comparison:
 
 ```js
 vis.distribution((data) => {
-  // data.values contains all events grouped by timestamp
+  // Place events with positive amounts above, negative below
   if (data.values && data.values.length > 0) {
     return data.values[0].amount > 0;
   }
@@ -102,20 +138,7 @@ vis.distribution((data) => {
 .mapping({ amount: 'amount' })
 .render([
   { timestamp: '2023-01-01', text: 'Income', amount: 1000 },
-  { timestamp: '2023-02-01', text: 'Expense', amount: -500 },
-  { timestamp: '2023-03-01', text: 'Bonus', amount: 2000 }
-]);
-```
-
-Example - character-based positioning:
-
-```js
-vis.distribution((data) => {
-  return data.values.some(event => event.character === 'Gandalf');
-})
-.render([
-  { timestamp: '2023-01-01', text: 'Event 1', character: 'Gandalf' },
-  { timestamp: '2023-02-01', text: 'Event 2', character: 'Frodo' }
+  { timestamp: '2023-02-01', text: 'Expense', amount: -500 }
 ]);
 ```
 

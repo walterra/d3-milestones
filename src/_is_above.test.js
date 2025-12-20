@@ -78,4 +78,102 @@ describe('isAbove', () => {
     expect(isAbove(1, distributionFn, negativeGroup)).toBe(false);
     expect(isAbove(2, distributionFn, mixedGroup)).toBe(true);
   });
+
+  it('should support object-based distribution with field matching', () => {
+    const distribution = {
+      field: 'character',
+      top: 'Gandalf',
+      bottom: 'Frodo',
+    };
+
+    const gandalfData = {
+      key: '2023-01',
+      values: [{ text: 'Event 1', character: 'Gandalf' }],
+    };
+
+    const frodoData = {
+      key: '2023-02',
+      values: [{ text: 'Event 2', character: 'Frodo' }],
+    };
+
+    const otherData = {
+      key: '2023-03',
+      values: [{ text: 'Event 3', character: 'Aragorn' }],
+    };
+
+    expect(isAbove(0, distribution, gandalfData)).toBe(true);
+    expect(isAbove(1, distribution, frodoData)).toBe(false);
+    // Should fallback to alternating for unmatched values
+    expect(isAbove(2, distribution, otherData)).toBe(false);
+    expect(isAbove(3, distribution, otherData)).toBe(true);
+  });
+
+  it('should support object-based distribution with array of values', () => {
+    const distribution = {
+      field: 'type',
+      top: ['income', 'bonus', 'refund'],
+      bottom: ['expense', 'bill', 'tax'],
+    };
+
+    const incomeData = {
+      key: '2023-01',
+      values: [{ text: 'Salary', type: 'income' }],
+    };
+
+    const bonusData = {
+      key: '2023-02',
+      values: [{ text: 'Year-end bonus', type: 'bonus' }],
+    };
+
+    const expenseData = {
+      key: '2023-03',
+      values: [{ text: 'Rent', type: 'expense' }],
+    };
+
+    const billData = {
+      key: '2023-04',
+      values: [{ text: 'Electricity', type: 'bill' }],
+    };
+
+    expect(isAbove(0, distribution, incomeData)).toBe(true);
+    expect(isAbove(1, distribution, bonusData)).toBe(true);
+    expect(isAbove(2, distribution, expenseData)).toBe(false);
+    expect(isAbove(3, distribution, billData)).toBe(false);
+  });
+
+  it('should support object-based distribution with multiple items in group', () => {
+    const distribution = {
+      field: 'category',
+      top: 'positive',
+      bottom: 'negative',
+    };
+
+    const mixedGroup = {
+      key: '2023-01',
+      values: [
+        { text: 'Item 1', category: 'positive' },
+        { text: 'Item 2', category: 'negative' },
+      ],
+    };
+
+    // Should return true if ANY item matches top value
+    expect(isAbove(0, distribution, mixedGroup)).toBe(true);
+  });
+
+  it('should handle object-based distribution with missing data gracefully', () => {
+    const distribution = {
+      field: 'character',
+      top: 'Gandalf',
+      bottom: 'Frodo',
+    };
+
+    const emptyData = { key: '2023-01', values: [] };
+    const noValuesData = { key: '2023-02' };
+
+    // Should fallback to alternating
+    expect(isAbove(0, distribution, emptyData)).toBe(false);
+    expect(isAbove(1, distribution, emptyData)).toBe(true);
+    expect(isAbove(0, distribution, noValuesData)).toBe(false);
+    expect(isAbove(1, distribution, noValuesData)).toBe(true);
+  });
 });

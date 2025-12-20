@@ -218,10 +218,68 @@ describe('milestones', () => {
     expect(blueBullet.style.padding).toBe('5px');
   });
 
-  it('should support custom distribution function based on data values', () => {
+  it('should support object-based distribution with field matching', () => {
     const chart = milestones('#container');
 
-    // Custom distribution: positive amounts above, negative below
+    // Object-based distribution: Gandalf above, Frodo below
+    chart.distribution({
+      field: 'character',
+      top: 'Gandalf',
+      bottom: 'Frodo',
+    });
+
+    // Create character-based data
+    const data = [
+      { text: 'Event 1', timestamp: '2023-01-01', character: 'Gandalf' },
+      { text: 'Event 2', timestamp: '2023-02-01', character: 'Frodo' },
+      { text: 'Event 3', timestamp: '2023-03-01', character: 'Gandalf' },
+      { text: 'Event 4', timestamp: '2023-04-01', character: 'Frodo' },
+    ];
+
+    // Map the character field
+    chart.mapping({ character: 'character' });
+
+    // Render the chart
+    chart.render(data);
+
+    // Verify that timeline was created
+    const timelineElement = document.querySelector('.milestones');
+    expect(timelineElement).not.toBeNull();
+  });
+
+  it('should support object-based distribution with array of values', () => {
+    const chart = milestones('#container');
+
+    // Object-based distribution: multiple positive/negative types
+    chart.distribution({
+      field: 'type',
+      top: ['income', 'bonus', 'refund'],
+      bottom: ['expense', 'bill', 'tax'],
+    });
+
+    // Create cash flow data
+    const data = [
+      { text: 'Salary', timestamp: '2023-01-01', type: 'income' },
+      { text: 'Rent', timestamp: '2023-02-01', type: 'expense' },
+      { text: 'Bonus', timestamp: '2023-03-01', type: 'bonus' },
+      { text: 'Electricity', timestamp: '2023-04-01', type: 'bill' },
+    ];
+
+    // Map the type field
+    chart.mapping({ type: 'type' });
+
+    // Render the chart
+    chart.render(data);
+
+    // Verify that timeline was created
+    const timelineElement = document.querySelector('.milestones');
+    expect(timelineElement).not.toBeNull();
+  });
+
+  it('should support custom distribution function for advanced cases', () => {
+    const chart = milestones('#container');
+
+    // Function-based distribution for complex logic
     const cashFlowDistribution = (data) => {
       // data.values contains the grouped events
       if (data.values && data.values.length > 0) {
