@@ -680,13 +680,7 @@ export default function milestones(selector) {
 
       textMerge.style('padding-top', '0px').style('padding-bottom', '0px');
 
-      // Skip optimizer for custom distributions (object/function)
-      // The optimizer relies on index % 2 pattern which breaks with split groups
-      const isCustomDistribution =
-        (typeof distribution === 'object' && distribution !== null) ||
-        typeof distribution === 'function';
-
-      if (optimizeLayout && !isCustomDistribution) {
+      if (optimizeLayout) {
         optimizeFn(
           aggregateFormatParse,
           distribution,
