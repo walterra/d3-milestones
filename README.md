@@ -202,6 +202,8 @@ vis.mapping({
 
 Enables/Disables the label optimizer. When enabled, the optimizer attempts to avoid label overlap by vertically displacing labels.
 
+**Note:** The optimizer is automatically disabled when using custom distribution (object or function). The optimizer relies on the `index % 2` pattern to determine label positioning, which is incompatible with split groups created by custom distributions.
+
 <a name="autoResize" href="#autoResize">#</a> vis.<b>autoResize</b>(<i>boolean</i>)
 
 Enables/Disables auto resizing. Enabled by default, this adds listeners to resizing events of the browser window.
