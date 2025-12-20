@@ -93,7 +93,7 @@ export const optimize = (
         const paddingBelow =
           orientation === 'horizontal' ? 'padding-top' : 'padding-left';
 
-        const padding = isAbove(index, distribution)
+        const padding = isAbove(index, distribution, item)
           ? paddingAbove
           : paddingBelow;
 
@@ -302,9 +302,13 @@ export const optimize = (
 
             let minPadding = Number.POSITIVE_INFINITY;
             nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
+              const overlapCheckItem = dom
+                .selectAll(overlapCheckNode)
+                .data()[0];
               const checkSameOrientation = isAbove(
                 overlapCheckIndex,
-                distribution
+                distribution,
+                overlapCheckItem
               )
                 ? paddingAbove
                 : paddingBelow;

@@ -338,14 +338,14 @@ export default function milestones(selector) {
         //   );
         // })
         .classed(cssAboveClass + '-' + orientation, (d) =>
-          isAbove(d.index, distribution)
+          isAbove(d.index, distribution, d)
         )
         .each(function (d) {
           // Adjust label vertical position to align with bullet edge
           if (orientation === 'horizontal') {
             const bulletRadius = bulletRadii.get(d.key) || 5.5; // Default bullet radius (11px diameter / 2)
             const timelineCenter = 5.5; // margin-top (4px) + half line height (1.5px)
-            const above = isAbove(d.index, distribution);
+            const above = isAbove(d.index, distribution, d);
 
             if (above) {
               // For above labels, position at top edge of bullet
@@ -450,7 +450,7 @@ export default function milestones(selector) {
           return finalWidth + 'px';
         })
         .each(function (d) {
-          const above = isAbove(d.index, distribution);
+          const above = isAbove(d.index, distribution, d);
 
           const wrapper = dom.select(this);
           wrapper.html(null);
