@@ -439,25 +439,28 @@ export const optimize = (
               const overlapCheckItem = dom
                 .selectAll(overlapCheckNode)
                 .data()[0];
-              const checkSameOrientation = isAbove(
-                overlapCheckIndex,
+
+              // Check if this item is on the same side as current item
+              const overlapCheckAbove = isAbove(
+                overlapCheckItem.index,
                 distribution,
                 overlapCheckItem
-              )
-                ? paddingAbove
-                : paddingBelow;
+              );
 
-              if (checkSameOrientation !== padding) {
-                return;
+              if (overlapCheckAbove !== itemIsAbove) {
+                return; // Different side, skip
               }
 
               const overlapCheckDomElement = dom.selectAll(
                 nodes[overlapCheckIndex]
               );
 
+              const checkPadding = overlapCheckAbove
+                ? paddingAbove
+                : paddingBelow;
               const itemPadding = getIntValueFromPxAttribute(
                 overlapCheckDomElement,
-                padding
+                checkPadding
               );
               minPadding = Math.min(minPadding, itemPadding);
             });
@@ -469,26 +472,28 @@ export const optimize = (
                   .selectAll(overlapCheckNode)
                   .data()[0];
                 const overlapCheckAbove = isAbove(
-                  overlapCheckIndex,
+                  overlapCheckItem.index,
                   distribution,
                   overlapCheckItem
                 );
-                const currentItemAbove = isAbove(index, distribution, item);
 
                 // Only adjust padding for items on the same side
-                if (overlapCheckAbove !== currentItemAbove) {
+                if (overlapCheckAbove !== itemIsAbove) {
                   return;
                 }
 
                 const overlapCheckDomElement = dom.selectAll(
                   nodes[overlapCheckIndex]
                 );
+                const checkPadding = overlapCheckAbove
+                  ? paddingAbove
+                  : paddingBelow;
                 const itemPadding = getIntValueFromPxAttribute(
                   overlapCheckDomElement,
-                  padding
+                  checkPadding
                 );
                 overlapCheckDomElement.style(
-                  padding,
+                  checkPadding,
                   `${itemPadding - minPadding}px`
                 );
               });
