@@ -18,7 +18,27 @@ const getParentElement = (domElement) =>
     return this.parentNode;
   });
 
-const isSameDistribution = (index, nextCheck, overlapCheckIndex) => {
+const isSameDistribution = (
+  index,
+  nextCheck,
+  overlapCheckIndex,
+  distribution,
+  item,
+  overlapCheckItem
+) => {
+  // For custom distribution (object or function), check actual side
+  if (typeof distribution === 'object' || typeof distribution === 'function') {
+    const itemAbove = isAbove(index, distribution, item);
+    const overlapAbove = isAbove(
+      overlapCheckIndex,
+      distribution,
+      overlapCheckItem
+    );
+    // Return true if they are on DIFFERENT sides (skip overlap check for different sides)
+    return itemAbove !== overlapAbove;
+  }
+
+  // For string-based distribution, use modulo logic
   const itemRowCheck = index % nextCheck;
   const distributionCheck = (overlapCheckIndex + itemRowCheck) % nextCheck;
 
@@ -220,7 +240,14 @@ export const optimize = (
 
               if (
                 overlapCheckItem.key === item.key ||
-                isSameDistribution(index, nextCheck, overlapCheckIndex)
+                isSameDistribution(
+                  index,
+                  nextCheck,
+                  overlapCheckIndex,
+                  distribution,
+                  item,
+                  overlapCheckItem
+                )
               ) {
                 return;
               }
@@ -330,11 +357,19 @@ export const optimize = (
 
             if (minPadding > 0) {
               nodes.forEach((overlapCheckNode, overlapCheckIndex) => {
-                const itemRowCheck = index % nextCheck;
-                const distributionCheck =
-                  (overlapCheckIndex + itemRowCheck) % nextCheck;
+                // Check if this node is on the same side (above/below) as the current item
+                const overlapCheckItem = dom
+                  .selectAll(overlapCheckNode)
+                  .data()[0];
+                const overlapCheckAbove = isAbove(
+                  overlapCheckIndex,
+                  distribution,
+                  overlapCheckItem
+                );
+                const currentItemAbove = isAbove(index, distribution, item);
 
-                if (distributionCheck !== 0) {
+                // Only adjust padding for items on the same side
+                if (overlapCheckAbove !== currentItemAbove) {
                   return;
                 }
 
