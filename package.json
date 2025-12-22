@@ -56,9 +56,9 @@
     "@storybook/html-webpack5": "^8.6.12",
     "acorn": "^7.1.1",
     "babel-jest": "^29.3.1",
-    "babel-loader": "^9.1.0",
+    "babel-loader": "^10.0.0",
     "browserify": "^17.0.1",
-    "css-loader": "^6.5.1",
+    "css-loader": "^7.1.2",
     "eslint": "^7.16.0",
     "eslint-config-es5": "^0.5.0",
     "eslint-config-prettier": "^7.1.0",
@@ -74,7 +74,7 @@
     "karma-tap": "^4.2.0",
     "karma-tap-pretty-reporter": "^4.2.0",
     "less": "^4.1.2",
-    "less-loader": "^10.2.0",
+    "less-loader": "^12.3.0",
     "npm-watch": "^0.11.0",
     "prettier": "^2.2.1",
     "react": "^18.3.1",
@@ -83,7 +83,7 @@
     "rollup": "^4.40.0",
     "serve": "^13.0.2",
     "storybook": "^8.6.12",
-    "style-loader": "^3.3.1",
+    "style-loader": "^4.0.0",
     "tap-spec": "^5.0.0",
     "tape": "^5.6.1",
     "tape-promise": "^4.0.0",
@@ -152,6 +152,6 @@
     "wrap-ansi": "7.0.0",
     "string-width": "4.1.0",
     "semver": ">=7.5.2",
-    "webpack": "5.99.7"
+    "webpack": "5.103.0"
   }
 }
