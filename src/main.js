@@ -412,9 +412,11 @@ export default function milestones(selector) {
                 orientation === 'horizontal' ? width - offset : offset;
             } else if (itemNumTotal - itemNum === 0) {
               if (typeof compareItem2 !== 'undefined') {
-                const offsetPreviousItem = x(
-                  aggregateFormatParse(compareItem2.key)
-                );
+                const previousValue =
+                  scaleType === 'ordinal'
+                    ? compareItem2.key
+                    : aggregateFormatParse(compareItem2.key);
+                const offsetPreviousItem = x(previousValue);
                 availableWidth =
                   orientation === 'horizontal'
                     ? (width - offsetPreviousItem) / 2

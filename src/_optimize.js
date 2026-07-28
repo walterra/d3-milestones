@@ -2,11 +2,12 @@ import * as dom from 'd3-selection';
 import { nest } from 'd3-collection';
 
 import { cssAboveClass, cssBelowClass, cssLastClass } from './_css';
+import { hasOverlap } from './_overlap';
 
 const LABEL_MIN_WIDTH = { horizontal: 60, vertical: 30 };
 const ADJUST_PIXEL_STEP = 10;
 const DEBUG_CHART = false;
-const DEBUG_TIME = true;
+const DEBUG_TIME = false;
 
 const getDebugCanvasContext = (width, height, marginBottom) => {
   if (!DEBUG_CHART) return;
@@ -161,8 +162,6 @@ export const optimize = (
       }
 
       while (orangeCount > 0 && iterations < nodes.length + 10) {
-        console.log('iteration', iterations);
-        // debugger;
         orangeCount = 0;
         iterations++;
         let totalHeight = 0;
@@ -212,17 +211,26 @@ export const optimize = (
             : 0;
         }, 0);
 
-        // create bitmap of all elements
         const bitmapWidth = width;
         const bitmapHeight = totalHeight;
+        const collisionRects = boundingsRects.map((rect) => ({
+          backwards: rect.backwards,
+          height: rect[heightAttr],
+          index: rect.index,
+          offset: rect.offset,
+          padding: rect.padding,
+          width: rect[widthAttr],
+        }));
         const bitmapMarginBottom = Math.round(isHorizontal ? maxHeight : 0);
-        const bitmap = getBitmap(
-          bitmapWidth,
-          bitmapHeight,
-          boundingsRects,
-          nodes,
-          isHorizontal
-        );
+        const bitmap = DEBUG_CHART
+          ? getBitmap(
+              bitmapWidth,
+              bitmapHeight,
+              boundingsRects,
+              nodes,
+              isHorizontal
+            )
+          : undefined;
         const ctx = getDebugCanvasContext(
           bitmapWidth,
           bitmapHeight,
@@ -327,29 +335,23 @@ export const optimize = (
                 ctx.fillText(lowestOrange.text, newX + 5, newY + 5);
               }
 
-              overlap = false;
+              overlap =
+                (newX + newWidth > width && side === 'after') || newX < 0;
 
-              if (newX + newWidth > width && side === 'after') {
-                overlap = true;
-              } else if (newX < 0) {
-                overlap = true;
-              } else {
-                for (const [rowI] of Array(newHeight).fill(true).entries()) {
-                  for (const [colI] of Array(newWidth).fill(true).entries()) {
-                    if (
-                      bitmap[newY + rowI - 1] !== undefined &&
-                      bitmap[newY + rowI - 1][newX + colI] !== false &&
-                      bitmap[newY + rowI - 1][newX + colI] !==
-                        lowestOrange.index + 1
-                    ) {
-                      overlap = true;
-                      break;
-                    }
-                  }
-                  if (overlap) {
-                    break;
-                  }
-                }
+              if (!overlap) {
+                overlap = hasOverlap(
+                  {
+                    backwards: side === 'after',
+                    height: newHeight,
+                    index: lowestOrange.index,
+                    offset: side === 'after' ? newX + newWidth : newX,
+                    padding: newYOffset,
+                    width: newWidth,
+                  },
+                  collisionRects,
+                  bitmapWidth,
+                  bitmapHeight
+                );
               }
 
               if (overlap) {
@@ -467,17 +469,6 @@ export const optimize = (
             let overlap = true;
             let overlapRemovalIterations = 0;
 
-            const rX = Math.round(
-              rect.offset - (rect.backwards ? rect[widthAttr] : 0)
-            );
-            const rY = Math.round(
-              bitmapHeight -
-                rect[heightAttr] -
-                (rect.padding !== undefined ? rect.padding : 0)
-            );
-            const rW = Math.round(rect[widthAttr]);
-            const rH = Math.round(rect[heightAttr]);
-
             if (DEBUG_CHART && ctx) {
               const alpha = 0.3;
               bitmap.forEach((row, yIndex) => {
@@ -494,48 +485,13 @@ export const optimize = (
             while (overlap === true && overlapRemovalIterations < 1000) {
               overlapRemovalIterations++;
 
-              overlap = false;
-
-              for (const [rowI] of Array(rH).fill(true).entries()) {
-                for (const [colI] of Array(rW).fill(true).entries()) {
-                  if (
-                    bitmap[rY + rowI - 1] &&
-                    bitmap[rY + rowI - 1][rX + colI] !== false &&
-                    bitmap[rY + rowI - 1][rX + colI] !== rect.index + 1
-                  ) {
-                    overlap = true;
-                    break;
-                  }
-                }
-                if (overlap) {
-                  break;
-                }
-              }
-
-              if (!overlap) {
-                const columnHeight = Math.floor(
-                  rect.padding !== undefined ? rect.padding : 0
-                );
-                for (const [rowI] of Array(columnHeight).fill(true).entries()) {
-                  if (bitmap[rY + rH + rowI - 1]) {
-                    if (
-                      !rect.backwards &&
-                      bitmap[rY + rH + rowI - 1][rX] !== false &&
-                      bitmap[rY + rH + rowI - 1][rX] !== rect.index + 1
-                    ) {
-                      overlap = true;
-                      break;
-                    } else if (
-                      rect.backwards &&
-                      bitmap[rY + rH + rowI - 1][rX + rW - 1] !== false &&
-                      bitmap[rY + rH + rowI - 1][rX + rW - 1] !== rect.index + 1
-                    ) {
-                      overlap = true;
-                      break;
-                    }
-                  }
-                }
-              }
+              overlap = hasOverlap(
+                collisionRects[rect.index],
+                collisionRects,
+                bitmapWidth,
+                bitmapHeight,
+                true
+              );
 
               if (overlap) {
                 overlap = false;
