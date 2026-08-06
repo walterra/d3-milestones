@@ -37,7 +37,7 @@ jobs:
           cache: "yarn"
 
       - name: Upgrade npm for OIDC support
-        run: npm install -g npm@latest
+        run: npm install -g npm@11
 
       - name: Setup Xvfb for browser tests
         run: |
