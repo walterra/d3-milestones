@@ -432,7 +432,7 @@ export default function milestones(selector) {
         )
         .classed(
           cssBelowClass + '-' + orientation,
-          (d) => !isAbove(d.index, distribution)
+          (d) => !isAbove(d.index, distribution, d)
         )
         .each(function (d) {
           // Adjust label vertical position to align with bullet edge
