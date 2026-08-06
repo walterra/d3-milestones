@@ -472,17 +472,35 @@ export default function milestones(selector) {
           let nextItem;
           let previousItem;
           let itemNumTotal;
-          const itemNum = d.index + 1;
+          let itemNum = d.index + 1;
           const nextCheck = distribution === 'top-bottom' ? 2 : 1;
-          if (typeof mapping.category === 'undefined') {
-            nextItem = nestedData[d.timelineIndex][d.index + nextCheck];
-            previousItem = nestedData[d.timelineIndex][d.index - nextCheck];
-            itemNumTotal = nestedData[d.timelineIndex].length;
+          const timelineEntries =
+            typeof mapping.category === 'undefined'
+              ? nestedData[d.timelineIndex]
+              : nestedData[d.timelineIndex].entries;
+          const customDistribution =
+            typeof distribution === 'function' ||
+            (typeof distribution === 'object' && distribution !== null);
+
+          if (customDistribution) {
+            const currentPosition = timelineEntries.indexOf(d);
+            const above = isAbove(d.index, distribution, d);
+            const sameLane = (entry) =>
+              isAbove(entry.index, distribution, entry) === above;
+
+            nextItem = timelineEntries
+              .slice(currentPosition + 1)
+              .find(sameLane);
+            previousItem = timelineEntries
+              .slice(0, currentPosition)
+              .reverse()
+              .find(sameLane);
+            itemNum = currentPosition + 1;
+            itemNumTotal = timelineEntries.length;
           } else {
-            nextItem = nestedData[d.timelineIndex].entries[d.index + nextCheck];
-            previousItem =
-              nestedData[d.timelineIndex].entries[d.index - nextCheck];
-            itemNumTotal = nestedData[d.timelineIndex].entries.length;
+            nextItem = timelineEntries[d.index + nextCheck];
+            previousItem = timelineEntries[d.index - nextCheck];
+            itemNumTotal = timelineEntries.length;
           }
 
           let availableWidth;

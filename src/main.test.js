@@ -247,6 +247,31 @@ describe('milestones', () => {
     expect(timelineElement).not.toBeNull();
   });
 
+  it('should calculate label widths from the next item on the same custom lane', () => {
+    container.style.width = '800px';
+    const chart = milestones('#container');
+
+    chart.distribution({
+      field: 'character',
+      top: 'Gandalf',
+      bottom: 'Frodo',
+    });
+    chart.mapping({ character: 'character' });
+    chart.render([
+      { text: 'Top 1', timestamp: '2023-01-01', character: 'Gandalf' },
+      { text: 'Bottom 1', timestamp: '2023-01-01', character: 'Frodo' },
+      { text: 'Top 2', timestamp: '2023-02-01', character: 'Gandalf' },
+      { text: 'Bottom 2', timestamp: '2023-02-01', character: 'Frodo' },
+    ]);
+
+    const labels = document.querySelectorAll(
+      '.milestones__group__label__text-horizontal'
+    );
+    expect(labels).toHaveLength(4);
+    expect(parseFloat(labels[0].style.width)).toBeGreaterThan(0);
+    expect(parseFloat(labels[1].style.width)).toBeGreaterThan(0);
+  });
+
   it('should support object-based distribution with array of values', () => {
     const chart = milestones('#container');
 
