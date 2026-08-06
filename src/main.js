@@ -27,6 +27,99 @@ import { timeFormat } from './_time_format';
 import { timeParse } from './_time_parse';
 import { transform } from './_transform';
 
+function splitGroupsByDistribution(nestedData, distribution) {
+  // Guard against invalid input
+  if (!nestedData || !Array.isArray(nestedData)) {
+    return nestedData;
+  }
+
+  // Only split for custom distributions (object or function)
+  if (
+    (typeof distribution !== 'object' || distribution === null) &&
+    typeof distribution !== 'function'
+  ) {
+    return nestedData;
+  }
+
+  // Helper to split a single timeline's entries
+  function splitEntries(entries) {
+    // Guard against non-array inputs
+    if (!Array.isArray(entries)) {
+      return [];
+    }
+
+    const result = [];
+
+    entries.forEach((group) => {
+      if (!group.values || group.values.length <= 1) {
+        // Single item or no items - no need to split
+        result.push(group);
+        return;
+      }
+
+      // Group values by their distribution result
+      const aboveValues = [];
+      const belowValues = [];
+
+      group.values.forEach((item) => {
+        // Create temporary data object to test distribution
+        const tempData = {
+          key: group.key,
+          values: [item],
+          timelineIndex: group.timelineIndex,
+          scaleType: group.scaleType,
+        };
+        if (isAbove(group.index, distribution, tempData)) {
+          aboveValues.push(item);
+        } else {
+          belowValues.push(item);
+        }
+      });
+
+      // Create separate groups for above/below
+      // IMPORTANT: Keep the same index for split groups - they're at the same x-position!
+      if (aboveValues.length > 0) {
+        result.push({
+          key: group.key,
+          values: aboveValues,
+          index: group.index, // Keep original index!
+          timelineIndex: group.timelineIndex,
+          scaleType: group.scaleType,
+        });
+      }
+
+      if (belowValues.length > 0) {
+        result.push({
+          key: group.key,
+          values: belowValues,
+          index: group.index, // Keep original index!
+          timelineIndex: group.timelineIndex,
+          scaleType: group.scaleType,
+        });
+      }
+    });
+
+    return result;
+  }
+
+  // Handle both category-based and simple array structures
+  return nestedData.map((timeline) => {
+    if (Array.isArray(timeline)) {
+      // Simple array structure - timeline is an array of entries
+      return splitEntries(timeline);
+    } else if (timeline && typeof timeline === 'object' && timeline.entries) {
+      // Category-based structure (check this AFTER array check since arrays have .entries() method)
+      return {
+        ...timeline,
+        entries: splitEntries(timeline.entries),
+      };
+    } else {
+      // Fallback - return as-is
+      return timeline;
+    }
+  });
+}
+
 export default function milestones(selector) {
   let distribution = DEFAULTS.DISTRIBUTION;
   function setDistribution(d) {
@@ -181,10 +274,14 @@ export default function milestones(selector) {
     const labelMaxWidth = orientation === 'horizontal' ? 180 : 180;
 
     const timelineSelection = dom.select(selector).selectAll('.' + cssPrefix);
-    const nestedData =
+    let nestedData =
       typeof data !== 'undefined'
         ? transform(aggregateFormat, data, mapping, parseTime, scaleType)
         : timelineSelection.data();
+
+    // Split groups by distribution if using custom distribution
+    nestedData = splitGroupsByDistribution(nestedData, distribution);
+
     const timeline = timelineSelection.data(nestedData);
 
     const timelineEnter = timeline
@@ -331,18 +428,18 @@ export default function milestones(selector) {
         .attr('class', cssLabelClass + '-' + orientation)
         .merge(label)
         .classed(cssAboveClass + '-' + orientation, (d) =>
-          isAbove(d.index, distribution)
+          isAbove(d.index, distribution, d)
         )
         .classed(
           cssBelowClass + '-' + orientation,
-          (d) => !isAbove(d.index, distribution)
+          (d) => !isAbove(d.index, distribution, d)
         )
         .each(function (d) {
           // Adjust label vertical position to align with bullet edge
           if (orientation === 'horizontal') {
             const bulletRadius = bulletRadii.get(d.key) || 5.5; // Default bullet radius (11px diameter / 2)
             const timelineCenter = 5.5; // margin-top (4px) + half line height (1.5px)
-            const above = isAbove(d.index, distribution);
+            const above = isAbove(d.index, distribution, d);
 
             if (above) {
               // For above labels, position at top edge of bullet
@@ -375,17 +472,35 @@ export default function milestones(selector) {
           let nextItem;
           let previousItem;
           let itemNumTotal;
-          const itemNum = d.index + 1;
+          let itemNum = d.index + 1;
           const nextCheck = distribution === 'top-bottom' ? 2 : 1;
-          if (typeof mapping.category === 'undefined') {
-            nextItem = nestedData[d.timelineIndex][d.index + nextCheck];
-            previousItem = nestedData[d.timelineIndex][d.index - nextCheck];
-            itemNumTotal = nestedData[d.timelineIndex].length;
+          const timelineEntries =
+            typeof mapping.category === 'undefined'
+              ? nestedData[d.timelineIndex]
+              : nestedData[d.timelineIndex].entries;
+          const customDistribution =
+            typeof distribution === 'function' ||
+            (typeof distribution === 'object' && distribution !== null);
+
+          if (customDistribution) {
+            const currentPosition = timelineEntries.indexOf(d);
+            const above = isAbove(d.index, distribution, d);
+            const sameLane = (entry) =>
+              isAbove(entry.index, distribution, entry) === above;
+
+            nextItem = timelineEntries
+              .slice(currentPosition + 1)
+              .find(sameLane);
+            previousItem = timelineEntries
+              .slice(0, currentPosition)
+              .reverse()
+              .find(sameLane);
+            itemNum = currentPosition + 1;
+            itemNumTotal = timelineEntries.length;
           } else {
-            nextItem = nestedData[d.timelineIndex].entries[d.index + nextCheck];
-            previousItem =
-              nestedData[d.timelineIndex].entries[d.index - nextCheck];
-            itemNumTotal = nestedData[d.timelineIndex].entries.length;
+            nextItem = timelineEntries[d.index + nextCheck];
+            previousItem = timelineEntries[d.index - nextCheck];
+            itemNumTotal = timelineEntries.length;
           }
 
           let availableWidth;
@@ -441,7 +556,7 @@ export default function milestones(selector) {
           return finalWidth + 'px';
         })
         .each(function (d) {
-          const above = isAbove(d.index, distribution);
+          const above = isAbove(d.index, distribution, d);
 
           const wrapper = dom.select(this);
           wrapper.html(null);
