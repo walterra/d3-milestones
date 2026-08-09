@@ -1,5 +1,5 @@
 const apm =
-  typeof APM_SERVER === 'string'
+  typeof APM_SERVER === 'string' && APM_SERVER.length > 0
     ? elasticApm.init({
         serviceName: 'd3-milestones-karma-service',
         serverUrl: APM_SERVER,
@@ -14,9 +14,15 @@ export function startTransaction(spanName) {
 
   if (apm) {
     transaction = apm.startTransaction('d3-milestones/karma', 'custom');
-    transaction.addLabels({ 'd3-milestones-layout': APM_GIT_BRANCH });
-    span = transaction.startSpan(spanName, 'render-chart');
-    span.addLabels({ 'd3-milestones-layout': APM_GIT_BRANCH });
+
+    if (transaction) {
+      transaction.addLabels({ 'd3-milestones-layout': APM_GIT_BRANCH });
+      span = transaction.startSpan(spanName, 'render-chart');
+
+      if (span) {
+        span.addLabels({ 'd3-milestones-layout': APM_GIT_BRANCH });
+      }
+    }
   }
 
   return {
