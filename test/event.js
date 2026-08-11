@@ -10,7 +10,7 @@ const TEST_NAME =
 tape(TEST_NAME, (t) => {
   document.body.insertAdjacentHTML(
     'afterbegin',
-    '<div id="wrapper_event"></div>'
+    '<div id="wrapper_event"></div>',
   );
 
   const data = [

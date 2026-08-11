@@ -1,6 +1,5 @@
 const babel = require('@rollup/plugin-babel');
 const tapSpec = require('tap-spec');
-const eslint = require('@rollup/plugin-eslint');
 const { nodeResolve } = require('@rollup/plugin-node-resolve');
 
 const { getBranch } = require('./test/get_git_branch');
@@ -49,13 +48,7 @@ module.exports = (config) => {
         },
         sourcemap: 'inline',
       },
-      plugins: [
-        eslint({
-          exclude: ['src/styles/**'],
-        }),
-        nodeResolve(),
-        babel({ babelHelpers: 'bundled' }),
-      ],
+      plugins: [nodeResolve(), babel({ babelHelpers: 'bundled' })],
     },
     singleRun: true,
     tapReporter: {

@@ -1,5 +1,4 @@
 import babel from '@rollup/plugin-babel';
-import eslint from '@rollup/plugin-eslint';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 
 export default {
@@ -11,11 +10,5 @@ export default {
     sourcemap: true,
     sourcemapFile: 'build/d3-milestones.js',
   },
-  plugins: [
-    eslint({
-      exclude: ['src/styles/**'],
-    }),
-    nodeResolve(),
-    babel({ babelHelpers: 'bundled' }),
-  ],
+  plugins: [nodeResolve(), babel({ babelHelpers: 'bundled' })],
 };

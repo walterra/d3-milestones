@@ -114,7 +114,7 @@ describe('milestones', () => {
     const spy = jest.spyOn(
       document.querySelector('#container'),
       'innerHTML',
-      'set'
+      'set',
     );
 
     // Change orientation
@@ -203,7 +203,7 @@ describe('milestones', () => {
 
     // Find bullet elements
     const bulletElements = document.querySelectorAll(
-      '.milestones__group__bullet'
+      '.milestones__group__bullet',
     );
     expect(bulletElements.length).toBe(3);
 
@@ -265,7 +265,7 @@ describe('milestones', () => {
     ]);
 
     const labels = document.querySelectorAll(
-      '.milestones__group__label__text-horizontal'
+      '.milestones__group__label__text-horizontal',
     );
     expect(labels).toHaveLength(4);
     expect(parseFloat(labels[0].style.width)).toBeGreaterThan(0);

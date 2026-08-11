@@ -33,7 +33,7 @@ const Template = (args) =>
   createMilestones(
     'Ordinal Scale',
     'This example demonstrates using an ordinal scale instead of time scale',
-    args
+    args,
   );
 
 export const OrdinalScale = Template.bind({});

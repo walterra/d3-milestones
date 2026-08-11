@@ -10,7 +10,7 @@ const Template = (args) =>
   createMilestones(
     'Custom ID Attributes',
     `This example demonstrates the use of custom HTML ID attributes for milestone elements. Each milestone element has a unique ID attribute that can be used for direct DOM access or styling.`,
-    args
+    args,
   );
 
 export const CustomIds = Template.bind({});

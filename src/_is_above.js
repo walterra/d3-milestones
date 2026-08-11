@@ -17,14 +17,14 @@ export function isAbove(i, distribution, data) {
     // Check if any value in the group matches the top values
     if (data && data.values && data.values.length > 0) {
       const hasTopValue = data.values.some((item) =>
-        topValues.includes(item[field])
+        topValues.includes(item[field]),
       );
       if (hasTopValue) {
         return true;
       }
 
       const hasBottomValue = data.values.some((item) =>
-        bottomValues.includes(item[field])
+        bottomValues.includes(item[field]),
       );
       if (hasBottomValue) {
         return false;

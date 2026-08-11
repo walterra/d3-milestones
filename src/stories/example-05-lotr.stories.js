@@ -18,7 +18,7 @@ const Template = (args) => {
       data: gandalfData,
     }),
     'timeline-gandalf',
-    'height: 200px !important'
+    'height: 200px !important',
   );
   const frodo = createMilestones(
     undefined,
@@ -28,7 +28,7 @@ const Template = (args) => {
       data: frodoData,
     }),
     'timeline-frodo',
-    'height: 200px !important; margin-top: -200px !important'
+    'height: 200px !important; margin-top: -200px !important',
   );
   return gandalf + frodo;
 };

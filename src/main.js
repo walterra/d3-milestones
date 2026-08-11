@@ -254,7 +254,7 @@ export default function milestones(selector) {
 
   const resizeObserver = new ResizeObserver(resizeHandler);
   resizeObserver.observe(
-    typeof selector === 'string' ? document.querySelector(selector) : selector
+    typeof selector === 'string' ? document.querySelector(selector) : selector,
   );
 
   function setAutoResize(d) {
@@ -320,7 +320,7 @@ export default function milestones(selector) {
         Object.entries(categoryData[mapping.categoryStyle]).forEach(
           ([prop, val]) => {
             dom.select(node[i]).style(prop, val);
-          }
+          },
         );
       }
     });
@@ -342,7 +342,7 @@ export default function milestones(selector) {
       .selectAll('.data-js-timeline')
       .style(
         marginTimeAttribute,
-        maxCategoryLabelWidth + timelineLeftMargin + 'px'
+        maxCategoryLabelWidth + timelineLeftMargin + 'px',
       );
     timelineMerge
       .selectAll('.' + cssLineClass)
@@ -428,11 +428,11 @@ export default function milestones(selector) {
         .attr('class', cssLabelClass + '-' + orientation)
         .merge(label)
         .classed(cssAboveClass + '-' + orientation, (d) =>
-          isAbove(d.index, distribution, d)
+          isAbove(d.index, distribution, d),
         )
         .classed(
           cssBelowClass + '-' + orientation,
-          (d) => !isAbove(d.index, distribution, d)
+          (d) => !isAbove(d.index, distribution, d),
         )
         .each(function (d) {
           // Adjust label vertical position to align with bullet edge
@@ -545,13 +545,13 @@ export default function milestones(selector) {
           const labelRightMargin = 6;
           const availableWidthWithMargin = Math.max(
             0,
-            availableWidth - labelRightMargin
+            availableWidth - labelRightMargin,
           );
           const finalWidth = Math.min(
             orientation === 'horizontal'
               ? labelMaxWidth
               : availableWidthWithMargin,
-            availableWidthWithMargin
+            availableWidthWithMargin,
           );
           return finalWidth + 'px';
         })
@@ -585,7 +585,7 @@ export default function milestones(selector) {
             }
 
             Object.entries(titleStyle).forEach(([prop, val]) =>
-              titleSpan.style(prop, val)
+              titleSpan.style(prop, val),
             );
 
             element.append('br');
@@ -604,7 +604,7 @@ export default function milestones(selector) {
             // if so return an image tag with the filename as the source
             if (
               ['jpg', 'jpeg', 'gif', 'png', 'webp'].indexOf(
-                t.split('.').pop()
+                t.split('.').pop(),
               ) > -1
             ) {
               item = element
@@ -661,7 +661,7 @@ export default function milestones(selector) {
             }
 
             Object.entries(textStyle).forEach(([prop, val]) =>
-              item.style(prop, val)
+              item.style(prop, val),
             );
           });
 
@@ -680,7 +680,7 @@ export default function milestones(selector) {
             }
 
             Object.entries(titleStyle).forEach(([prop, val]) =>
-              titleSpan.style(prop, val)
+              titleSpan.style(prop, val),
             );
           }
         });
@@ -700,7 +700,7 @@ export default function milestones(selector) {
           textMerge,
           width,
           x,
-          scaleType // Pass scale type to optimizer
+          scaleType, // Pass scale type to optimizer
         );
       }
     } else {
@@ -721,9 +721,9 @@ export default function milestones(selector) {
               '.' +
               cssAboveClass +
               '-' +
-              orientation
+              orientation,
           )._groups[0],
-        (d) => d.offsetHeight
+        (d) => d.offsetHeight,
       );
       const maxBelowHeight = max(
         dom
@@ -737,9 +737,9 @@ export default function milestones(selector) {
               cssAboveClass +
               '-' +
               orientation +
-              ')'
+              ')',
           )._groups[0],
-        (d) => d.offsetHeight
+        (d) => d.offsetHeight,
       );
 
       if (orientation === 'horizontal') {

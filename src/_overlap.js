@@ -42,7 +42,7 @@ const getObstacle = (rect, bitmapWidth, bitmapHeight) => {
         top: y - 1,
       },
       bitmapWidth,
-      bitmapHeight
+      bitmapHeight,
     ),
     connector:
       padding > 0
@@ -54,7 +54,7 @@ const getObstacle = (rect, bitmapWidth, bitmapHeight) => {
               top: y + height - 1,
             },
             bitmapWidth,
-            bitmapHeight
+            bitmapHeight,
           )
         : undefined,
   };
@@ -73,7 +73,7 @@ const getCandidate = (rect, bitmapWidth, bitmapHeight, includeConnector) => {
         top: y - 1,
       },
       bitmapWidth,
-      bitmapHeight
+      bitmapHeight,
     ),
     connector:
       includeConnector && padding > 0
@@ -85,7 +85,7 @@ const getCandidate = (rect, bitmapWidth, bitmapHeight, includeConnector) => {
               top: y + height - 1,
             },
             bitmapWidth,
-            bitmapHeight
+            bitmapHeight,
           )
         : undefined,
   };
@@ -96,13 +96,13 @@ export const hasOverlap = (
   rects,
   bitmapWidth,
   bitmapHeight,
-  includeConnector = false
+  includeConnector = false,
 ) => {
   const candidate = getCandidate(
     candidateRect,
     bitmapWidth,
     bitmapHeight,
-    includeConnector
+    includeConnector,
   );
 
   return rects.some((rect) => {

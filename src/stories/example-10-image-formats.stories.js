@@ -10,7 +10,7 @@ const Template = (args) =>
   createMilestones(
     'Image formats',
     `This example demonstrates the use of different image formats for milestone elements.`,
-    args
+    args,
   );
 
 export const ImageFormats = Template.bind({});

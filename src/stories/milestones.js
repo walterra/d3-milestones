@@ -72,7 +72,7 @@ export const createMilestones = (
     scaleType,
   },
   DIV_ID = 'timeline',
-  style = ''
+  style = '',
 ) => {
   iteration++;
 
