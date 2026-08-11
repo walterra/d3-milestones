@@ -162,7 +162,6 @@ export const optimize = (
       }
 
       while (orangeCount > 0 && iterations < nodes.length + 10) {
-        orangeCount = 0;
         iterations++;
         let totalHeight = 0;
         let maxHeight = 0;
