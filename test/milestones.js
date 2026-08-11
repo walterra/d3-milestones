@@ -9,7 +9,7 @@ const TEST_NAME = 'should render a minimal milestones chart';
 tape(TEST_NAME, (t) => {
   document.body.insertAdjacentHTML(
     'afterbegin',
-    '<div id="wrapper_milestones"></div>'
+    '<div id="wrapper_milestones"></div>',
   );
 
   const data = [
@@ -42,25 +42,25 @@ tape(TEST_NAME, (t) => {
   return delay(1000).then(() => {
     t.false(
       d3.select('#wrapper_milestones .milestones').empty(),
-      'should render .milestones element'
+      'should render .milestones element',
     );
     t.false(
       d3
         .select('#wrapper_milestones .milestones .milestones__horizontal_line')
         .empty(),
-      'should render .milestones__horizontal_line element'
+      'should render .milestones__horizontal_line element',
     );
     t.equal(
       d3.selectAll('#wrapper_milestones .milestones .milestones__group').size(),
       3,
-      'should render 3 .milestones__group elements'
+      'should render 3 .milestones__group elements',
     );
     t.equal(
       d3
         .selectAll('#wrapper_milestones .milestones .milestones__group a')
         .size(),
       1,
-      'should render 1 link'
+      'should render 1 link',
     );
 
     t.end();

@@ -10,7 +10,7 @@ const Template = (args) =>
   createMilestones(
     'Issue #80 - Spacing Fix and Category Styling',
     'Year 1991 has 10 items in Windows timeline. The spacing between timelines is now correct (not affected by item count). Categories (Windows/Mac) have individual styling with categoryStyle.',
-    args
+    args,
   );
 
 export const Issue80 = Template.bind({});

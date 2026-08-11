@@ -76,7 +76,7 @@ const Template = (args) =>
   createMilestones(
     'Ordinal Scale with Categories',
     'This example demonstrates using an ordinal scale with multiple categories',
-    args
+    args,
   );
 
 export const OrdinalScaleCategories = Template.bind({});

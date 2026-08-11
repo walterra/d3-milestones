@@ -10,7 +10,7 @@ const Template = (args) =>
   createMilestones(
     'Version Milestones',
     `The chart is responsive, try resizing the browser window. Use the storybook's options to trigger examples of the chart's features`,
-    args
+    args,
   );
 
 export const MilestonesReleases = Template.bind({});

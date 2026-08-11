@@ -33,7 +33,7 @@ const getTextWidth = (el, isHorizontal) => {
   const clientRect = range.getBoundingClientRect();
   return Math.max(
     LABEL_MIN_WIDTH[isHorizontal ? 'horizontal' : 'vertical'],
-    Math.round(clientRect.width)
+    Math.round(clientRect.width),
   );
 };
 
@@ -44,7 +44,7 @@ const getParentElement = (domElement) =>
 
 const getBitmap = (width, height, rects, nodes, isHorizontal) => {
   const bitmap = Array.from({ length: height }, () =>
-    Array.from({ length: width }, () => false)
+    Array.from({ length: width }, () => false),
   );
 
   for (const rect of rects) {
@@ -57,7 +57,7 @@ const getBitmap = (width, height, rects, nodes, isHorizontal) => {
     const rY = Math.round(
       bitmap.length -
         rectHeight -
-        (rect.padding !== undefined ? rect.padding : 0)
+        (rect.padding !== undefined ? rect.padding : 0),
     );
 
     // const textWidth = getTextWidth(nodes[rect.index][0], isHorizontal);
@@ -77,7 +77,7 @@ const getBitmap = (width, height, rects, nodes, isHorizontal) => {
     }
 
     const columnHeight = Math.floor(
-      rect.padding !== undefined ? rect.padding : 0
+      rect.padding !== undefined ? rect.padding : 0,
     );
     for (const [rowI] of Array(columnHeight).fill(true).entries()) {
       if (bitmap[rY + rH + rowI - 1]) {
@@ -113,7 +113,7 @@ export const optimize = (
   textMerge,
   width,
   x,
-  scaleType = 'time'
+  scaleType = 'time',
 ) => {
   if (DEBUG_TIME) {
     console.time('optimize');
@@ -136,15 +136,15 @@ export const optimize = (
     // get all upper nodes
     const aboveNodes = timeline.values.filter((tn) =>
       getParentElement(dom.select(tn[0])).classed(
-        `${cssAboveClass}-${orientation}`
-      )
+        `${cssAboveClass}-${orientation}`,
+      ),
     );
 
     // get all lower nodes
     const belowNodes = timeline.values.filter((tn) =>
       getParentElement(dom.select(tn[0])).classed(
-        `${cssBelowClass}-${orientation}`
-      )
+        `${cssBelowClass}-${orientation}`,
+      ),
     );
 
     const optimizeLayout = (nodes, isAbove) => {
@@ -174,7 +174,7 @@ export const optimize = (
 
           const parentElement = getParentElement(dom.selectAll(node));
           const backwards = parentElement.classed(
-            `${cssLastClass}-${orientation}`
+            `${cssLastClass}-${orientation}`,
           );
           const paddingPx = parentElement.style(padding);
           const adjusted = parentElement.attr('data-adjusted');
@@ -197,7 +197,7 @@ export const optimize = (
 
           totalHeight = Math.max(
             totalHeight,
-            boundingRect[heightAttr] + boundingRect.padding
+            boundingRect[heightAttr] + boundingRect.padding,
           );
           maxHeight = Math.max(maxHeight, boundingRect[heightAttr]);
         }
@@ -228,13 +228,13 @@ export const optimize = (
               bitmapHeight,
               boundingsRects,
               nodes,
-              isHorizontal
+              isHorizontal,
             )
           : undefined;
         const ctx = getDebugCanvasContext(
           bitmapWidth,
           bitmapHeight,
-          bitmapMarginBottom
+          bitmapMarginBottom,
         );
         let lowestOrange;
         let side;
@@ -251,7 +251,7 @@ export const optimize = (
             (d) =>
               d.index === c.index - 1 &&
               ((isHorizontal && d[widthAttr] < LABEL_MIN_WIDTH[orientation]) ||
-                (!isHorizontal && d.adjusted === false))
+                (!isHorizontal && d.adjusted === false)),
           );
 
           const rightEl = boundingsRects.find(
@@ -260,7 +260,7 @@ export const optimize = (
               ((isHorizontal &&
                 (d[widthAttr] < LABEL_MIN_WIDTH[orientation] ||
                   (!d.backwards && d.offset + d[widthAttr] > width))) ||
-                (!isHorizontal && d.adjusted === false))
+                (!isHorizontal && d.adjusted === false)),
           );
 
           return leftEl !== undefined || rightEl !== undefined ? c : p;
@@ -275,7 +275,7 @@ export const optimize = (
                 d.index === lowestGreen.index - 1 &&
                 ((isHorizontal &&
                   d[widthAttr] < LABEL_MIN_WIDTH[orientation]) ||
-                  (!isHorizontal && d.adjusted === false))
+                  (!isHorizontal && d.adjusted === false)),
             );
             side = 'before';
           }
@@ -291,7 +291,7 @@ export const optimize = (
                 ((isHorizontal &&
                   (d[widthAttr] < LABEL_MIN_WIDTH[orientation] ||
                     (!d.backwards && d.offset + d[widthAttr] > width))) ||
-                  (!isHorizontal && d.adjusted === false))
+                  (!isHorizontal && d.adjusted === false)),
             );
 
             if (
@@ -318,12 +318,12 @@ export const optimize = (
                 lowestOrange[widthAttr] * lowestOrange[heightAttr];
               const newHeight = Math.max(
                 20,
-                Math.round(loVolume / newTestWidth)
+                Math.round(loVolume / newTestWidth),
               );
               const newX = Math.round(
                 side === 'before'
                   ? lowestOrange.offset
-                  : lowestOrange.offset - newTestWidth - 2
+                  : lowestOrange.offset - newTestWidth - 2,
               );
               const newY = Math.round(bitmapHeight - newYOffset - newHeight);
               const newWidth = Math.round(newTestWidth);
@@ -350,7 +350,7 @@ export const optimize = (
                   },
                   collisionRects,
                   bitmapWidth,
-                  bitmapHeight
+                  bitmapHeight,
                 );
               }
 
@@ -370,7 +370,7 @@ export const optimize = (
             const backwards = side === 'after';
 
             const domElement = getParentElement(
-              dom.select(nodes[lowestOrange.index][0])
+              dom.select(nodes[lowestOrange.index][0]),
             );
 
             domElement.attr('data-adjusted', true);
@@ -389,12 +389,12 @@ export const optimize = (
             const shrinkedWidth = isHorizontal
               ? getTextWidth(nodes[lowestOrange.index][0])
               : parseFloat(
-                  domElement.select('.wrapper').style('height').split('px')[0]
+                  domElement.select('.wrapper').style('height').split('px')[0],
                 );
             if (shrinkedWidth + widthOffset < newTestWidth) {
               domElement.style(
                 widthAttr,
-                `${shrinkedWidth + (isHorizontal ? 10 : 0)}px`
+                `${shrinkedWidth + (isHorizontal ? 10 : 0)}px`,
               );
               dom
                 .select(nodes[lowestOrange.index][0])
@@ -451,7 +451,7 @@ export const optimize = (
                 fillRectX,
                 fillRectY,
                 rect[widthAttr],
-                rect[heightAttr]
+                rect[heightAttr],
               );
               ctx.fillStyle = `rgba(0,0,0,1)`;
               ctx.fillText(rect.text, fillRectX + 5, fillRectY + 5);
@@ -490,14 +490,14 @@ export const optimize = (
                 collisionRects,
                 bitmapWidth,
                 bitmapHeight,
-                true
+                true,
               );
 
               if (overlap) {
                 overlap = false;
                 orangeCount++;
                 const domElement = getParentElement(
-                  dom.select(nodes[rect.index][0])
+                  dom.select(nodes[rect.index][0]),
                 );
                 domElement.attr('data-adjusted', false);
 
@@ -508,7 +508,7 @@ export const optimize = (
                 const widthOffset = isHorizontal ? 5 : 0;
                 domElement.style(
                   widthAttr,
-                  `${LABEL_MIN_WIDTH[orientation] - 10 + widthOffset}px`
+                  `${LABEL_MIN_WIDTH[orientation] - 10 + widthOffset}px`,
                 );
                 dom
                   .select(nodes[rect.index][0])

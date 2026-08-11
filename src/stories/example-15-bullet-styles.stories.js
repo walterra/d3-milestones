@@ -10,7 +10,7 @@ const Template = (args) =>
   createMilestones(
     'Bullet Styles',
     'Custom bullet colors, sizes, and borders using bulletStyle',
-    args
+    args,
   );
 
 export const BulletStyles = Template.bind({});

@@ -14,7 +14,7 @@ const ObjectTemplate = (args) => {
     Object.assign(args, {
       distribution: { field: 'character', top: 'Gandalf', bottom: 'Frodo' },
       data: args.data,
-    })
+    }),
   );
 };
 
@@ -44,7 +44,7 @@ const FunctionTemplate = (args) => {
     Object.assign(args, {
       distribution: characterDistribution,
       data: args.data,
-    })
+    }),
   );
 };
 

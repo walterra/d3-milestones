@@ -13,12 +13,12 @@ const rect = (overrides = {}) =>
       padding: 0,
       width: 40,
     },
-    overrides
+    overrides,
   );
 
 const getLegacyBitmap = (rects, width, height) => {
   const bitmap = Array.from({ length: height }, () =>
-    Array.from({ length: width }, () => false)
+    Array.from({ length: width }, () => false),
   );
 
   rects.forEach((item) => {
@@ -62,14 +62,14 @@ const hasLegacyOverlap = (
   rects,
   width,
   height,
-  includeConnector
+  includeConnector,
 ) => {
   const bitmap = getLegacyBitmap(rects, width, height);
   const rectWidth = Math.round(candidate.width);
   const rectHeight = Math.round(candidate.height);
   const padding = Math.floor(candidate.padding || 0);
   const x = Math.round(
-    candidate.offset - (candidate.backwards ? candidate.width : 0)
+    candidate.offset - (candidate.backwards ? candidate.width : 0),
   );
   const y = Math.round(height - candidate.height - (candidate.padding || 0));
   const occupied = (checkX, checkY) => {
@@ -100,10 +100,10 @@ describe('hasOverlap', () => {
     const obstacle = rect();
 
     expect(
-      hasOverlap(rect({ index: 1, offset: 50 }), [obstacle], WIDTH, HEIGHT)
+      hasOverlap(rect({ index: 1, offset: 50 }), [obstacle], WIDTH, HEIGHT),
     ).toBe(true);
     expect(
-      hasOverlap(rect({ index: 1, offset: 59 }), [obstacle], WIDTH, HEIGHT)
+      hasOverlap(rect({ index: 1, offset: 59 }), [obstacle], WIDTH, HEIGHT),
     ).toBe(false);
   });
 
@@ -138,8 +138,8 @@ describe('hasOverlap', () => {
         rect({ height: 30, index: 1, offset: -50, padding: 200 }),
         [obstacle],
         WIDTH,
-        HEIGHT
-      )
+        HEIGHT,
+      ),
     ).toBe(false);
   });
 
@@ -171,9 +171,9 @@ describe('hasOverlap', () => {
       rects.forEach((candidate) => {
         [false, true].forEach((includeConnector) => {
           expect(
-            hasOverlap(candidate, rects, WIDTH, HEIGHT, includeConnector)
+            hasOverlap(candidate, rects, WIDTH, HEIGHT, includeConnector),
           ).toBe(
-            hasLegacyOverlap(candidate, rects, WIDTH, HEIGHT, includeConnector)
+            hasLegacyOverlap(candidate, rects, WIDTH, HEIGHT, includeConnector),
           );
         });
       });

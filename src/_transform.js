@@ -6,7 +6,7 @@ export function transform(
   data,
   mapping,
   parseTime,
-  scaleType = 'time'
+  scaleType = 'time',
 ) {
   // Choose grouping function based on scale type
   const groupBy = function (d) {

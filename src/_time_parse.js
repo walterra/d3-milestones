@@ -14,7 +14,7 @@ export function timeParse(f) {
             ? '0' + quarterFirstMonthAsString
             : quarterFirstMonthAsString;
         return quarterParser(
-          d.split('-')[0] + '-' + quarterFirstMonthLeadingZero
+          d.split('-')[0] + '-' + quarterFirstMonthLeadingZero,
         );
       } else {
         const monthAsString = parseInt(d.split('-')[1][1]) * 3 + '';
