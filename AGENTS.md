@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Provides repository guidance for coding agents.
 
 ## Build Commands
 
@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 - All tests: `yarn test`
 - Jest tests only: `yarn test-jest`
-- Single Jest test: `npx jest src/path/to/file.test.js`
+- Single Jest test: `yarn jest src/path/to/file.test.js`
 - Karma tests: `yarn test-karma`
 - Watch tests: `yarn test-watch`
 
@@ -29,10 +29,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Code Style Guidelines
 
-- Use ES6 modules with named exports
-- Follow ESLint and Prettier rules defined in .eslintrc.json
+- Use ES modules and preserve each module's established export style
+- Follow ESLint rules in `eslint.config.mjs` and formatting rules in `.prettierrc`
 - Write Jest tests for new functionality
-- Use kebab-case for filenames (with leading underscore for internal modules)
+- Use kebab-case for public filenames and leading underscores for internal modules
 - Follow D3.js conventions and API patterns
 - Add changeset for all user-facing changes (`yarn changeset`)
 - Keep code backward compatible when possible
@@ -55,15 +55,13 @@ The library supports two scale types (configurable via `.scaleType()`):
 - `_defaults.js` - Default configuration values for all timeline options
 - `_api.js` - API factory that creates the fluent interface for method chaining
 - `_transform.js` - Data transformation logic to prepare raw data for rendering
-- `_optimize.js` - Label overlap detection and vertical displacement algorithm
-- `_time_parse.js` - Time parsing utilities wrapping D3 time-format
+- `_optimize.js` - Label overlap resolution and vertical displacement algorithm
+- `_overlap.js` - Label overlap detection
 - `_time_format.js` - Time formatting utilities wrapping D3 time-format
+- `_time_parse.js` - Time parsing utilities wrapping D3 time-format
 - `_aggregate_formats.js` - Time format strings for different aggregation levels
 - `_css.js` - CSS class name constants
 - `_is_above.js` - Determines label distribution (top/bottom or left/right)
-- `_get_available_width.js` - Calculates available width for labels
-- `_get_next_group_height.js` - Calculates vertical spacing for groups
-- `_get_attribute.js` - Utility to safely extract attributes from data objects
 
 ### Rendering Flow
 
@@ -86,8 +84,8 @@ Uses `ResizeObserver` to automatically re-render timeline when container size ch
 ### Test Structure
 
 - Jest tests: Unit tests for individual modules (files ending in `.test.js`)
-- Karma tests: Browser-based integration tests in `test/*-test.js`
-- Both test runners use Babel to transpile ES6 modules
+- Karma tests: Browser-based integration tests loaded through `test/tape.js`
+- Babel transpiles ES modules for Jest, Rollup, and browser tests
 
 ## Release Process
 
