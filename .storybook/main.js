@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|ts|tsx)'],
   staticDirs: ['../src/stories/assets'],
 
