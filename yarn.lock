@@ -1321,21 +1321,21 @@
   resolved "https://registry.yarnpkg.com/@csstools/css-tokenizer/-/css-tokenizer-3.0.4.tgz#333fedabc3fd1a8e5d0100013731cf19e6a8c5d3"
   integrity sha512-Vd/9EVDiu6PPJt9yAh6roZP6El1xHrdvIVGjyBsHR0RYwNHgL7FJPyIIW4fANJNG6FtyZfvlRPpFI4ZM/lubvw==
 
-"@elastic/apm-rum-core@^5.21.0":
-  version "5.21.1"
-  resolved "https://registry.yarnpkg.com/@elastic/apm-rum-core/-/apm-rum-core-5.21.1.tgz#ea6f2268629193962c194ae1d29971e2c5b2e531"
-  integrity sha512-/LyLhVdJ+zcsKogwq2AEYARc//RDXOoTHWPERLay4sCsvvxc4/GkkhhOC40CqI0oMu4kUAoJInQWZuCM7zCZRQ==
+"@elastic/apm-rum-core@^5.25.3":
+  version "5.25.3"
+  resolved "https://registry.yarnpkg.com/@elastic/apm-rum-core/-/apm-rum-core-5.25.3.tgz#06ccaaa9b01a5b4cd7c17d2e033447e7839001f9"
+  integrity sha512-9JOhcT1biC//p4/vV7R74B2LAamAprFZpv9fVMnZuhQg/AceBd5c7KiKfF5338fJf+CNrjTBM1gVD2ap6TgYDg==
   dependencies:
     error-stack-parser "^1.3.5"
     opentracing "^0.14.3"
     promise-polyfill "^8.1.3"
 
 "@elastic/apm-rum@^5.12.0":
-  version "5.16.0"
-  resolved "https://registry.yarnpkg.com/@elastic/apm-rum/-/apm-rum-5.16.0.tgz#bb9b00a866a48ec40c07ea742d241f835e8b5f9d"
-  integrity sha512-vNwRWDIccdu6iPDpCyrC3myRnpBzRH6wlAoOZjgSFJilQJMsymb8NzR1rkQmNEBca+frRuDCZabd+ylEZ47YBA==
+  version "5.17.5"
+  resolved "https://registry.yarnpkg.com/@elastic/apm-rum/-/apm-rum-5.17.5.tgz#0d0e82407b98f3429835a705daa69936227b9dc1"
+  integrity sha512-fVf3PnDE5fCC50SKpyQER3XjUa7qwxchJ/4xf+qayQ4ttVcnLjQud95FjStK8jdiAQhJwFJjGBAD0pCil6uksw==
   dependencies:
-    "@elastic/apm-rum-core" "^5.21.0"
+    "@elastic/apm-rum-core" "^5.25.3"
 
 "@emnapi/core@1.10.0":
   version "1.10.0"
