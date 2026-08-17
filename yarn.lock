@@ -1082,12 +1082,12 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@changesets/apply-release-plan@^7.0.14":
-  version "7.0.14"
-  resolved "https://registry.yarnpkg.com/@changesets/apply-release-plan/-/apply-release-plan-7.0.14.tgz#e567bca79e520652a88b52332731fa138ed5b8a7"
-  integrity sha512-ddBvf9PHdy2YY0OUiEl3TV78mH9sckndJR14QAt87KLEbIov81XO0q0QAmvooBxXlqRRP8I9B7XOzZwQG7JkWA==
+"@changesets/apply-release-plan@^7.1.1":
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/@changesets/apply-release-plan/-/apply-release-plan-7.1.1.tgz#198c3d4dd9eafd0b3fa402a5d212eabe89db134e"
+  integrity sha512-9qPCm/rLx/xoOFXIHGB229+4GOL76S4MC+7tyOuTsR6+1jYlfFDQORdvwR5hDA6y4FL2BPt3qpbcQIS+dW85LA==
   dependencies:
-    "@changesets/config" "^3.1.2"
+    "@changesets/config" "^3.1.4"
     "@changesets/get-version-range-type" "^0.4.0"
     "@changesets/git" "^3.0.4"
     "@changesets/should-skip-package" "^0.1.2"
@@ -1101,13 +1101,13 @@
     resolve-from "^5.0.0"
     semver "^7.5.3"
 
-"@changesets/assemble-release-plan@^6.0.9":
-  version "6.0.9"
-  resolved "https://registry.yarnpkg.com/@changesets/assemble-release-plan/-/assemble-release-plan-6.0.9.tgz#8aa5baf0037a85812e320172e83b92ca31e85fd6"
-  integrity sha512-tPgeeqCHIwNo8sypKlS3gOPmsS3wP0zHt67JDuL20P4QcXiw/O4Hl7oXiuLnP9yg+rXLQ2sScdV1Kkzde61iSQ==
+"@changesets/assemble-release-plan@^6.0.10":
+  version "6.0.10"
+  resolved "https://registry.yarnpkg.com/@changesets/assemble-release-plan/-/assemble-release-plan-6.0.10.tgz#cb82efed0dc17b741bc39b6ccd551e3c86a4eb3d"
+  integrity sha512-rSDcqdJ9KbVyjpBIuCidhvZNIiVt1XaIYp73ycVQRIA5n/j6wQaEk0ChRLMUQ1vkxZe51PTQ9OIhbg6HQMW45A==
   dependencies:
     "@changesets/errors" "^0.2.0"
-    "@changesets/get-dependents-graph" "^2.1.3"
+    "@changesets/get-dependents-graph" "^2.1.4"
     "@changesets/should-skip-package" "^0.1.2"
     "@changesets/types" "^6.1.0"
     "@manypkg/get-packages" "^1.1.3"
@@ -1121,32 +1121,30 @@
     "@changesets/types" "^6.1.0"
 
 "@changesets/cli@^2.29.8":
-  version "2.29.8"
-  resolved "https://registry.yarnpkg.com/@changesets/cli/-/cli-2.29.8.tgz#30f71f7ea4f68acab9fb3a0edf178ab43a337e0a"
-  integrity sha512-1weuGZpP63YWUYjay/E84qqwcnt5yJMM0tep10Up7Q5cS/DGe2IZ0Uj3HNMxGhCINZuR7aO9WBMdKnPit5ZDPA==
+  version "2.31.1"
+  resolved "https://registry.yarnpkg.com/@changesets/cli/-/cli-2.31.1.tgz#aaef4fc5cc4a2aae4e952696593e48ddc7d75a74"
+  integrity sha512-uO05WTcRBwuVOJVSW8Cmpqw6q0WDL53ajGCMyszutvOe5toOnunbpM4jZzf+qxBOz7i0AzopZ8diBuewjmF40w==
   dependencies:
-    "@changesets/apply-release-plan" "^7.0.14"
-    "@changesets/assemble-release-plan" "^6.0.9"
+    "@changesets/apply-release-plan" "^7.1.1"
+    "@changesets/assemble-release-plan" "^6.0.10"
     "@changesets/changelog-git" "^0.2.1"
-    "@changesets/config" "^3.1.2"
+    "@changesets/config" "^3.1.4"
     "@changesets/errors" "^0.2.0"
-    "@changesets/get-dependents-graph" "^2.1.3"
-    "@changesets/get-release-plan" "^4.0.14"
+    "@changesets/get-dependents-graph" "^2.1.4"
+    "@changesets/get-release-plan" "^4.0.16"
     "@changesets/git" "^3.0.4"
     "@changesets/logger" "^0.1.1"
     "@changesets/pre" "^2.0.2"
-    "@changesets/read" "^0.6.6"
+    "@changesets/read" "^0.6.7"
     "@changesets/should-skip-package" "^0.1.2"
     "@changesets/types" "^6.1.0"
     "@changesets/write" "^0.4.0"
     "@inquirer/external-editor" "^1.0.2"
     "@manypkg/get-packages" "^1.1.3"
     ansi-colors "^4.1.3"
-    ci-info "^3.7.0"
     enquirer "^2.4.1"
     fs-extra "^7.0.1"
     mri "^1.2.0"
-    p-limit "^2.2.0"
     package-manager-detector "^0.2.0"
     picocolors "^1.1.0"
     resolve-from "^5.0.0"
@@ -1154,14 +1152,15 @@
     spawndamnit "^3.0.1"
     term-size "^2.1.0"
 
-"@changesets/config@^3.1.2":
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/@changesets/config/-/config-3.1.2.tgz#7d04d531285766f8f7ae03648e0b4a97c71aa9b3"
-  integrity sha512-CYiRhA4bWKemdYi/uwImjPxqWNpqGPNbEBdX1BdONALFIDK7MCUj6FPkzD+z9gJcvDFUQJn9aDVf4UG7OT6Kog==
+"@changesets/config@^3.1.4":
+  version "3.1.4"
+  resolved "https://registry.yarnpkg.com/@changesets/config/-/config-3.1.4.tgz#e503be9d86f122e52d64ccca868870e5ea943cfd"
+  integrity sha512-pf0bvD/v6WI2cRlZ6hzpjtZdSlXDXMAJ+Iz7xfFzV4ZxJ8OGGAON+1qYc99ZPrijnt4xp3VGG7eNvAOGS24V1Q==
   dependencies:
     "@changesets/errors" "^0.2.0"
-    "@changesets/get-dependents-graph" "^2.1.3"
+    "@changesets/get-dependents-graph" "^2.1.4"
     "@changesets/logger" "^0.1.1"
+    "@changesets/should-skip-package" "^0.1.2"
     "@changesets/types" "^6.1.0"
     "@manypkg/get-packages" "^1.1.3"
     fs-extra "^7.0.1"
@@ -1174,25 +1173,25 @@
   dependencies:
     extendable-error "^0.1.5"
 
-"@changesets/get-dependents-graph@^2.1.3":
-  version "2.1.3"
-  resolved "https://registry.yarnpkg.com/@changesets/get-dependents-graph/-/get-dependents-graph-2.1.3.tgz#cd31b39daab7102921fb65acdcb51b4658502eee"
-  integrity sha512-gphr+v0mv2I3Oxt19VdWRRUxq3sseyUpX9DaHpTUmLj92Y10AGy+XOtV+kbM6L/fDcpx7/ISDFK6T8A/P3lOdQ==
+"@changesets/get-dependents-graph@^2.1.4":
+  version "2.1.4"
+  resolved "https://registry.yarnpkg.com/@changesets/get-dependents-graph/-/get-dependents-graph-2.1.4.tgz#a18e56d94b41d45888f62021accc6e17a61b5d7c"
+  integrity sha512-ZsS00x6WvmHq3sQv8oCMwL0f/z3wbXCVuSVTJwCnnmbC/iBdNJGFx1EcbMG4PC6sXRyH69liM4A2WKXzn/kRPg==
   dependencies:
     "@changesets/types" "^6.1.0"
     "@manypkg/get-packages" "^1.1.3"
     picocolors "^1.1.0"
     semver "^7.5.3"
 
-"@changesets/get-release-plan@^4.0.14":
-  version "4.0.14"
-  resolved "https://registry.yarnpkg.com/@changesets/get-release-plan/-/get-release-plan-4.0.14.tgz#4b03a13f7f8107d1a91500cdf020a6181af2ad32"
-  integrity sha512-yjZMHpUHgl4Xl5gRlolVuxDkm4HgSJqT93Ri1Uz8kGrQb+5iJ8dkXJ20M2j/Y4iV5QzS2c5SeTxVSKX+2eMI0g==
+"@changesets/get-release-plan@^4.0.16":
+  version "4.0.16"
+  resolved "https://registry.yarnpkg.com/@changesets/get-release-plan/-/get-release-plan-4.0.16.tgz#18f01f037c4c9376acf32ab820f7bcb7e292eaa0"
+  integrity sha512-2K5Om6CrMPm45rtvckfzWo7e9jOVCKLCnXia5eUPaURH7/LWzri7pK1TycdzAuAtehLkW7VPbWLCSExTHmiI6g==
   dependencies:
-    "@changesets/assemble-release-plan" "^6.0.9"
-    "@changesets/config" "^3.1.2"
+    "@changesets/assemble-release-plan" "^6.0.10"
+    "@changesets/config" "^3.1.4"
     "@changesets/pre" "^2.0.2"
-    "@changesets/read" "^0.6.6"
+    "@changesets/read" "^0.6.7"
     "@changesets/types" "^6.1.0"
     "@manypkg/get-packages" "^1.1.3"
 
@@ -1219,10 +1218,10 @@
   dependencies:
     picocolors "^1.1.0"
 
-"@changesets/parse@^0.4.2":
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/@changesets/parse/-/parse-0.4.2.tgz#d31f6e87fe8b3b404e44b1ffd8bb0caa24094a2f"
-  integrity sha512-Uo5MC5mfg4OM0jU3up66fmSn6/NE9INK+8/Vn/7sMVcdWg46zfbvvUSjD9EMonVqPi9fbrJH9SXHn48Tr1f2yA==
+"@changesets/parse@^0.4.3":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@changesets/parse/-/parse-0.4.3.tgz#912a7eac7f8cb387b05f749596a68f2f763660e0"
+  integrity sha512-ZDmNc53+dXdWEv7fqIUSgRQOLYoUom5Z40gmLgmATmYR9NbL6FJJHwakcCpzaeCy+1D0m0n7mT4jj2B/MQPl7A==
   dependencies:
     "@changesets/types" "^6.1.0"
     js-yaml "^4.1.1"
@@ -1237,14 +1236,14 @@
     "@manypkg/get-packages" "^1.1.3"
     fs-extra "^7.0.1"
 
-"@changesets/read@^0.6.6":
-  version "0.6.6"
-  resolved "https://registry.yarnpkg.com/@changesets/read/-/read-0.6.6.tgz#0097f5d9e9693fae3ca0e3265a5bee5eab614b36"
-  integrity sha512-P5QaN9hJSQQKJShzzpBT13FzOSPyHbqdoIBUd2DJdgvnECCyO6LmAOWSV+O8se2TaZJVwSXjL+v9yhb+a9JeJg==
+"@changesets/read@^0.6.7":
+  version "0.6.7"
+  resolved "https://registry.yarnpkg.com/@changesets/read/-/read-0.6.7.tgz#65e144c960344b34ae8bd85144752a4b687e92d2"
+  integrity sha512-D1G4AUYGrBEk8vj8MGwf75k9GpN6XL3wg8i42P2jZZwFLXnlr2Pn7r9yuQNbaMCarP7ZQWNJbV6XLeysAIMhTA==
   dependencies:
     "@changesets/git" "^3.0.4"
     "@changesets/logger" "^0.1.1"
-    "@changesets/parse" "^0.4.2"
+    "@changesets/parse" "^0.4.3"
     "@changesets/types" "^6.1.0"
     fs-extra "^7.0.1"
     p-filter "^2.1.0"
@@ -4035,11 +4034,6 @@ chrome-trace-event@^1.0.2:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/chrome-trace-event/-/chrome-trace-event-1.0.4.tgz#05bffd7ff928465093314708c93bdfa9bd1f0f5b"
   integrity sha512-rNjApaLzuwaOTjCiT8lSDdGN1APCiqkChLMJxJPWLunPAt5fy8xgU9/jNOchV84wfIxrA0lRQB7oCT8jrn/wrQ==
-
-ci-info@^3.7.0:
-  version "3.9.0"
-  resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-3.9.0.tgz#4279a62028a7b1f262f3473fc9605f5e218c59b4"
-  integrity sha512-NIxF55hv4nSqQswkAeiOi1r83xy8JldOFDTWiug55KBu9Jnblncd2U6ViHmYgHf01TPZS77NJBhBMKdWj9HQMQ==
 
 ci-info@^4.2.0:
   version "4.4.0"
