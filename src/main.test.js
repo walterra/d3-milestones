@@ -66,6 +66,25 @@ describe('milestones', () => {
     expect(timelineElement).not.toBeNull();
   });
 
+  it('should rebuild layout data from the original input on re-render', () => {
+    container.style.width = '800px';
+    const chart = milestones('#container');
+    const data = [
+      { text: 'Event 1', timestamp: '2023-01-01' },
+      { text: 'Event 2', timestamp: '2023-06-01' },
+    ];
+
+    chart.optimize(false).render(data);
+
+    const firstGroup = document.querySelector('.milestones__group');
+    const originalKey = firstGroup.__data__.key;
+    firstGroup.__data__.key = '2099-01-01';
+
+    chart.render();
+
+    expect(firstGroup.__data__.key).toBe(originalKey);
+  });
+
   it('should execute renderCallback when render is called', () => {
     const chart = milestones('#container');
     const mockCallback = jest.fn();

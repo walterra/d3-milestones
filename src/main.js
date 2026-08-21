@@ -261,8 +261,12 @@ export default function milestones(selector) {
     autoResize.current = d;
   }
 
+  let lastRenderData;
+
   function render(data) {
-    // Simple render method with a single data parameter
+    if (typeof data !== 'undefined') {
+      lastRenderData = data;
+    }
 
     const widthAttribute = orientation === 'horizontal' ? 'width' : 'height';
     const marginTimeAttribute =
@@ -275,8 +279,14 @@ export default function milestones(selector) {
 
     const timelineSelection = dom.select(selector).selectAll('.' + cssPrefix);
     let nestedData =
-      typeof data !== 'undefined'
-        ? transform(aggregateFormat, data, mapping, parseTime, scaleType)
+      typeof lastRenderData !== 'undefined'
+        ? transform(
+            aggregateFormat,
+            lastRenderData,
+            mapping,
+            parseTime,
+            scaleType,
+          )
         : timelineSelection.data();
 
     // Split groups by distribution if using custom distribution
