@@ -153,11 +153,14 @@ export const optimize = (
 
       const padding = isAbove ? paddingAbove : paddingBelow;
 
-      // reset padding and "last" class before starting the optimization
+      // Restore the unoptimized baseline before measuring the existing nodes.
       for (const node of nodes) {
         const parentElement = getParentElement(dom.selectAll(node));
         parentElement.attr('data-adjusted', false);
         parentElement.classed(`${cssLastClass}-${orientation}`, false);
+        parentElement.style(widthAttr, null);
+        parentElement.style(paddingAbove, null);
+        parentElement.style(paddingBelow, null);
         parentElement.style(padding, isHorizontal ? '0px' : '10px');
       }
 
