@@ -1,0 +1,192 @@
+[
+  {
+    "company": "OpenAI",
+    "models": [
+      {
+        "date": "2023-03-14",
+        "name": "GPT-4",
+        "source": "https://openai.com/index/gpt-4-research/"
+      },
+      {
+        "date": "2023-11-06",
+        "name": "GPT-4 Turbo",
+        "source": "https://openai.com/index/new-models-and-developer-products-announced-at-devday/"
+      },
+      {
+        "date": "2024-05-13",
+        "name": "GPT-4o",
+        "source": "https://openai.com/index/hello-gpt-4o/"
+      },
+      {
+        "date": "2024-09-12",
+        "name": "o1-preview",
+        "source": "https://openai.com/index/introducing-openai-o1-preview/"
+      },
+      {
+        "date": "2025-01-31",
+        "name": "o3-mini",
+        "source": "https://openai.com/index/openai-o3-mini/"
+      },
+      {
+        "date": "2025-02-27",
+        "name": "GPT-4.5",
+        "source": "https://openai.com/index/introducing-gpt-4-5/"
+      },
+      {
+        "date": "2025-04-14",
+        "name": "GPT-4.1",
+        "source": "https://openai.com/index/gpt-4-1/"
+      },
+      {
+        "date": "2025-04-16",
+        "name": "o3 and o4-mini",
+        "source": "https://openai.com/index/introducing-o3-and-o4-mini/"
+      },
+      {
+        "date": "2025-08-07",
+        "name": "GPT-5",
+        "source": "https://openai.com/index/introducing-gpt-5/"
+      },
+      {
+        "date": "2025-11-12",
+        "name": "GPT-5.1",
+        "source": "https://openai.com/index/gpt-5-1/"
+      },
+      {
+        "date": "2025-12-11",
+        "name": "GPT-5.2",
+        "source": "https://openai.com/index/introducing-gpt-5-2/"
+      },
+      {
+        "date": "2026-03-03",
+        "name": "GPT-5.3 Instant",
+        "source": "https://openai.com/index/gpt-5-3-instant/"
+      },
+      {
+        "date": "2026-03-05",
+        "name": "GPT-5.4",
+        "source": "https://openai.com/index/introducing-gpt-5-4/"
+      },
+      {
+        "date": "2026-04-23",
+        "name": "GPT-5.5",
+        "source": "https://openai.com/index/introducing-gpt-5-5/"
+      },
+      {
+        "date": "2026-05-05",
+        "name": "GPT-5.5 Instant",
+        "source": "https://openai.com/index/gpt-5-5-instant/"
+      },
+      {
+        "date": "2026-06-26",
+        "name": "GPT-5.6 Sol preview",
+        "source": "https://openai.com/index/previewing-gpt-5-6-sol/"
+      },
+      {
+        "date": "2026-07-09",
+        "name": "GPT-5.6",
+        "source": "https://openai.com/index/gpt-5-6/"
+      }
+    ]
+  },
+  {
+    "company": "Anthropic",
+    "models": [
+      {
+        "date": "2023-03-14",
+        "name": "Claude",
+        "source": "https://www.anthropic.com/news/introducing-claude"
+      },
+      {
+        "date": "2023-07-11",
+        "name": "Claude 2",
+        "source": "https://www.anthropic.com/news/claude-2"
+      },
+      {
+        "date": "2023-11-21",
+        "name": "Claude 2.1",
+        "source": "https://www.anthropic.com/news/claude-2-1"
+      },
+      {
+        "date": "2024-03-04",
+        "name": "Claude 3",
+        "source": "https://www.anthropic.com/news/claude-3-family"
+      },
+      {
+        "date": "2024-06-20",
+        "name": "Claude 3.5 Sonnet",
+        "source": "https://www.anthropic.com/news/claude-3-5-sonnet"
+      },
+      {
+        "date": "2024-10-22",
+        "name": "Claude 3.5 Haiku",
+        "source": "https://www.anthropic.com/news/3-5-models-and-computer-use"
+      },
+      {
+        "date": "2025-02-24",
+        "name": "Claude 3.7 Sonnet",
+        "source": "https://www.anthropic.com/news/claude-3-7-sonnet"
+      },
+      {
+        "date": "2025-05-22",
+        "name": "Claude Opus 4 and Sonnet 4",
+        "source": "https://www.anthropic.com/news/claude-4"
+      },
+      {
+        "date": "2025-08-05",
+        "name": "Claude Opus 4.1",
+        "source": "https://www.anthropic.com/news/claude-opus-4-1"
+      },
+      {
+        "date": "2025-09-29",
+        "name": "Claude Sonnet 4.5",
+        "source": "https://www.anthropic.com/news/claude-sonnet-4-5"
+      },
+      {
+        "date": "2025-10-15",
+        "name": "Claude Haiku 4.5",
+        "source": "https://www.anthropic.com/news/claude-haiku-4-5"
+      },
+      {
+        "date": "2025-11-24",
+        "name": "Claude Opus 4.5",
+        "source": "https://www.anthropic.com/news/claude-opus-4-5"
+      },
+      {
+        "date": "2026-02-05",
+        "name": "Claude Opus 4.6",
+        "source": "https://www.anthropic.com/news/claude-opus-4-6"
+      },
+      {
+        "date": "2026-02-17",
+        "name": "Claude Sonnet 4.6",
+        "source": "https://www.anthropic.com/news/claude-sonnet-4-6"
+      },
+      {
+        "date": "2026-04-16",
+        "name": "Claude Opus 4.7",
+        "source": "https://www.anthropic.com/news/claude-opus-4-7"
+      },
+      {
+        "date": "2026-05-28",
+        "name": "Claude Opus 4.8",
+        "source": "https://www.anthropic.com/news/claude-opus-4-8"
+      },
+      {
+        "date": "2026-06-09",
+        "name": "Claude Fable 5 and Mythos 5",
+        "source": "https://www.anthropic.com/news/claude-fable-5-mythos-5"
+      },
+      {
+        "date": "2026-06-30",
+        "name": "Claude Sonnet 5",
+        "source": "https://www.anthropic.com/news/claude-sonnet-5"
+      },
+      {
+        "date": "2026-07-24",
+        "name": "Claude Opus 5",
+        "source": "https://www.anthropic.com/news/claude-opus-5"
+      }
+    ]
+  }
+]
