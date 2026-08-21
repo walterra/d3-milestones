@@ -1,5 +1,23 @@
 ## [`main`](https://github.com/walterra/d3-milestones/tree/main)
 
+## 2.0.0
+
+### Major Changes
+
+- 74e6533: Require Node.js 22.18 or newer for installation and releases
+
+### Minor Changes
+
+- 1fade3c: Add declarative and function-based label distribution for data-driven positioning
+- e67ec1b: `yarn gif:responsive` generates an animated GIF that demoes resizing the viking timeline
+
+### Patch Changes
+
+- 0739d3a: Add a Storybook timeline of major OpenAI and Anthropic model releases.
+- 5e54b64: Deploy Storybook to GitHub Pages automatically on release
+- ceb7794: Produce the same label layout after resizing as a fresh render at the target size
+- f757ed6: Improve dense horizontal and vertical timelines with collision-aware label placement, balanced distribution, and faster resizing.
+
 ## 1.6.0
 
 ### Minor Changes
