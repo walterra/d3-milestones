@@ -60,7 +60,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest": "^29.15.4",
     "eslint-plugin-prettier": "^5.5.6",
-    "eslint-plugin-storybook": "10.5.7",
+    "eslint-plugin-storybook": "10.5.8",
     "gh-pages": "^6.1.1",
     "globals": "^17.9.0",
     "jest": "^30.4.2",
