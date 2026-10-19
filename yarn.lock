@@ -1301,9 +1301,9 @@
     prettier "^2.7.1"
 
 "@chromatic-com/storybook@^5.3.0":
-  version "5.3.1"
-  resolved "https://registry.yarnpkg.com/@chromatic-com/storybook/-/storybook-5.3.1.tgz#6123fbe67bf5e42b5810705d0b578cc17db71bae"
-  integrity sha512-eUcbR9CddVmKAnjOiBCOz5rNdT096jiXIjR+qaWbUuTlgRdpc9yjTrk4/hiPAAykZrPYVNJN11p6rJgW9KNpKg==
+  version "5.4.0"
+  resolved "https://registry.yarnpkg.com/@chromatic-com/storybook/-/storybook-5.4.0.tgz#0040f394617591162c126008766aa50643e32e6e"
+  integrity sha512-U4Rny8H6BBa8uiRMnL0CFZyqZ0MWogN/szlMugsInfSnX+PtrLCVp2kjrvaG9bv6X5xSgHpnmepOzLm8+QFseA==
   dependencies:
     "@neoconfetti/react" "^1.0.0"
     chromatic "^18.0.1"
