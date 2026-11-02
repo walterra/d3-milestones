@@ -67,18 +67,18 @@
     semver "^6.3.1"
 
 "@babel/core@^8.0.1":
-  version "8.0.7"
-  resolved "https://registry.yarnpkg.com/@babel/core/-/core-8.0.7.tgz#794f5ac863e0ba30f76a7a7fa546ad3c103ca652"
-  integrity sha512-ZIsZWBG6Y1oa+8fkQVp0xeCdjCHBkXFCCIWrmg9SvejVvfcVQgKKRmGrBDWfM7rilhvnRoEuaqa5dkK7KB3pHA==
+  version "8.0.9"
+  resolved "https://registry.yarnpkg.com/@babel/core/-/core-8.0.9.tgz#4d597c512a119d16ffab53a71b967b3a48088cbf"
+  integrity sha512-wXtyKlpR/pXf/u0vmib+OBakQaIzLglLcRoKpWxCHW/whqq7YfQYPD0IAAl9H/evi40MyLIjYYdvb6N+9DI2yA==
   dependencies:
     "@babel/code-frame" "^8.0.6"
     "@babel/generator" "^8.0.6"
     "@babel/helper-compilation-targets" "^8.0.7"
-    "@babel/helpers" "^8.0.7"
-    "@babel/parser" "^8.0.7"
+    "@babel/helpers" "^8.0.8"
+    "@babel/parser" "^8.0.8"
     "@babel/template" "^8.0.0"
     "@babel/traverse" "^8.0.7"
-    "@babel/types" "^8.0.6"
+    "@babel/types" "^8.0.8"
     "@types/gensync" "^1.0.5"
     convert-source-map "^2.0.0"
     empathic "^2.0.1"
@@ -305,10 +305,10 @@
   resolved "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-7.29.7.tgz#7f0871d99824d23137d60f86fcf6130fd5a1b51f"
   integrity sha512-Pb5ijPrZ89GDH8223L4UP8i6QApWxs04RbPQJTeWDV0/keR2E36MeKnyr6LYmUUvqRRI+Iv87SuF1W6ErINzYw==
 
-"@babel/helper-string-parser@^8.0.6":
-  version "8.0.6"
-  resolved "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-8.0.6.tgz#5dd27135235502b6e141821a00a0e14de69af3b6"
-  integrity sha512-+6HYEBnsDRZHJtUTAEfMQd0zMDqdFHS7C+5vAsEZqBUr3vEMWOWlHJ0Jz1gS8jJIlCvLsuA6ivmeoqzH936YcA==
+"@babel/helper-string-parser@^8.0.8":
+  version "8.0.8"
+  resolved "https://registry.yarnpkg.com/@babel/helper-string-parser/-/helper-string-parser-8.0.8.tgz#1f0ce7cda813491d43a37eef725cd979ae3b1d86"
+  integrity sha512-fVM+gSuKbdv9cpmyRNh5EvsDHUZCdxQH3FdnFKSkNYHpbsn95bbrxm+ES3MVeQjcqwi2O5ur/DjLfmTQaO60ng==
 
 "@babel/helper-validator-identifier@^7.29.7":
   version "7.29.7"
@@ -352,13 +352,13 @@
     "@babel/template" "^7.29.7"
     "@babel/types" "^7.29.7"
 
-"@babel/helpers@^8.0.7":
-  version "8.0.7"
-  resolved "https://registry.yarnpkg.com/@babel/helpers/-/helpers-8.0.7.tgz#9a3771a3dbf416f7936c1aa46749b4e2c6853cbf"
-  integrity sha512-5dMj5kFwS2AY7Dt4PZp4px3c5ThMbbEa7tZfuHTncCGSFYq8uoA1ufDE1IS/lYpQedE+3+GQ3cPZUiplIu195w==
+"@babel/helpers@^8.0.8":
+  version "8.0.10"
+  resolved "https://registry.yarnpkg.com/@babel/helpers/-/helpers-8.0.10.tgz#f09a6fc538699b5163c54f383bee96ea2dc1bc16"
+  integrity sha512-tBG9yuaR26JJWFafcl/Dk4eib6bkRJ9H5e6lENcwZqFudA9ImNCuMXLjB3/t+Ub7/DOZv2Rmi5LCOi8q2DCekQ==
   dependencies:
     "@babel/template" "^8.0.0"
-    "@babel/types" "^8.0.6"
+    "@babel/types" "^8.0.10"
 
 "@babel/parser@^7.1.0", "@babel/parser@^7.20.7", "@babel/parser@^7.23.9", "@babel/parser@^7.29.7", "@babel/parser@^7.29.8":
   version "7.29.8"
@@ -367,12 +367,12 @@
   dependencies:
     "@babel/types" "^7.29.8"
 
-"@babel/parser@^8.0.0", "@babel/parser@^8.0.6", "@babel/parser@^8.0.7":
-  version "8.0.7"
-  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-8.0.7.tgz#9230a40e3c9b3f2e72282f582f669ada4e645af2"
-  integrity sha512-UkDwEbPO1px2JQSrdh4qIgaH1JgG7GO/pFeJkpxhDxIETkT/QvGpnigXIw75ViHYPtIgKITmVUJqLjiO+JuWjA==
+"@babel/parser@^8.0.0", "@babel/parser@^8.0.6", "@babel/parser@^8.0.7", "@babel/parser@^8.0.8":
+  version "8.0.10"
+  resolved "https://registry.yarnpkg.com/@babel/parser/-/parser-8.0.10.tgz#d6dc1458deb4e2239c88c517b9ea9332d4c0d035"
+  integrity sha512-h+ah2Kg0ne1Vii892dShj9gky9I5jPzkd8x4s/3xgN/P2bMWmHS3qq59tum3mCVjCBXI8uqfYyYtrfp1Mz6+1w==
   dependencies:
-    "@babel/types" "^8.0.6"
+    "@babel/types" "^8.0.10"
 
 "@babel/plugin-bugfix-firefox-class-in-computed-class-key@^8.0.1":
   version "8.0.1"
@@ -1074,12 +1074,12 @@
     "@babel/helper-string-parser" "^7.29.7"
     "@babel/helper-validator-identifier" "^7.29.7"
 
-"@babel/types@^8.0.0", "@babel/types@^8.0.5", "@babel/types@^8.0.6":
-  version "8.0.6"
-  resolved "https://registry.yarnpkg.com/@babel/types/-/types-8.0.6.tgz#7ab2de1f9891c712af9c4b640dc12a2d5dc6b6e7"
-  integrity sha512-c+xgSWboV2pdwXP67BUWDVRHi2BO5Q3KwxyFVs7taVTY+fsK47/L51ZXQoV9rozHJDNHvJ4v4WEsI/IlxV2l2A==
+"@babel/types@^8.0.0", "@babel/types@^8.0.10", "@babel/types@^8.0.5", "@babel/types@^8.0.6", "@babel/types@^8.0.8":
+  version "8.0.10"
+  resolved "https://registry.yarnpkg.com/@babel/types/-/types-8.0.10.tgz#cb5c3bbab2c9fc738967022b6ba1fecd6acf1a09"
+  integrity sha512-KV8Y+teoRsmXeEPS4sCJY1kwV+hcPzHP1qQqgCxrjKOehLdBaxpsFBfoJ8MXWFV80y6Jw56+TM95wR0Per8dYw==
   dependencies:
-    "@babel/helper-string-parser" "^8.0.6"
+    "@babel/helper-string-parser" "^8.0.8"
     "@babel/helper-validator-identifier" "^8.0.6"
 
 "@bcoe/v8-coverage@^0.2.3":
